@@ -1,0 +1,30 @@
+.column {
+  flex: 0 0 270px;
+  border-radius: 5px;
+  background-color: #ebecf0;
+  padding: 15px 5px;
+
+  &__header{
+    position: relative;
+    padding: 0 0 0 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__title{
+    font-weight: 600;
+    height: 28px;
+    border-radius: 3px;
+  }
+  &__input{
+    position: absolute;
+    height: 25px;
+    top: -7px;
+    left: 0px;
+    padding: 0 0 0 5px;
+    opacity: 0.5;
+  }
+  &__actions{
+
+  }
+}
