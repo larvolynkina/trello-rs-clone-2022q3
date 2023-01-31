@@ -1,0 +1,11 @@
+// Минимальная ширина страницы
+$minWidth: 320;
+// Ширина полотна (макета)
+$maxWidth: 1600;
+// Ширина ограничивающего контейнера (0 = нет ограничения)
+$maxWidthContainer: 1160;
+// Общий отступ у контейнера
+$containerPadding: 30;
+
+// Ширина срабатывания первого брейкпоинта
+$containerWidth: $maxWidthContainer + $containerPadding;
