@@ -1,22 +1,25 @@
 import './column.scss';
+import { useState } from 'react';
+import ColumnCard from '../ColumnCard';
+import IColumnCard from '../../types';
 
 type ColumnProps = {
   column: string;
-  cards: string[];
+  cards: IColumnCard[];
 };
 function Column({ column, cards }: ColumnProps) {
+  const [cardList] = useState(cards);
   return (
     <li className="column">
       <div className="column__header">
-        <textarea className="column__title" maxLength={512}>{`Колонка ${column}`}</textarea>
-
+        <h2 className="column__title">{`Колонка ${column}`}</h2>
         <button className="column__actions" type="button">
           ...
         </button>
       </div>
       <ul className="column__cards">
-        {cards.map((card) => (
-          <li>{card}</li>
+        {cardList.map((card) => (
+          <ColumnCard key={card.title} card={card} />
         ))}
       </ul>
       <div className="column__footer">
