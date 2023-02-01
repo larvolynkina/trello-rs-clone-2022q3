@@ -3,7 +3,6 @@ import { IColumnCard } from '../../types/columns';
 
 type ColumnCardProps = {
   card: IColumnCard;
-  // setCardList: (cards: IColumnCard[]) => void;
 };
 
 function ColumnCard({ card }: ColumnCardProps) {

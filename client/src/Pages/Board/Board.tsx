@@ -1,6 +1,4 @@
 import './board.scss';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import Column from '../../Components/Column';
 import { IColumnCard, IColumn } from '../../types/columns';
@@ -37,11 +35,9 @@ function Board() {
         </div>
 
         <ul className="board__columns">
-          <DndProvider backend={HTML5Backend}>
-            {columns.map((column) => (
-              <Column key={column.position} column={column} cards={cards} />
-            ))}
-          </DndProvider>
+          {columns.map((column) => (
+            <Column key={column.position} column={column} cards={cards} />
+          ))}
         </ul>
       </div>
     </main>
