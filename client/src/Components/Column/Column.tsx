@@ -1,18 +1,27 @@
 import './column.scss';
 import { useState } from 'react';
+import { useDrag } from 'react-dnd';
+
 import ColumnCard from '../ColumnCard';
-import IColumnCard from '../../types';
+import { IColumnCard, IColumn } from '../../types/columns';
 
 type ColumnProps = {
-  column: string;
+  column: IColumn;
   cards: IColumnCard[];
 };
 function Column({ column, cards }: ColumnProps) {
   const [cardList] = useState(cards);
+  const [{ isDragging }, dragRef] = useDrag({
+    type: 'column',
+    item: { column },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
   return (
-    <li className="column">
+    <li className="column" ref={dragRef}>
       <div className="column__header">
-        <h2 className="column__title">{`Колонка ${column}`}</h2>
+        <h2 className="column__title">{column.title}</h2>
         <button className="column__actions" type="button">
           ...
         </button>

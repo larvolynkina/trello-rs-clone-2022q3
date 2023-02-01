@@ -1,5 +1,5 @@
 import './columnCard.scss';
-import IColumnCard from '../../types';
+import { IColumnCard } from '../../types/columns';
 
 type ColumnCardProps = {
   card: IColumnCard;

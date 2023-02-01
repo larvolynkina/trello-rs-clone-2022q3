@@ -3,10 +3,17 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import Column from '../../Components/Column';
-import IColumnCard from '../../types';
+import { IColumnCard, IColumn } from '../../types/columns';
 
 function Board() {
-  const columns = ['1', '2', '3', '4', '5', '6', '7'];
+  const columns: IColumn[] = [
+    { title: 'Column 1', position: 0 },
+    { title: 'Column 2', position: 1 },
+    { title: 'Column 3', position: 2 },
+    { title: 'Column 4', position: 3 },
+    { title: 'Column 5', position: 4 },
+    { title: 'Column 6', position: 5 },
+  ];
   const cards: IColumnCard[] = [
     { title: 'card 1', position: 0 },
     { title: 'card 2', position: 1 },
@@ -32,7 +39,7 @@ function Board() {
         <ul className="board__columns">
           <DndProvider backend={HTML5Backend}>
             {columns.map((column) => (
-              <Column key={column} column={column} cards={cards} />
+              <Column key={column.position} column={column} cards={cards} />
             ))}
           </DndProvider>
         </ul>
