@@ -46,27 +46,15 @@ function Column({
     setCardWithStyle('');
     setDropCard(card);
   };
-  const handleDragOverColumn = () => {
-    // console.log('over', column.id)
-    // setDropColumn(column);
-  };
+
   const handleDropColumn = (e: DragEvent<HTMLLIElement>) => {
     e.preventDefault();
     setDropColumn(column);
   };
 
-  // useEffect(() => {
-  //   if (dragCard) {
-  //     console.log('current drop column: ', dropColumn);
-  //     if (dropColumn) {
-  //       console.log('update from effect');
-  //       updateCards(dragCard, dropColumn);
-  //     }
-  //   }
-  // }, [dropColumn]);
 
   return (
-    <li className="column" onDragOver={handleDragOverColumn} onDrop={handleDropColumn}>
+    <li className="column" onDrop={handleDropColumn}>
       <div className="column__header">
         <h2 className="column__title">{column.title}</h2>
         <button className="column__actions" type="button">
