@@ -52,9 +52,20 @@ function Column({
     setDropColumn(column);
   };
 
-
+  const stopPrevent = (e: DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+  };
   return (
-    <li className="column" onDrop={handleDropColumn}>
+    <li
+      className="column"
+      onDrop={handleDropColumn}
+      onDragEnter={(e) => {
+        stopPrevent(e);
+      }}
+      onDragOver={(e) => {
+        stopPrevent(e);
+      }}
+    >
       <div className="column__header">
         <h2 className="column__title">{column.title}</h2>
         <button className="column__actions" type="button">
@@ -83,7 +94,7 @@ function Column({
         </button>
       </div>
     </li>
-  );  
+  );
 }
 
 export default Column;
