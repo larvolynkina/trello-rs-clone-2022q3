@@ -1,5 +1,5 @@
 import './column.scss';
-import { DragEvent, useCallback, useEffect, useState } from 'react';
+import { DragEvent, useState } from 'react';
 
 import ColumnCard from '../ColumnCard';
 import { IColumnCard, IColumn } from '../../types/columns';
@@ -7,59 +7,66 @@ import { IColumnCard, IColumn } from '../../types/columns';
 type ColumnProps = {
   column: IColumn;
   cards: IColumnCard[];
-  updateCards: (cards: IColumnCard[]) => void;
+  dragCard: IColumnCard | null;
+  setDragCard: (card: IColumnCard) => void;
+  setDropCard: (card: IColumnCard) => void;
+  setDragColumnFromCard: (column: IColumn) => void;
+  setDropColumn: (column: IColumn) => void;
 };
-function Column({ column, cards, updateCards }: ColumnProps) {
-  const [currentDragCard, setCurrentDragCard] = useState<IColumnCard | null>(null);
-  const [lastTargetCard, setLastTargetCard] = useState<IColumnCard | null>(null);
+function Column({
+  column,
+  cards,
+  dragCard,
+  setDragCard,
+  setDropCard,
+  setDragColumnFromCard,
+  setDropColumn,
+}: ColumnProps) {
+  const [cardWithStyle, setCardWithStyle] = useState<string>('');
 
-  const handleDragStart = useCallback((e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
-    console.log(card);
-    setCurrentDragCard(card);
-  }, []);
+  const handleDragStartCard = (card: IColumnCard) => {
+    setDragCard(card);
+    setDragColumnFromCard(column);
+  };
 
-  const handleDragEnd = useCallback((e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
-    // console.log(card.title, card.position);
-  }, []);
-
-  const handleDragOver = useCallback((e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
+  const handleDragOverCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
     e.preventDefault();
-    setLastTargetCard(card);
-  }, []);
-  function sortCardList(items: IColumnCard[]) {
-    const newArr = [...items];
-    console.log(
-      'newArr:',
-      newArr.sort((a, b) => a.position - b.position),
-    );
-    return newArr;
-  }
-  const handleDrop = useCallback(
-    (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
-      e.preventDefault();
-      updateCards(
-        sortCardList(
-          cards.map((el) => {
-            if (el.id === card.id && currentDragCard) {
-              return { ...el, position: currentDragCard.position };
-            }
-            if (currentDragCard && el.id === currentDragCard.id) {
-              return { ...el, position: card.position };
-            }
-            return el;
-          }),
-        ),
-      );
-    },
-    [currentDragCard],
-  );
-  
-  useEffect(() => {
-    console.log('cardList:', cards);
-  }, [cards]);
+    if (card.id !== dragCard?.id) {
+      setCardWithStyle(card.id);
+    } else {
+      setCardWithStyle('');
+    }
+  };
+
+  const handleDragLeaveCard = () => {
+    setCardWithStyle('');
+  };
+  const handleDropCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
+    e.preventDefault();
+    setCardWithStyle('');
+    setDropCard(card);
+  };
+  const handleDragOverColumn = () => {
+    // console.log('over', column.id)
+    // setDropColumn(column);
+  };
+  const handleDropColumn = (e: DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+    setDropColumn(column);
+  };
+
+  // useEffect(() => {
+  //   if (dragCard) {
+  //     console.log('current drop column: ', dropColumn);
+  //     if (dropColumn) {
+  //       console.log('update from effect');
+  //       updateCards(dragCard, dropColumn);
+  //     }
+  //   }
+  // }, [dropColumn]);
 
   return (
-    <li className="column" draggable>
+    <li className="column" onDragOver={handleDragOverColumn} onDrop={handleDropColumn}>
       <div className="column__header">
         <h2 className="column__title">{column.title}</h2>
         <button className="column__actions" type="button">
@@ -71,10 +78,11 @@ function Column({ column, cards, updateCards }: ColumnProps) {
           <ColumnCard
             key={card.title}
             card={card}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
+            onDragStart={handleDragStartCard}
+            onDragOver={handleDragOverCard}
+            onDrop={handleDropCard}
+            onDragLeave={handleDragLeaveCard}
+            cardWithStyle={cardWithStyle}
           />
         ))}
       </ul>
@@ -87,7 +95,7 @@ function Column({ column, cards, updateCards }: ColumnProps) {
         </button>
       </div>
     </li>
-  );
+  );  
 }
 
 export default Column;

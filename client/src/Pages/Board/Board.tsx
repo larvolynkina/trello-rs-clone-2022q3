@@ -1,25 +1,52 @@
 import './board.scss';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Column from '../../Components/Column';
 import { IColumnCard, IColumn } from '../../types/columns';
+import dataColumns from './data';
 
 function Board() {
-  const columns: IColumn[] = [
-    { id: '1', title: 'Column 1', position: 0 },
-    { id: '2', title: 'Column 2', position: 1 },
-    { id: '3', title: 'Column 3', position: 2 },
-    { id: '4', title: 'Column 4', position: 3 },
-    { id: '5', title: 'Column 5', position: 4 },
-    { id: '6', title: 'Column 6', position: 5 },
-  ];
-  const [cards, setCards] = useState<IColumnCard[]>([
-    { id: '1', title: 'card 1', position: 0 },
-    { id: '2', title: 'card 2', position: 1 },
-    { id: '3', title: 'card 3', position: 2 },
-    { id: '4', title: 'card 4', position: 3 },
-    { id: '5', title: 'card 5', position: 4 },
-  ]);
+  const [columns, setColumns] = useState<IColumn[]>(dataColumns);
+  const [dragCard, setDragCard] = useState<IColumnCard | null>(null);
+  const [dropCard, setDropCard] = useState<IColumnCard | null>(null);
+  const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
+  const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
+
+  useEffect(() => {
+    if (dragColumnFromCard && dragCard && dropCard) {
+      const newColumns = [...columns];
+
+      setColumns(
+        newColumns.map((column) => {
+          if (
+            dragColumnFromCard.id === dropColumnFromCard?.id &&
+            column.id === dragColumnFromCard.id
+          ) {
+            const newCards = column.cards;
+            const dragIndex = newCards.indexOf(dragCard);
+            const tempDropIndex = newCards.indexOf(dropCard);
+            const dropIndex = tempDropIndex > dragIndex ? tempDropIndex : tempDropIndex + 1;
+            newCards.splice(dragIndex, 1);
+            newCards.splice(dropIndex, 0, dragCard);
+            return { ...column, cards: newCards };
+          }
+          if (column.id === dragColumnFromCard.id) {
+            const newCards = column.cards;
+            const dragIndex = newCards.indexOf(dragCard);
+            newCards.splice(dragIndex, 1);
+            return { ...column, cards: newCards };
+          }
+          if (column.id === dropColumnFromCard?.id) {
+            const newCards = column.cards;
+            const dropIndex = newCards.indexOf(dropCard);
+            newCards.splice(dropIndex + 1, 0, dragCard);
+            return { ...column, cards: newCards };
+          }
+          return column;
+        }),
+      );
+    } 
+  }, [dropColumnFromCard, dropCard]);
 
   return (
     <main className="board">
@@ -38,7 +65,16 @@ function Board() {
 
         <ul className="board__columns">
           {columns.map((column) => (
-            <Column key={column.position} column={column} cards={cards} updateCards={setCards}/>
+            <Column
+              key={column.id}
+              column={column}
+              cards={column.cards}
+              setDragCard={setDragCard}
+              setDropCard={setDropCard}
+              setDragColumnFromCard={setDragColumnFromCard}
+              dragCard={dragCard}
+              setDropColumn={setDropColumnFromCard}
+            />
           ))}
         </ul>
       </div>
