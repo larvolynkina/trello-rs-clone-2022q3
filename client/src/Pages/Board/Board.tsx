@@ -1,24 +1,26 @@
 import './board.scss';
+import { useState } from 'react';
 
 import Column from '../../Components/Column';
 import { IColumnCard, IColumn } from '../../types/columns';
 
 function Board() {
   const columns: IColumn[] = [
-    { title: 'Column 1', position: 0 },
-    { title: 'Column 2', position: 1 },
-    { title: 'Column 3', position: 2 },
-    { title: 'Column 4', position: 3 },
-    { title: 'Column 5', position: 4 },
-    { title: 'Column 6', position: 5 },
+    { id: '1', title: 'Column 1', position: 0 },
+    { id: '2', title: 'Column 2', position: 1 },
+    { id: '3', title: 'Column 3', position: 2 },
+    { id: '4', title: 'Column 4', position: 3 },
+    { id: '5', title: 'Column 5', position: 4 },
+    { id: '6', title: 'Column 6', position: 5 },
   ];
-  const cards: IColumnCard[] = [
-    { title: 'card 1', position: 0 },
-    { title: 'card 2', position: 1 },
-    { title: 'card 3', position: 2 },
-    { title: 'card 4', position: 3 },
-    { title: 'card 5', position: 4 },
-  ];
+  const [cards, setCards] = useState<IColumnCard[]>([
+    { id: '1', title: 'card 1', position: 0 },
+    { id: '2', title: 'card 2', position: 1 },
+    { id: '3', title: 'card 3', position: 2 },
+    { id: '4', title: 'card 4', position: 3 },
+    { id: '5', title: 'card 5', position: 4 },
+  ]);
+
   return (
     <main className="board">
       <aside className="board__aside">board aside</aside>
@@ -36,7 +38,7 @@ function Board() {
 
         <ul className="board__columns">
           {columns.map((column) => (
-            <Column key={column.position} column={column} cards={cards} />
+            <Column key={column.position} column={column} cards={cards} updateCards={setCards}/>
           ))}
         </ul>
       </div>
