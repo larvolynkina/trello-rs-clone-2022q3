@@ -1,5 +1,7 @@
 import './column.scss';
-import { DragEvent, useState } from 'react';
+import { ChangeEvent, DragEvent, KeyboardEvent, useState } from 'react';
+import { useAppDispatch } from '../../hooks/redux'; 
+import { changeTitleColumn } from '../../store/reducers/columnsState';
 
 import ColumnCard from '../ColumnCard';
 import { IColumnCard, IColumn } from '../../types/columns';
@@ -22,7 +24,9 @@ function Column({
   setDragColumnFromCard,
   setDropColumn,
 }: ColumnProps) {
-  const [cardWithStyle, setCardWithStyle] = useState<string>('');
+  const dispatch = useAppDispatch();
+  const [title, setTitle] = useState(column.title);
+  const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
 
   const handleDragStartCard = (card: IColumnCard) => {
     setDragCard(card);
@@ -32,18 +36,18 @@ function Column({
   const handleDragOverCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
     e.preventDefault();
     if (card.id !== dragCard?.id) {
-      setCardWithStyle(card.id);
+      setCardWithStyleID(card.id);
     } else {
-      setCardWithStyle('');
+      setCardWithStyleID('');
     }
   };
 
   const handleDragLeaveCard = () => {
-    setCardWithStyle('');
+    setCardWithStyleID('');
   };
   const handleDropCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
     e.preventDefault();
-    setCardWithStyle('');
+    setCardWithStyleID('');
     setDropCard(card);
   };
 
@@ -55,6 +59,16 @@ function Column({
   const stopPrevent = (e: DragEvent<HTMLLIElement>) => {
     e.preventDefault();
   };
+  const handleTitleKeyUp = (e: KeyboardEvent<HTMLInputElement> ) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
+    }
+  };
+  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value !== '') {
+      setTitle(e.target.value)
+    }
+  }
   return (
     <li
       className="column"
@@ -67,7 +81,15 @@ function Column({
       }}
     >
       <div className="column__header">
-        <h2 className="column__title">{column.title}</h2>
+        <input
+          type="text"
+          className="column__title"
+          value={title}
+          onChange={(e) => handleChangeTitle(e)}
+          onFocus={(e) => {e.target.select()}}
+          onKeyUp={(e) => handleTitleKeyUp(e)}
+          onBlur={() => dispatch(changeTitleColumn({id: column.id, title}))}
+        />
         <button className="column__actions" type="button">
           ...
         </button>
@@ -81,7 +103,7 @@ function Column({
             onDragOver={handleDragOverCard}
             onDrop={handleDropCard}
             onDragLeave={handleDragLeaveCard}
-            cardWithStyle={cardWithStyle}
+            cardWithStyleID={cardWithStyleID}
           />
         ))}
       </ul>
