@@ -24,6 +24,12 @@ const userModel = new mongoose.Schema(
       type: String,
       default: '',
     },
+    workspaces: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Workspace',
+      },
+    ],
   },
   { timestamps: true },
 );

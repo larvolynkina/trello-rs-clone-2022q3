@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import userRouter from './routes/userRoute.js';
 import uploadRouter from './routes/uploadRoute.js';
+import workspaceRouter from './routes/workspaceRoute.js';
 
 dotenv.config();
 const app = express();
@@ -27,3 +28,4 @@ mongoose
 
 app.use('/', userRouter);
 app.use('/upload', uploadRouter);
+app.use('/workspaces', workspaceRouter);
