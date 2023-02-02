@@ -45,7 +45,7 @@ function Board() {
           return column;
         }),
       );
-    } 
+    }
   }, [dropColumnFromCard, dropCard]);
 
   return (
