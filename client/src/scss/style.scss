@@ -41,6 +41,7 @@ $responsiveType: 1;
   overflow: hidden;
   // Прижимаем footer
   > main {
+    padding-top: rem(60);
     flex: 1 1 auto;
   }
   // Фикс для слайдеров

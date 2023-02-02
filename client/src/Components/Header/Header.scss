@@ -1,0 +1,19 @@
+@import '../../scss/base/mixins.scss';
+
+$boxShadowColor: #091e4226;
+
+.header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  box-shadow: $boxShadowColor 0 rem(2) rem(4) 0;
+
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

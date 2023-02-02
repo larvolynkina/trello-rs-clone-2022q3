@@ -1,0 +1,13 @@
+@import '../../scss/base/mixins.scss';
+
+.user-profile-icon {
+  display: flex;
+  gap: rem(10);
+  align-items: center;
+
+  &__profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
