@@ -1,6 +1,7 @@
-import { IColumn } from "../../types/columns";
+import { createSlice } from '@reduxjs/toolkit';
+import { IColumn } from '../../types/columns';
 
-const dataColumns: IColumn[] = [
+const initialState: IColumn[] = [
   {
     id: '1',
     title: 'Column 1',
@@ -35,4 +36,10 @@ const dataColumns: IColumn[] = [
   },
 ];
 
-export default dataColumns;
+export const dataColumnsSlice = createSlice({
+  name: 'dataColumns',
+  initialState,
+  reducers: {},
+});
+
+export const dataColumns = dataColumnsSlice.reducer;

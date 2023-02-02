@@ -1,12 +1,14 @@
 import './board.scss';
 import { useEffect, useState } from 'react';
+import { useAppSelector } from '../../hooks/redux';
+import { RootState } from '../../store/rootReducer';
 
 import Column from '../../Components/Column';
 import { IColumnCard, IColumn } from '../../types/columns';
-import dataColumns from './data';
 
 function Board() {
-  const [columns, setColumns] = useState<IColumn[]>(dataColumns);
+  const columns = useAppSelector((state: RootState )=> state.dataColumns);
+  const [, setColumns] = useState<IColumn[]>(columns);
   const [dragCard, setDragCard] = useState<IColumnCard | null>(null);
   const [dropCard, setDropCard] = useState<IColumnCard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
