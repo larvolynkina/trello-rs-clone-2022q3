@@ -6,6 +6,7 @@ import userRouter from './routes/userRoute.js';
 import uploadRouter from './routes/uploadRoute.js';
 import workspaceRouter from './routes/workspaceRoute.js';
 import boardRouter from './routes/boardRoute.js';
+import columnRouter from './routes/columnRoute.js';
 
 dotenv.config();
 const app = express();
@@ -31,3 +32,4 @@ app.use('/', userRouter);
 app.use('/upload', uploadRouter);
 app.use('/workspaces', workspaceRouter);
 app.use('/boards', boardRouter);
+app.use('/columns', columnRouter);
