@@ -1,7 +1,10 @@
+import Promo from '../../Components/Promo';
+import './Main.scss';
+
 function Main() {
   return (
     <main className="main">
-      <div className="main__container">Main page</div>
+      <Promo />
     </main>
   );
 }

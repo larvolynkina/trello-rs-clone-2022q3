@@ -1,0 +1,35 @@
+@import '../../scss/colors.scss';
+
+.column {
+  flex: 0 0 270px;
+  border-radius: 5px;
+  background-color: $columnBackgroundColor;
+  padding: 15px 5px;
+  user-select: none;
+
+  &__header {
+    position: relative;
+    padding: 0 0 0 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-weight: 600;
+    height: 28px;
+    border-radius: 3px;
+  }
+
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 0 10px 0;
+  }
+
+  &__footer {
+    display: flex;
+    padding: 5px;
+    justify-content: space-between;
+  }
+}

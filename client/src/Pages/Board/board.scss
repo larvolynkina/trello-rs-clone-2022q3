@@ -1,0 +1,34 @@
+.board {
+  display: flex;
+  background: url('./bg-image.jpeg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  &__aside {
+    flex: 0 0 260px;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  &__body {
+    flex: 1 1 100%;
+    overflow: auto;
+    padding: 10px;
+  }
+
+  &__header {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__title {
+    flex: 1 0 auto;
+  }
+
+  &__columns {
+    display: flex;
+    gap: 5px;
+    align-items: flex-start;
+  }
+
+}
