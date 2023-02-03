@@ -9,7 +9,7 @@ import { IColumnCard, IColumn } from '../../types/columns';
 import { AddButtonsOnBoardText } from '../../const/const';
 
 function Board() {
-  const { columns } = useAppSelector((state: RootState) => state.boardState);
+  const { columns } = useAppSelector((state: RootState) => state.BOARD);
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<IColumnCard | null>(null);
   const [dropCard, setDropCard] = useState<IColumnCard | null>(null);

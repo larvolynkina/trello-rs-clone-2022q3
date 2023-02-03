@@ -6,6 +6,7 @@ export enum AuthorizationStatus {
 
 export enum NameSpace {
   user = 'USER',
+  board = 'BOARD',
 }
 
 

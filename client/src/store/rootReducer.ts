@@ -6,7 +6,7 @@ import { boardState } from './reducers/boardState';
 
 export const rootReducer = combineReducers({
   [NameSpace.user]: userState,
-  boardState,
+  [NameSpace.board]: boardState,
 });
 
 const setupStore = () =>
