@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IColumn, IColumnState } from '../../types/columns';
+import { IColumn, IColumnState } from '../../types/board';
 
 const initialState: IColumnState = {
   columns: [

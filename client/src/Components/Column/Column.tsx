@@ -5,7 +5,7 @@ import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardSt
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
-import { IColumnCard, IColumn } from '../../types/columns';
+import { IColumnCard, IColumn } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
 
 type ColumnProps = {

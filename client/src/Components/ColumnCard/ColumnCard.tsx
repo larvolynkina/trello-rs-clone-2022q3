@@ -1,7 +1,7 @@
 import './columnCard.scss';
 import { DragEvent } from 'react';
 
-import { IColumnCard } from '../../types/columns';
+import { IColumnCard } from '../../types/board';
 
 type ColumnCardProps = {
   card: IColumnCard;

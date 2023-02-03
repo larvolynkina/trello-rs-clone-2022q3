@@ -17,3 +17,8 @@ export enum AddButtonsOnBoardText {
   addCard = '+ Добавить карточку',
   saveCard = 'Добавить карточку',
 }
+
+export enum ServerDetails {
+  url = 'http://localhost',
+  port = '3001',
+}

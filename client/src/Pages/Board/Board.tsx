@@ -5,8 +5,9 @@ import { RootState } from '../../store/rootReducer';
 import { updateColumn } from '../../store/reducers/boardState';
 
 import Column from '../../Components/Column';
-import { IColumnCard, IColumn } from '../../types/columns';
+import { IColumnCard, IColumn } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
+import { getColumns } from '../../API/board';
 
 function Board() {
   const { columns } = useAppSelector((state: RootState) => state.BOARD);
@@ -59,9 +60,15 @@ function Board() {
     }
   }, [dropColumnFromCard, dropCard]);
 
+  function getColumnsFromServer() {
+    console.log(getColumns(''));
+  }
+  
   return (
     <main className="board">
-      <aside className="board__aside">Рабочее пространство</aside>
+      <aside className="board__aside">Рабочее пространство
+        <button type="button" onClick={getColumnsFromServer}>get columns</button>
+      </aside>
       <div className="board__body">
         <div className="board__header">
           <h1 className="board__title">Название доски</h1>
