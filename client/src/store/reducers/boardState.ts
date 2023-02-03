@@ -3,16 +3,7 @@ import { IColumn, IColumnState } from '../../types/board';
 import { getColumns } from '../../API/board';
 
 const initialState: IColumnState = {
-  columns: [
-    {
-      _id: '1',
-      title: 'Initial column',
-      cards: [],
-      archived: false,
-      createdAt: '',
-      updatedAt: '',
-    },
-  ],
+  columns: [],
 };
 
 export const boardStateSlice = createSlice({
@@ -39,11 +30,9 @@ export const boardStateSlice = createSlice({
         throw new Error(`Column № ${action.payload.id} not found`);
       }
     },
-    
   },
 });
 
-export const { changeTitleColumn, updateColumn, addCardInColumn } =
-  boardStateSlice.actions;
+export const { changeTitleColumn, updateColumn, addCardInColumn } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;
