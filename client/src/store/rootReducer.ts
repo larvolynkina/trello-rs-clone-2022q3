@@ -2,11 +2,11 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { NameSpace } from '../const/const';
 import { userState } from './reducers/userState';
-import { columnsState } from './reducers/columnsState';
+import { boardState } from './reducers/boardState';
 
 export const rootReducer = combineReducers({
   [NameSpace.user]: userState,
-  columnsState,
+  boardState,
 });
 
 const setupStore = () =>

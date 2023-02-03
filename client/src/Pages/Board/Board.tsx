@@ -2,14 +2,14 @@ import './board.scss';
 import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { RootState } from '../../store/rootReducer';
-import { updateColumn } from '../../store/reducers/columnsState';
+import { updateColumn } from '../../store/reducers/boardState';
 
 import Column from '../../Components/Column';
 import { IColumnCard, IColumn } from '../../types/columns';
 import { AddButtonsOnBoardText } from '../../const/const';
 
 function Board() {
-  const { columns } = useAppSelector((state: RootState) => state.columnsState);
+  const { columns } = useAppSelector((state: RootState) => state.boardState);
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<IColumnCard | null>(null);
   const [dropCard, setDropCard] = useState<IColumnCard | null>(null);

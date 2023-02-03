@@ -38,7 +38,7 @@ const initialState: IColumnState = {
   ],
 };
 
-export const columnsStateSlice = createSlice({
+export const boardStateSlice = createSlice({
   name: 'dataColumns',
   initialState,
   reducers: {
@@ -65,6 +65,6 @@ export const columnsStateSlice = createSlice({
   },
 });
 
-export const { changeTitleColumn, updateColumn, addCardInColumn } = columnsStateSlice.actions;
+export const { changeTitleColumn, updateColumn, addCardInColumn } = boardStateSlice.actions;
 
-export const columnsState = columnsStateSlice.reducer;
+export const boardState = boardStateSlice.reducer;

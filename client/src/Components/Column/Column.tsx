@@ -1,7 +1,7 @@
 import './column.scss';
 import { ChangeEvent, DragEvent, KeyboardEvent, useState } from 'react';
 import { useAppDispatch } from '../../hooks/redux';
-import { changeTitleColumn, addCardInColumn } from '../../store/reducers/columnsState';
+import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardState';
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
