@@ -9,7 +9,7 @@ export enum NameSpace {
 }
 
 
-export enum AddButtonsOnBoard {
+export enum AddButtonsOnBoardText {
   addColumn = '+ Добавить список',
   saveColumn = 'Добавить список',
   addOneMoreColumn = '+ Добавить ещё одну колонку',

@@ -47,15 +47,24 @@ export const columnsStateSlice = createSlice({
       if (columnForChange) {
         columnForChange.title = action.payload.title;
       } else {
-        console.log('column №', action.payload.id, 'not found');
+        throw new Error(`Column № ${action.payload.id} not found`);
       }
     },
     updateColumn(state, action: PayloadAction<IColumn[]>) {
       state.columns = action.payload;
     },
+    addCardInColumn(state, action: PayloadAction<{ id: string; title: string }>) {
+      const columnForChange = state.columns.find((column) => column.id === action.payload.id);
+      if (columnForChange) {
+        const newId = String(Date.now());
+        columnForChange.cards.push({ id: newId, title: action.payload.title });
+      } else {
+        throw new Error(`Column № ${action.payload.id} not found`);
+      }
+    },
   },
 });
 
-export const { changeTitleColumn, updateColumn } = columnsStateSlice.actions;
+export const { changeTitleColumn, updateColumn, addCardInColumn } = columnsStateSlice.actions;
 
 export const columnsState = columnsStateSlice.reducer;

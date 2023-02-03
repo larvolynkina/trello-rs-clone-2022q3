@@ -6,7 +6,7 @@ import { updateColumn } from '../../store/reducers/columnsState';
 
 import Column from '../../Components/Column';
 import { IColumnCard, IColumn } from '../../types/columns';
-import { AddButtonsOnBoard } from '../../const/const';
+import { AddButtonsOnBoardText } from '../../const/const';
 
 function Board() {
   const { columns } = useAppSelector((state: RootState) => state.columnsState);
@@ -19,8 +19,6 @@ function Board() {
   useEffect(() => {
     
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
-      console.log('go');
-      
       const newColumns = columns.map((column) => {
         if (
           dragColumnFromCard.id === dropColumnFromCard.id &&
@@ -57,9 +55,9 @@ function Board() {
       setDragColumnFromCard(null);
       setDropColumnFromCard(null);
       setDragCard(null);
-      setDropCard(null);
+      // setDropCard(null);
     }
-  }, [dropCard]);
+  }, [dropColumnFromCard, dropCard]);
 
   return (
     <main className="board">
@@ -89,10 +87,10 @@ function Board() {
               setDropColumn={setDropColumnFromCard}
             />
           ))}
-          <button type="button">
+          <button type="button" className="board__add-column">
             {columns.length === 0
-              ? AddButtonsOnBoard.addColumn
-              : AddButtonsOnBoard.addOneMoreColumn}
+              ? AddButtonsOnBoardText.addColumn
+              : AddButtonsOnBoardText.addOneMoreColumn}
           </button>
         </ul>
       </div>

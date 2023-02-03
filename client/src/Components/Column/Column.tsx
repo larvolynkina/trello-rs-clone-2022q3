@@ -1,10 +1,12 @@
 import './column.scss';
 import { ChangeEvent, DragEvent, KeyboardEvent, useState } from 'react';
-import { useAppDispatch } from '../../hooks/redux'; 
-import { changeTitleColumn } from '../../store/reducers/columnsState';
+import { useAppDispatch } from '../../hooks/redux';
+import { changeTitleColumn, addCardInColumn } from '../../store/reducers/columnsState';
 
 import ColumnCard from '../ColumnCard';
+import AddCardOrColumnForm from '../AddCardOrColumnForm';
 import { IColumnCard, IColumn } from '../../types/columns';
+import { AddButtonsOnBoardText } from '../../const/const';
 
 type ColumnProps = {
   column: IColumn;
@@ -27,6 +29,7 @@ function Column({
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState(column.title);
   const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
+  const [isOpenAddForm, setIsOpenAddForm] = useState(false);
 
   const handleDragStartCard = (card: IColumnCard) => {
     setDragCard(card);
@@ -48,7 +51,6 @@ function Column({
   const handleDropCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
     e.preventDefault();
     setCardWithStyleID('');
-    console.log('drop')
     setDropCard(card);
   };
 
@@ -60,16 +62,23 @@ function Column({
   const stopPrevent = (e: DragEvent<HTMLLIElement>) => {
     e.preventDefault();
   };
-  const handleTitleKeyUp = (e: KeyboardEvent<HTMLInputElement> ) => {
+  const handleTitleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.currentTarget.blur();
     }
   };
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value !== '') {
-      setTitle(e.target.value)
+      setTitle(e.target.value);
     }
-  }
+  };
+
+  const saveCard = (cardTitle: string) => {
+    if (cardTitle) {
+      dispatch(addCardInColumn({ id: column.id, title: cardTitle }));
+    }
+    setIsOpenAddForm(false);
+  };
   return (
     <li
       className="column"
@@ -87,9 +96,11 @@ function Column({
           className="column__title"
           value={title}
           onChange={(e) => handleChangeTitle(e)}
-          onFocus={(e) => {e.target.select()}}
+          onFocus={(e) => {
+            e.target.select();
+          }}
           onKeyUp={(e) => handleTitleKeyUp(e)}
-          onBlur={() => dispatch(changeTitleColumn({id: column.id, title}))}
+          onBlur={() => dispatch(changeTitleColumn({ id: column.id, title }))}
         />
         <button className="column__actions" type="button">
           ...
@@ -98,7 +109,7 @@ function Column({
       <ul className="column__cards">
         {cards.map((card) => (
           <ColumnCard
-            key={card.title}
+            key={card.id}
             card={card}
             onDragStart={handleDragStartCard}
             onDragOver={handleDragOverCard}
@@ -108,14 +119,21 @@ function Column({
           />
         ))}
       </ul>
-      <div className="column__footer">
-        <button className="column__add" type="button">
-          + Добавить карточку
-        </button>
-        <button className="column__create" type="button">
-          *
-        </button>
-      </div>
+      {isOpenAddForm && (
+        <AddCardOrColumnForm
+          placeholderTextarea="Ввести заголовок для этой карточки"
+          textButton="Добавить карточку"
+          saveCard={saveCard}
+          setIsOpenAddForm={setIsOpenAddForm}
+        />
+      )}
+      {!isOpenAddForm && (
+        <div className="column__footer">
+          <button className="column__add-card" type="button" onClick={() => setIsOpenAddForm(true)}>
+            {AddButtonsOnBoardText.addCard}
+          </button>
+        </div>
+      )}
     </li>
   );
 }

@@ -19,7 +19,7 @@ function ColumnCard({ card, onDragStart, onDragOver, onDrop, cardWithStyleID, on
       className={`column-card ${cardWithStyleID === card.id ? 'column-card--insert' : ''}`}
       onDragStart={() => onDragStart(card)}
       onDragOver={(e) => onDragOver(e, card)}
-      onDrop={(e) => {onDrop(e, card); console.log('drop card')}}
+      onDrop={(e) => onDrop(e, card)}
       onDragLeave={() => onDragLeave()}
     >
       {card.title}

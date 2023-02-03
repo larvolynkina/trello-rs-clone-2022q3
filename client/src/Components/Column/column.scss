@@ -4,8 +4,9 @@
   flex: 0 0 270px;
   border-radius: 5px;
   background-color: $columnBackgroundColor;
-  padding: 15px 5px;
+  padding: 15px 8px 8px;
   user-select: none;
+  transition: all 0.5s;
 
   &__header {
     position: relative;
@@ -25,7 +26,7 @@
     &--edit, 
     &:focus {
       background: white;
-      box-shadow: inset 0 0 0 2px $buttonShareAndOutline;
+      box-shadow: inset 0 0 0 2px $buttonShareAndOutlineColor;
     }
   }
 
@@ -38,7 +39,21 @@
 
   &__footer {
     display: flex;
-    padding: 5px;
     justify-content: space-between;
+  }
+
+  &__add-card {
+    color: $buttonAddCardTextColor;
+    border-radius: 3px;
+    padding: 6px 8px;
+    display: block;
+    flex: 1 0 auto;
+    text-align: left;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+      color: $mainColor;
+    }
   }
 }
