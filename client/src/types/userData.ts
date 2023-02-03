@@ -6,6 +6,7 @@ export type User = {
   avatarImage?: string;
   avatarColor?: string;
   email: string;
+  token: string;
 };
 
 export type UserData = User | null;
@@ -13,4 +14,9 @@ export type UserData = User | null;
 export type UserState = {
   userData: UserData;
   authorizationStatus: AuthorizationStatus;
+};
+
+export type LoginData = {
+  email: string;
+  password: string;
 };

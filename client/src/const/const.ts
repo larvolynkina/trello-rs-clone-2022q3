@@ -7,3 +7,9 @@ export enum AuthorizationStatus {
 export enum NameSpace {
   user = 'USER',
 }
+
+export enum APIRoute {
+  login = '/login',
+  signup = '/signup',
+  me = '/me',
+}

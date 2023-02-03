@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { NameSpace } from '../const/const';
+import createAPI from '../services/api';
 import { userState } from './reducers/userState';
 
 export const rootReducer = combineReducers({
@@ -10,6 +11,12 @@ export const rootReducer = combineReducers({
 const setupStore = () =>
   configureStore({
     reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        thunk: {
+          extraArgument: createAPI(),
+        },
+      }),
   });
 
 const store = setupStore();
