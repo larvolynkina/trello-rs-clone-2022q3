@@ -10,7 +10,7 @@ import { AddButtonsOnBoardText } from '../../const/const';
 
 type ColumnProps = {
   column: IColumn;
-  cards: IColumnCard[];
+  cards: string[];
   dragCard: IColumnCard | null;
   setDragCard: (card: IColumnCard) => void;
   setDropCard: (card: IColumnCard) => void;
@@ -75,7 +75,7 @@ function Column({
 
   const saveCard = (cardTitle: string) => {
     if (cardTitle) {
-      dispatch(addCardInColumn({ id: column.id, title: cardTitle }));
+      dispatch(addCardInColumn({ id: column._id, title: cardTitle }));
     }
     setIsOpenAddForm(false);
   };
@@ -100,16 +100,16 @@ function Column({
             e.target.select();
           }}
           onKeyUp={(e) => handleTitleKeyUp(e)}
-          onBlur={() => dispatch(changeTitleColumn({ id: column.id, title }))}
+          onBlur={() => dispatch(changeTitleColumn({ id: column._id, title }))}
         />
         <button className="column__actions" type="button">
           ...
         </button>
       </div>
       <ul className="column__cards">
-        {cards.map((card) => (
+        {/* {cards.map((card) => (
           <ColumnCard
-            key={card.id}
+            key={card}
             card={card}
             onDragStart={handleDragStartCard}
             onDragOver={handleDragOverCard}
@@ -117,13 +117,13 @@ function Column({
             onDragLeave={handleDragLeaveCard}
             cardWithStyleID={cardWithStyleID}
           />
-        ))}
+        ))} */}
       </ul>
       {isOpenAddForm && (
         <AddCardOrColumnForm
           placeholderTextarea="Ввести заголовок для этой карточки"
           textButton="Добавить карточку"
-          saveCard={saveCard}
+          saveObject={saveCard}
           setIsOpenAddForm={setIsOpenAddForm}
         />
       )}

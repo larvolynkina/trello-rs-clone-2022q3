@@ -1,10 +1,12 @@
+@import '../../scss/colors.scss';
+
 .board {
   display: flex;
   background: url('../../../public/assets/bg-image.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  padding: 40px 0 0 0;
+  margin: 40px 0 0 0;
 
   &__aside {
     flex: 0 0 260px;
@@ -35,6 +37,10 @@
     display: flex;
     gap: 5px;
     align-items: flex-start;
+  }
+
+  &__last-column {
+    min-width: 272px;
   }
 
   &__add-column {
