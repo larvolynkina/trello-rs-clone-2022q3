@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 import './addCardOrColumnForm.scss';
 
-interface IAddCardOrColumnFormProps {
+type AddCardOrColumnFormProps = {
   textButton: string;
   placeholderTextarea: string;
   saveCard: (title: string) => void;
@@ -12,7 +12,7 @@ function AddCardOrColumnForm({
   placeholderTextarea,
   saveCard,
   setIsOpenAddForm,
-}: IAddCardOrColumnFormProps) {
+}: AddCardOrColumnFormProps) {
   const [text, setText] = useState('');
 
   const handleClickAddButton = () => {
