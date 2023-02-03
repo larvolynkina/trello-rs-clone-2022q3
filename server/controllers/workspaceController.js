@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import Workspace from '../models/workspaceModel.js';
 import User from '../models/userModel.js';
-import chooseRandomColor from '../helpers.js';
+import { chooseRandomColor } from '../helpers.js';
 
 async function createWorkspace(req, res) {
   try {

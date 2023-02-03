@@ -7,4 +7,37 @@ function chooseRandomColor() {
   return randomColor;
 }
 
-export default chooseRandomColor;
+const defaultMarks = [
+  {
+    color: '#7bc86c',
+    text: '',
+    checked: false,
+  },
+  {
+    color: '#f5dd29',
+    text: '',
+    checked: false,
+  },
+  {
+    color: '#ffaf3f',
+    text: '',
+    checked: false,
+  },
+  {
+    color: '#ef7564',
+    text: '',
+    checked: false,
+  },
+  {
+    color: '#cd8de5',
+    text: '',
+    checked: false,
+  },
+  {
+    color: '#5ba4cf',
+    text: '',
+    checked: false,
+  },
+];
+
+export { chooseRandomColor, defaultMarks };

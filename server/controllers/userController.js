@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
-import chooseRandomColor from '../helpers.js';
+import { chooseRandomColor } from '../helpers.js';
 
-async function register(req, res) {
+async function signup(req, res) {
   try {
     const { userName, email } = req.body;
 
@@ -153,4 +153,4 @@ async function updateUserPassword(req, res) {
   }
 }
 
-export { register, getAllUsers, getUserByID, updateUserName, updateUserPassword, login, getMe };
+export { signup, getAllUsers, getUserByID, updateUserName, updateUserPassword, login, getMe };
