@@ -6,4 +6,14 @@ export enum AuthorizationStatus {
 
 export enum NameSpace {
   user = 'USER',
+  board = 'BOARD',
+}
+
+
+export enum AddButtonsOnBoardText {
+  addColumn = '+ Добавить список',
+  saveColumn = 'Добавить список',
+  addOneMoreColumn = '+ Добавить ещё одну колонку',
+  addCard = '+ Добавить карточку',
+  saveCard = 'Добавить карточку',
 }

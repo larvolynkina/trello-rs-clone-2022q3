@@ -9,14 +9,14 @@ type ColumnCardProps = {
   onDragOver: (e: DragEvent<HTMLLIElement>, card: IColumnCard) => void;
   onDrop: (e: DragEvent<HTMLLIElement>, card: IColumnCard) => void;
   onDragLeave: () => void;
-  cardWithStyle: string;
+  cardWithStyleID: string;
 };
 
-function ColumnCard({ card, onDragStart, onDragOver, onDrop, cardWithStyle, onDragLeave }: ColumnCardProps) {
+function ColumnCard({ card, onDragStart, onDragOver, onDrop, cardWithStyleID, onDragLeave }: ColumnCardProps) {
   return (
     <li
       draggable
-      className={`column-card ${cardWithStyle === card.id ? 'column-card--insert' : ''}`}
+      className={`column-card ${cardWithStyleID === card.id ? 'column-card--insert' : ''}`}
       onDragStart={() => onDragStart(card)}
       onDragOver={(e) => onDragOver(e, card)}
       onDrop={(e) => onDrop(e, card)}
