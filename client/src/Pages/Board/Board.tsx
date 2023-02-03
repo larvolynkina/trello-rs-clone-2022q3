@@ -17,24 +17,29 @@ function Board() {
   const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
 
   useEffect(() => {
+    
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
+      console.log('go');
+      
       const newColumns = columns.map((column) => {
         if (
-          dragColumnFromCard.id === dropColumnFromCard?.id &&
+          dragColumnFromCard.id === dropColumnFromCard.id &&
           column.id === dragColumnFromCard.id
         ) {
           const dragIndex = column.cards.indexOf(dragCard);
           const tempDropIndex = column.cards.indexOf(dropCard);
           const dropIndex = tempDropIndex > dragIndex ? tempDropIndex : tempDropIndex + 1;
-          // TODO
-          const newCards = [...column.cards.slice()]
+          const newCards = [...column.cards.slice()];
           newCards.splice(dragIndex, 1);
           newCards.splice(dropIndex, 0, dragCard);
           return { ...column, cards: newCards };
         }
         if (column.id === dragColumnFromCard.id) {
           const dragIndex = column.cards.indexOf(dragCard);
-          const newCards = [...column.cards.slice(0, dragIndex), ...column.cards.slice(dragIndex + 1)];
+          const newCards = [
+            ...column.cards.slice(0, dragIndex),
+            ...column.cards.slice(dragIndex + 1),
+          ];
           return { ...column, cards: newCards };
         }
         if (column.id === dropColumnFromCard.id) {
@@ -54,7 +59,7 @@ function Board() {
       setDragCard(null);
       setDropCard(null);
     }
-  }, [dropColumnFromCard, dropCard]);
+  }, [dropCard]);
 
   return (
     <main className="board">

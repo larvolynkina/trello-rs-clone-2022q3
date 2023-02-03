@@ -48,6 +48,7 @@ function Column({
   const handleDropCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
     e.preventDefault();
     setCardWithStyleID('');
+    console.log('drop')
     setDropCard(card);
   };
 
