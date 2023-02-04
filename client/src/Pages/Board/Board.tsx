@@ -1,5 +1,5 @@
 import './board.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEvent } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { RootState } from '../../store/rootReducer';
 import { updateColumn } from '../../store/reducers/boardState';
@@ -18,6 +18,7 @@ function Board() {
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
   const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
+
 
   // временные константы
   const boardId = '63dc9efe0257d54a15c2c628';
@@ -84,9 +85,11 @@ function Board() {
       });
     }
   };
+  
   return (
     <main className="board">
       <aside className="board__aside">Рабочее пространство</aside>
+
       <div className="board__body">
         <div className="board__header">
           <h1 className="board__title">Название доски</h1>
