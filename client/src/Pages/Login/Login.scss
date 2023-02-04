@@ -1,0 +1,11 @@
+@import '../../scss/base/mixins.scss';
+@import '../../scss/vars.scss';
+
+.login {
+  padding-top: rem(60);
+  background-color: #f9fafc;
+
+  @media (max-width: $mobile) {
+    background-color: #fff;
+  }
+}
