@@ -1,51 +1,61 @@
-import { useState } from 'react';
+import { ChangeEvent, useState, MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
 import { APPRoute } from '../../const/const';
 import { useAppDispatch } from '../../hooks/redux';
 import { loginAction } from '../../store/serviceActions';
+import { LoginData } from '../../types/userData';
 import './LoginForm.scss';
+
+const initialLoginData: LoginData = {
+  email: '',
+  password: '',
+};
 
 function LoginForm() {
   const dispatch = useAppDispatch();
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState(initialLoginData);
 
-  const handleLoginBtnClick = () => {
-    dispatch(
-      loginAction({
-        email: login,
-        password,
-      }),
-    );
+  const handleLoginBtnClick = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    dispatch(loginAction(formData));
+  };
+
+  const handleFormChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = evt.currentTarget;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
-    <section className="login-form">
+    <section className="login-form auth-form">
       <div className="login-form__container">
-        <form className="login-form__wrapper">
-          <h1 className="login-form__title">Вход в Trello</h1>
+        <form className="auth-form__wrapper">
+          <h1 className="auth-form__title">Вход в Trello</h1>
           <input
-            className="login-form__input"
+            className="auth-form__input"
             type="email"
             placeholder="Укажите адрес электронной почты"
             required
             name="login"
-            onChange={(evt) => setLogin(evt.currentTarget.value)}
+            onChange={handleFormChange}
           />
           <input
-            className="login-form__input"
+            className="auth-form__input"
             type="password"
             placeholder="Введите пароль"
             required
             name="password"
-            onChange={(evt) => setPassword(evt.currentTarget.value)}
+            onChange={handleFormChange}
           />
-          <button className="login-form__login-btn" type="submit" onClick={handleLoginBtnClick}>
+          <button className="login-form__btn form-btn" type="submit" onClick={handleLoginBtnClick}>
             Войти
           </button>
-          <hr className="login-form__separator" />
-          <Link className="login-form__sign-up-link" to={APPRoute.signUp}>
+          <hr className="auth-form__separator" />
+          <Link className="auth-form__link" to={APPRoute.signUp}>
             Зарегистрировать аккаунт
           </Link>
         </form>

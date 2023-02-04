@@ -1,10 +1,10 @@
 import { AuthorizationStatus } from '../const/const';
 
 export type User = {
-  id: string;
+  _id: string;
   userName: string;
-  avatarImage?: string;
-  avatarColor?: string;
+  avatarImage: string;
+  avatarColor: string;
   email: string;
   token: string;
 };
@@ -20,3 +20,7 @@ export type LoginData = {
   email: string;
   password: string;
 };
+
+export type SignUpData = {
+  userName: string;
+} & LoginData;

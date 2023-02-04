@@ -3,7 +3,7 @@ import { AxiosInstance } from 'axios';
 
 import { APIRoute, AuthorizationStatus, NameSpace } from '../const/const';
 import { saveToken } from '../services/token';
-import { User, LoginData } from '../types/userData';
+import { User, LoginData, SignUpData } from '../types/userData';
 import { loadUserData, requireAuthorization } from './reducers/userState';
 import { AppDispatch, RootState } from './rootReducer';
 
@@ -30,6 +30,17 @@ export const loginAction = createAppAsyncThunk(
   `${NameSpace.user}/loginAction`,
   async (loginData: LoginData, { dispatch, extra: api }) => {
     const { data } = await api.post<User>(APIRoute.login, loginData);
+
+    saveToken(data.token);
+    dispatch(loadUserData(data));
+    dispatch(requireAuthorization(AuthorizationStatus.Auth));
+  },
+);
+
+export const signUpAction = createAppAsyncThunk(
+  `${NameSpace.user}/signUpAction`,
+  async (signUpData: SignUpData, { dispatch, extra: api }) => {
+    const { data } = await api.post<User>(APIRoute.signup, signUpData);
 
     saveToken(data.token);
     dispatch(loadUserData(data));

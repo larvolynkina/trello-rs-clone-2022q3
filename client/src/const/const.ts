@@ -17,6 +17,6 @@ export enum APIRoute {
 export enum APPRoute {
   main = '/',
   login = '/login',
-  signUp = 'signup',
+  signUp = '/signup',
   board = '/board',
 }
