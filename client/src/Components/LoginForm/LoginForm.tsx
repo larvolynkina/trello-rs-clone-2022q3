@@ -40,7 +40,7 @@ function LoginForm() {
             type="email"
             placeholder="Укажите адрес электронной почты"
             required
-            name="login"
+            name="email"
             onChange={handleFormChange}
           />
           <input
