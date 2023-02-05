@@ -53,3 +53,35 @@ export async function addColumn(
     return new Error(message);
   }
 }
+
+export async function updateTitleColumn(
+  userId: string,
+  boardId: string,
+  columnId: string,
+  title: string,
+): Promise<IColumn | Error> {
+  try {
+    const body = {
+      userId,
+      boardId,
+      columnId,
+      title,
+    };
+    const responce = await axios.patch<IColumn>(
+      `${ServerDetails.url}:${ServerDetails.port}/columns`,
+      body,
+    );
+    console.log('responce', responce)
+    return responce.data;
+  } catch (e: unknown) {
+    let message = '';
+    if (typeof e === 'string') {
+      console.error('error fetching update columns: ', e);
+      message = e;
+    } else if (e instanceof Error) {
+      console.error('error fetching update columns: ', e.message);
+      message = e.message;
+    }
+    return new Error(message);
+  }
+}

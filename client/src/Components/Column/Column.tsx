@@ -1,14 +1,17 @@
 import './column.scss';
 import { ChangeEvent, DragEvent, KeyboardEvent, useState } from 'react';
-import { useAppDispatch } from '../../hooks/redux';
+import { RootState } from '../../store/rootReducer';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardState';
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
 import { IColumnCard, IColumn } from '../../types/board';
-import { AddButtonsOnBoardText } from '../../const/const';
+import { AddButtonsOnBoardText, userId } from '../../const/const';
+import { updateTitleColumn } from '../../API/board';
 
 type ColumnProps = {
+  boardId: string;
   column: IColumn;
   cards: string[];
   dragCard: IColumnCard | null;
@@ -18,6 +21,7 @@ type ColumnProps = {
   setDropColumn: (column: IColumn) => void;
 };
 function Column({
+  boardId,
   column,
   cards,
   dragCard,
@@ -27,6 +31,7 @@ function Column({
   setDropColumn,
 }: ColumnProps) {
   const dispatch = useAppDispatch();
+  
   const [title, setTitle] = useState(column.title);
   const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
@@ -79,6 +84,15 @@ function Column({
     }
     setIsOpenAddForm(false);
   };
+  const updateTitleOnServerAndStore = () => {
+    if (userId && boardId && title)
+      updateTitleColumn(userId, boardId, column._id, title).then((res) => {
+        if (!(res instanceof Error)) {
+          console.log('res', res)
+          dispatch(changeTitleColumn({ id: column._id, title }));
+        }
+      });
+  };
   return (
     <li
       className="column"
@@ -100,7 +114,7 @@ function Column({
             e.target.select();
           }}
           onKeyUp={(e) => handleTitleKeyUp(e)}
-          onBlur={() => dispatch(changeTitleColumn({ id: column._id, title }))}
+          onBlur={updateTitleOnServerAndStore}
         />
         <button className="column__actions" type="button">
           ...

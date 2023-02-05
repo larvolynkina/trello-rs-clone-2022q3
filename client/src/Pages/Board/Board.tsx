@@ -11,18 +11,14 @@ import { AddButtonsOnBoardText } from '../../const/const';
 import { addColumn, getColumns } from '../../API/board';
 
 function Board() {
-  const { columns } = useAppSelector((state: RootState) => state.BOARD);
+  const { board, columns } = useAppSelector((state: RootState) => state.BOARD);
+  const { userData } = useAppSelector((state: RootState) => state.USER);
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<IColumnCard | null>(null);
   const [dropCard, setDropCard] = useState<IColumnCard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
   const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
-
-
-  // временные константы
-  const boardId = '63dc9efe0257d54a15c2c628';
-  const userId = '63db5b2b87ef7c0d31ccccea';
 
   // useEffect(() => {
 
@@ -68,31 +64,37 @@ function Board() {
   // }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
-    getColumns(boardId).then((res) => {
-      if (!(res instanceof Error)) {
-        dispatch(updateColumn(res));
-      }
-    });
+    console.log(userData, board)
+    if (board._id) {
+      getColumns(board._id).then((res) => {
+        if (!(res instanceof Error)) {
+          dispatch(updateColumn(res));
+        }
+      });
+    } else {
+      // TODO:
+      console.log('need board details');
+    }
   }, []);
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
-    if (title) {
-      addColumn(userId, boardId, title).then((res) => {
+    if (userData && board && title) {
+      addColumn( userData.id, board._id, title).then((res) => {
         if (!(res instanceof Error)) {
           dispatch(updateColumn([...columns, res]));
         }
       });
     }
   };
-  
+
   return (
     <main className="board">
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body">
         <div className="board__header">
-          <h1 className="board__title">Название доски</h1>
+          <h1 className="board__title">{board.title}</h1>
           <div className="board__participants">Участники</div>
           <button type="button" className="board__share">
             Поделиться
@@ -106,6 +108,7 @@ function Board() {
           {columns.map((column) => (
             <Column
               key={column._id}
+              boardId={board._id}
               column={column}
               cards={column.cards}
               setDragCard={setDragCard}
