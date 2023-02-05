@@ -34,11 +34,6 @@ export interface IColumn extends IColumnParams {
 //   cards: IColumnCard[];
 // }
 
-export interface IColumnState {
-  board: IBoard;
-  columns: IColumn[];
-}
-
 export interface IBoardQueryParams {
   userId: string;
   workspaceId: string;
@@ -65,4 +60,10 @@ export interface IBoard {
 export interface ICard {
   _id: string;
   title: string;
+}
+
+export interface IBoardState {
+  board: IBoard;
+  columns: IColumn[];
+  cards: ICard[];
 }

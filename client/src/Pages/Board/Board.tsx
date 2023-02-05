@@ -2,20 +2,21 @@ import './board.scss';
 import { useEffect, useState, MouseEvent } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { RootState } from '../../store/rootReducer';
-import { updateColumn } from '../../store/reducers/boardState';
+import { updateCardInColumn, updateColumns } from '../../store/reducers/boardState';
 
 import Column from '../../Components/Column';
 import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
-import { IColumnCard, IColumn } from '../../types/board';
-import { AddButtonsOnBoardText } from '../../const/const';
-import { addColumn, getColumns } from '../../API/board';
+import { IColumn, ICard } from '../../types/board';
+import { AddButtonsOnBoardText, userId } from '../../const/const';
+import { createColumn, getCardsOnBoard, getColumns } from '../../API/board';
+import { getCardsOfColumn } from './utils';
 
 function Board() {
-  const { board, columns } = useAppSelector((state: RootState) => state.BOARD);
+  const { board, columns, cards } = useAppSelector((state: RootState) => state.BOARD);
   const { userData } = useAppSelector((state: RootState) => state.USER);
   const dispatch = useAppDispatch();
-  const [dragCard, setDragCard] = useState<IColumnCard | null>(null);
-  const [dropCard, setDropCard] = useState<IColumnCard | null>(null);
+  const [dragCard, setDragCard] = useState<ICard | null>(null);
+  const [dropCard, setDropCard] = useState<ICard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
   const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
@@ -64,11 +65,15 @@ function Board() {
   // }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
-    console.log(userData, board)
     if (board._id) {
       getColumns(board._id).then((res) => {
         if (!(res instanceof Error)) {
-          dispatch(updateColumn(res));
+          dispatch(updateColumns(res));
+        }
+      });
+      getCardsOnBoard(board._id).then((res) => {
+        if (!(res instanceof Error)) {
+          dispatch(updateCardInColumn(res));
         }
       });
     } else {
@@ -76,18 +81,25 @@ function Board() {
       console.log('need board details');
     }
   }, []);
-
+  useEffect(() => {
+    if (cards.length > 0) {
+      console.log('cards from effect:', cards)
+      console.log('cards of columns 0:', getCardsOfColumn(columns[0].cards, cards))
+    }
+  }, [cards]);
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
-    if (userData && board && title) {
-      addColumn( userData.id, board._id, title).then((res) => {
+    if (userId && board._id && title) {
+      createColumn(userId, board._id, title).then((res) => {
         if (!(res instanceof Error)) {
-          dispatch(updateColumn([...columns, res]));
+          dispatch(updateColumns([...columns, res]));
         }
       });
     }
   };
-
+  useEffect(() => {
+    console.log('columns change')
+  }, [columns])
   return (
     <main className="board">
       <aside className="board__aside">Рабочее пространство</aside>
@@ -110,7 +122,7 @@ function Board() {
               key={column._id}
               boardId={board._id}
               column={column}
-              cards={column.cards}
+              cards={cards.length > 0 ? getCardsOfColumn(column.cards, cards) : []}
               setDragCard={setDragCard}
               setDropCard={setDropCard}
               setDragColumnFromCard={setDragColumnFromCard}

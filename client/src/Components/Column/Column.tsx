@@ -1,22 +1,24 @@
 import './column.scss';
-import { ChangeEvent, DragEvent, KeyboardEvent, useState } from 'react';
+import { ChangeEvent, DragEvent, KeyboardEvent, useState, useEffect } from 'react';
 import { RootState } from '../../store/rootReducer';
+const { cards } = useAppSelector((state: RootState) => state.BOARD);
+
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardState';
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
-import { IColumnCard, IColumn } from '../../types/board';
+import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, userId } from '../../const/const';
-import { updateTitleColumn } from '../../API/board';
+import { createCard, updateTitleColumn } from '../../API/board';
 
 type ColumnProps = {
   boardId: string;
   column: IColumn;
   cards: string[];
-  dragCard: IColumnCard | null;
-  setDragCard: (card: IColumnCard) => void;
-  setDropCard: (card: IColumnCard) => void;
+  dragCard: ICard | null;
+  setDragCard: (card: ICard) => void;
+  setDropCard: (card: ICard) => void;
   setDragColumnFromCard: (column: IColumn) => void;
   setDropColumn: (column: IColumn) => void;
 };
@@ -31,20 +33,21 @@ function Column({
   setDropColumn,
 }: ColumnProps) {
   const dispatch = useAppDispatch();
-  
+
   const [title, setTitle] = useState(column.title);
   const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
 
-  const handleDragStartCard = (card: IColumnCard) => {
+  useEffect(() => {}, [cards]);
+  const handleDragStartCard = (card: ICard) => {
     setDragCard(card);
     setDragColumnFromCard(column);
   };
 
-  const handleDragOverCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
+  const handleDragOverCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
     e.preventDefault();
-    if (card.id !== dragCard?.id) {
-      setCardWithStyleID(card.id);
+    if (card._id !== dragCard?._id) {
+      setCardWithStyleID(card._id);
     } else {
       setCardWithStyleID('');
     }
@@ -53,7 +56,7 @@ function Column({
   const handleDragLeaveCard = () => {
     setCardWithStyleID('');
   };
-  const handleDropCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
+  const handleDropCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
     e.preventDefault();
     setCardWithStyleID('');
     setDropCard(card);
@@ -80,7 +83,11 @@ function Column({
 
   const saveCard = (cardTitle: string) => {
     if (cardTitle) {
-      dispatch(addCardInColumn({ id: column._id, title: cardTitle }));
+      createCard(userId, boardId, column._id, cardTitle).then((res) => {
+        if (!(res instanceof Error)) {
+          dispatch(addCardInColumn({ card: res, id: column._id }));
+        }
+      });
     }
     setIsOpenAddForm(false);
   };
@@ -88,7 +95,7 @@ function Column({
     if (userId && boardId && title)
       updateTitleColumn(userId, boardId, column._id, title).then((res) => {
         if (!(res instanceof Error)) {
-          console.log('res', res)
+          console.log('res', res);
           dispatch(changeTitleColumn({ id: column._id, title }));
         }
       });
@@ -121,9 +128,9 @@ function Column({
         </button>
       </div>
       <ul className="column__cards">
-        {/* {cards.map((card) => (
+        {cards.map((card) => (
           <ColumnCard
-            key={card}
+            key={card._id}
             card={card}
             onDragStart={handleDragStartCard}
             onDragOver={handleDragOverCard}
@@ -131,7 +138,7 @@ function Column({
             onDragLeave={handleDragLeaveCard}
             cardWithStyleID={cardWithStyleID}
           />
-        ))} */}
+        ))}
       </ul>
       {isOpenAddForm && (
         <AddCardOrColumnForm
