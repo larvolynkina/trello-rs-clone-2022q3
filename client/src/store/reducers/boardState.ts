@@ -36,6 +36,7 @@ export const boardStateSlice = createSlice({
       } else {
         throw new Error(`Column № ${action.payload.id} not found`);
       }
+      state.cardsData = [...state.cardsData, action.payload.card]
     },
   },
 });

@@ -40,6 +40,7 @@ function Column({
   const [cards, setCards] = useState<ICard[]>([]);
 
   useEffect(() => {
+    console.log('cards data change')
     setCards(getCardsOfColumn(cardIds, cardsData))
   }, [cardsData]);
   const handleDragStartCard = (card: ICard) => {

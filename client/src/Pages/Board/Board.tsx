@@ -65,7 +65,6 @@ function Board() {
   // }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
-    console.log('effect')
     if (boardData._id) {
       getColumns(boardData._id).then((res) => {
         if (!(res instanceof Error)) {
