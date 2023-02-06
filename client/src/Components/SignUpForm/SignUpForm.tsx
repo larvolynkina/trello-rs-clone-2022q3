@@ -2,7 +2,7 @@ import { ChangeEvent, MouseEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { APPRoute } from '../../const/const';
-import { useAppDispatch } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { signUpAction } from '../../store/serviceActions';
 import { SignUpData } from '../../types/userData';
 import './SignUpForm.scss';
@@ -15,6 +15,7 @@ const initialFormData: SignUpData = {
 
 function SignUpForm() {
   const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector((state) => state.USER);
 
   const [formData, setFormData] = useState<SignUpData>(initialFormData);
 
@@ -31,6 +32,9 @@ function SignUpForm() {
     evt.preventDefault();
     dispatch(signUpAction(formData));
   };
+
+  const isButtonDisabled =
+    isLoading || formData.userName === '' || formData.email === '' || formData.password === '';
 
   return (
     <section className="sign-up-form auth-form">
@@ -59,12 +63,14 @@ function SignUpForm() {
             placeholder="Введите пароль"
             required
             name="password"
+            autoComplete="on"
             onChange={handleFormChange}
           />
           <button
             className="sign-up-form__btn form-btn"
             type="submit"
             onClick={handleSignUpBtnClick}
+            disabled={isButtonDisabled}
           >
             Зарегистрировать
           </button>

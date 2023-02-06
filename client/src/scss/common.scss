@@ -16,6 +16,12 @@
       box-shadow: #7a869a80 0 0 0 rem(3);
     }
   }
+
+  &:disabled {
+    background-color: #ccc;
+    border: rem(1) solid #ccc;
+    box-shadow: none;
+  }
 }
 
 .auth-form {

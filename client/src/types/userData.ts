@@ -14,6 +14,7 @@ export type UserData = User | null;
 export type UserState = {
   userData: UserData;
   authorizationStatus: AuthorizationStatus;
+  isLoading: boolean;
 };
 
 export type LoginData = {

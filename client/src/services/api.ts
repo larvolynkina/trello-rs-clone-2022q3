@@ -9,7 +9,7 @@ const SERVER_URL = 'http://localhost:3001/';
 const REQUEST_TIMEOUT = 5000;
 
 enum HttpCode {
-  Forbidden = 403,
+  Unauthorized = 401,
 }
 
 let store: AppStore;
@@ -29,12 +29,12 @@ const createAPI = (): AxiosInstance => {
   api.interceptors.response.use(
     (response: AxiosResponse) => response,
 
-    (error: AxiosError) => {
-      const { response } = error;
+    (err: AxiosError) => {
+      const { response } = err;
 
-      if (response?.status === HttpCode.Forbidden) onUnauthorized();
+      if (response?.status === HttpCode.Unauthorized) onUnauthorized();
 
-      return Promise.reject(error);
+      return Promise.reject(err);
     },
   );
 

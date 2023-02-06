@@ -2,7 +2,7 @@ import { ChangeEvent, useState, MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
 import { APPRoute } from '../../const/const';
-import { useAppDispatch } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { loginAction } from '../../store/serviceActions';
 import { LoginData } from '../../types/userData';
 import './LoginForm.scss';
@@ -14,6 +14,8 @@ const initialLoginData: LoginData = {
 
 function LoginForm() {
   const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector((state) => state.USER);
+
   const [formData, setFormData] = useState(initialLoginData);
 
   const handleLoginBtnClick = (evt: MouseEvent<HTMLButtonElement>) => {
@@ -29,6 +31,8 @@ function LoginForm() {
       [name]: value,
     }));
   };
+
+  const isButtonDisabled = isLoading || formData.email === '' || formData.password === '';
 
   return (
     <section className="login-form auth-form">
@@ -51,7 +55,12 @@ function LoginForm() {
             name="password"
             onChange={handleFormChange}
           />
-          <button className="login-form__btn form-btn" type="submit" onClick={handleLoginBtnClick}>
+          <button
+            className="login-form__btn form-btn"
+            type="submit"
+            onClick={handleLoginBtnClick}
+            disabled={isButtonDisabled}
+          >
             Войти
           </button>
           <hr className="auth-form__separator" />
