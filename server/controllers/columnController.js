@@ -126,13 +126,32 @@ async function updateCardOrder(req, res) {
     // update changed columns
     const promises = [];
     data.forEach((value) => {
-      const updateColumn = Column.findByIdAndUpdate(value.columnId, { cards: value.columnCards });
-      promises.push(updateColumn);
+      const updatedColumn = Column.findByIdAndUpdate(value.columnId, { cards: value.columnCards });
+      promises.push(updatedColumn);
     });
     await Promise.all(promises);
     // get all columns on the board
     const allColumns = await Column.find().where('_id').in(board.columns).exec();
     return res.status(200).json(allColumns);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function updateColumnOrder(req, res) {
+  try {
+    const { userId, boardId, data } = req.body;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: 'You are not a member of this board',
+      });
+    }
+    // update board columns array
+    const updatedBoard = await Board.findByIdAndUpdate(boardId, { columns: data }, { new: true });
+    return res.status(200).json(updatedBoard.columns);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -145,4 +164,5 @@ export {
   getAllColumns,
   updateColumnTitle,
   updateCardOrder,
+  updateColumnOrder,
 };
