@@ -97,6 +97,8 @@ function Column({
   const updateTitleOnServerAndStore = () => {
     if (userId && boardId && title)
       updateTitleColumn(userId, boardId, column._id, title).then((res) => {
+        console.log(res);
+        
         if (!(res instanceof Error)) {
           dispatch(changeTitleColumn({ id: column._id, title }));
         }

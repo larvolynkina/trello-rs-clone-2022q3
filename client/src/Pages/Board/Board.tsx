@@ -65,6 +65,7 @@ function Board() {
   // }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
+    console.log('effect')
     if (boardData._id) {
       getColumns(boardData._id).then((res) => {
         if (!(res instanceof Error)) {
@@ -80,7 +81,7 @@ function Board() {
       // TODO:
       console.log('need board details');
     }
-  }, [cardsData]);
+  }, []);
   // useEffect(() => {
   //   if (cards.length > 0) {
   //     console.log('cards from effect:', cards)
