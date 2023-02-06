@@ -28,12 +28,6 @@ export interface IColumn extends IColumnParams {
   _id: string;
 }
 
-// export interface IColumn {
-//   id: string;
-//   title: string;
-//   cards: IColumnCard[];
-// }
-
 export interface IBoardQueryParams {
   userId: string;
   workspaceId: string;

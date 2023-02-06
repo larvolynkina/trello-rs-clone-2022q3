@@ -24,6 +24,7 @@ export const boardStateSlice = createSlice({
       }
     },
     updateColumns(state, action: PayloadAction<IColumn[]>) {
+      console.log('update column: ', action.payload)
       state.columnsData = action.payload;
     },
     updateCardInColumn(state, action: PayloadAction<ICard[]>) {

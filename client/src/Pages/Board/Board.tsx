@@ -9,11 +9,9 @@ import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, userId } from '../../const/const';
 import { createColumn, getCardsOnBoard, getColumns } from '../../API/board';
-import { getCardsOfColumn } from '../../Components/Column/utils';
 
 function Board() {
-  const { boardData, columnsData, cardsData } = useAppSelector((state: RootState) => state.BOARD);
-  const { userData } = useAppSelector((state: RootState) => state.USER);
+  const { boardData, columnsData } = useAppSelector((state: RootState) => state.BOARD);
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
@@ -21,48 +19,52 @@ function Board() {
   const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
 
-  // useEffect(() => {
+  useEffect(() => {
+    if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
+      const newColumns: IColumn[] = columnsData.map((column) => {
+        if (
+          dragColumnFromCard._id === dropColumnFromCard._id &&
+          column._id === dragColumnFromCard._id
+        ) {
+          const dragIndex = column.cards.indexOf(dragCard._id);
+          const tempDropIndex = column.cards.indexOf(dropCard._id);
+          const dropIndex = tempDropIndex > dragIndex ? tempDropIndex : tempDropIndex + 1;
+          const newCards = [...column.cards.slice()];
+          newCards.splice(dragIndex, 1);
+          newCards.splice(dropIndex, 0, dragCard._id);
+          return { ...column, cards: newCards } as IColumn;
+        }
+        if (column._id === dragColumnFromCard._id) {
+          const dragIndex = column.cards.indexOf(dragCard._id);
+          const newCards = [
+            ...column.cards.slice(0, dragIndex),
+            ...column.cards.slice(dragIndex + 1),
+          ];
+          console.log('from: ', newCards);
+          
+          return { ...column, cards: newCards } as IColumn;
+        }
+        if (column._id === dropColumnFromCard._id) {
+          const dropIndex = column.cards.indexOf(dropCard._id) + 1;
+          const newCards = [
+            ...column.cards.slice(0, dropIndex),
+            dragCard._id,
+            ...column.cards.slice(dropIndex),
+          ];
+          console.log('to: ', newCards);
 
-  //   if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
-  //     const newColumns: IColumn[] = columns.map((column) => {
-  //       if (
-  //         dragColumnFromCard._id === dropColumnFromCard._id &&
-  //         column._id === dragColumnFromCard._id
-  //       ) {
-  //         const dragIndex = column.cards.indexOf(dragCard.id);
-  //         const tempDropIndex = column.cards.indexOf(dropCard.id);
-  //         const dropIndex = tempDropIndex > dragIndex ? tempDropIndex : tempDropIndex + 1;
-  //         const newCards = [...column.cards.slice()];
-  //         newCards.splice(dragIndex, 1);
-  //         newCards.splice(dropIndex, 0, dragCard.id);
-  //         return { ...column, cards: newCards };
-  //       }
-  //       if (column._id === dragColumnFromCard._id) {
-  //         const dragIndex = column.cards.indexOf(dragCard.id);
-  //         const newCards = [
-  //           ...column.cards.slice(0, dragIndex),
-  //           ...column.cards.slice(dragIndex + 1),
-  //         ];
-  //         return { ...column, cards: newCards };
-  //       }
-  //       if (column._id === dropColumnFromCard._id) {
-  //         const dropIndex = column.cards.indexOf(dropCard.id) + 1;
-  //         const newCards = [
-  //           ...column.cards.slice(0, dropIndex),
-  //           dragCard,
-  //           ...column.cards.slice(dropIndex),
-  //         ];
-  //         return { ...column, cards: newCards };
-  //       }
-  //       return column;
-  //     });
-  //     dispatch(updateColumn(newColumns));
-  //     setDragColumnFromCard(null);
-  //     setDropColumnFromCard(null);
-  //     setDragCard(null);
-  //     // setDropCard(null);
-  //   }
-  // }, [dropColumnFromCard, dropCard]);
+          return { ...column, cards: newCards } as IColumn;
+        }
+        return column;
+      });
+      console.log('newColumns from Board:', newColumns)
+      dispatch(updateColumns(newColumns));
+      setDragColumnFromCard(null);
+      setDropColumnFromCard(null);
+      setDragCard(null);
+      // setDropCard(null);
+    }
+  }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
     if (boardData._id) {
@@ -81,12 +83,7 @@ function Board() {
       console.log('need board details');
     }
   }, []);
-  // useEffect(() => {
-  //   if (cards.length > 0) {
-  //     console.log('cards from effect:', cards)
-  //     console.log('cards of columns 0:', getCardsOfColumn(columns[0].cards, cards))
-  //   }
-  // }, [cards]);
+
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
     if (userId && boardData._id && title) {
@@ -97,9 +94,7 @@ function Board() {
       });
     }
   };
-  // useEffect(() => {
-  //   console.log('columns change')
-  // }, [columnsData])
+  
   return (
     <main className="board">
       <aside className="board__aside">Рабочее пространство</aside>
