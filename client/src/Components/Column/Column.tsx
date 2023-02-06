@@ -1,21 +1,21 @@
 import './column.scss';
 import { ChangeEvent, DragEvent, KeyboardEvent, useState, useEffect } from 'react';
-import { RootState } from '../../store/rootReducer';
-const { cards } = useAppSelector((state: RootState) => state.BOARD);
 
+import { RootState } from '../../store/rootReducer';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardState';
+import { changeTitleColumn, addCardInColumn, updateColumns } from '../../store/reducers/boardState';
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, userId } from '../../const/const';
 import { createCard, updateTitleColumn } from '../../API/board';
+import { getCardsOfColumn } from './utils';
 
 type ColumnProps = {
   boardId: string;
   column: IColumn;
-  cards: string[];
+  cardIds: string[];
   dragCard: ICard | null;
   setDragCard: (card: ICard) => void;
   setDropCard: (card: ICard) => void;
@@ -25,20 +25,23 @@ type ColumnProps = {
 function Column({
   boardId,
   column,
-  cards,
+  cardIds,
   dragCard,
   setDragCard,
   setDropCard,
   setDragColumnFromCard,
   setDropColumn,
 }: ColumnProps) {
+  const { cardsData } = useAppSelector((state: RootState) => state.BOARD);
   const dispatch = useAppDispatch();
-
   const [title, setTitle] = useState(column.title);
   const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
+  const [cards, setCards] = useState<ICard[]>([]);
 
-  useEffect(() => {}, [cards]);
+  useEffect(() => {
+    setCards(getCardsOfColumn(cardIds, cardsData))
+  }, [cardsData]);
   const handleDragStartCard = (card: ICard) => {
     setDragCard(card);
     setDragColumnFromCard(column);
@@ -95,7 +98,6 @@ function Column({
     if (userId && boardId && title)
       updateTitleColumn(userId, boardId, column._id, title).then((res) => {
         if (!(res instanceof Error)) {
-          console.log('res', res);
           dispatch(changeTitleColumn({ id: column._id, title }));
         }
       });

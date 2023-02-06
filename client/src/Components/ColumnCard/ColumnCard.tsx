@@ -1,5 +1,5 @@
 import './columnCard.scss';
-import { DragEvent, useEffect } from 'react';
+import { DragEvent } from 'react';
 
 import { ICard } from '../../types/board';
 

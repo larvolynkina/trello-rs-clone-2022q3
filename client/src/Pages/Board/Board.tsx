@@ -9,10 +9,10 @@ import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, userId } from '../../const/const';
 import { createColumn, getCardsOnBoard, getColumns } from '../../API/board';
-import { getCardsOfColumn } from './utils';
+import { getCardsOfColumn } from '../../Components/Column/utils';
 
 function Board() {
-  const { board, columns, cards } = useAppSelector((state: RootState) => state.BOARD);
+  const { boardData, columnsData, cardsData } = useAppSelector((state: RootState) => state.BOARD);
   const { userData } = useAppSelector((state: RootState) => state.USER);
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<ICard | null>(null);
@@ -65,13 +65,13 @@ function Board() {
   // }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
-    if (board._id) {
-      getColumns(board._id).then((res) => {
+    if (boardData._id) {
+      getColumns(boardData._id).then((res) => {
         if (!(res instanceof Error)) {
           dispatch(updateColumns(res));
         }
       });
-      getCardsOnBoard(board._id).then((res) => {
+      getCardsOnBoard(boardData._id).then((res) => {
         if (!(res instanceof Error)) {
           dispatch(updateCardInColumn(res));
         }
@@ -80,33 +80,33 @@ function Board() {
       // TODO:
       console.log('need board details');
     }
-  }, []);
-  useEffect(() => {
-    if (cards.length > 0) {
-      console.log('cards from effect:', cards)
-      console.log('cards of columns 0:', getCardsOfColumn(columns[0].cards, cards))
-    }
-  }, [cards]);
+  }, [cardsData]);
+  // useEffect(() => {
+  //   if (cards.length > 0) {
+  //     console.log('cards from effect:', cards)
+  //     console.log('cards of columns 0:', getCardsOfColumn(columns[0].cards, cards))
+  //   }
+  // }, [cards]);
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
-    if (userId && board._id && title) {
-      createColumn(userId, board._id, title).then((res) => {
+    if (userId && boardData._id && title) {
+      createColumn(userId, boardData._id, title).then((res) => {
         if (!(res instanceof Error)) {
-          dispatch(updateColumns([...columns, res]));
+          dispatch(updateColumns([...columnsData, res]));
         }
       });
     }
   };
-  useEffect(() => {
-    console.log('columns change')
-  }, [columns])
+  // useEffect(() => {
+  //   console.log('columns change')
+  // }, [columnsData])
   return (
     <main className="board">
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body">
         <div className="board__header">
-          <h1 className="board__title">{board.title}</h1>
+          <h1 className="board__title">{boardData.title}</h1>
           <div className="board__participants">Участники</div>
           <button type="button" className="board__share">
             Поделиться
@@ -117,12 +117,12 @@ function Board() {
         </div>
 
         <ul className="board__columns">
-          {columns.map((column) => (
+          {columnsData.map((column) => (
             <Column
               key={column._id}
-              boardId={board._id}
+              boardId={boardData._id}
               column={column}
-              cards={cards.length > 0 ? getCardsOfColumn(column.cards, cards) : []}
+              cardIds={column.cards}
               setDragCard={setDragCard}
               setDropCard={setDropCard}
               setDragColumnFromCard={setDragColumnFromCard}
@@ -137,7 +137,7 @@ function Board() {
                 className="board__add-column"
                 onClick={() => setIsOpenAddForm(true)}
               >
-                {columns.length === 0
+                {columnsData.length === 0
                   ? AddButtonsOnBoardText.addColumn
                   : AddButtonsOnBoardText.addOneMoreColumn}
               </button>

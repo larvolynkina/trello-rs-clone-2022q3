@@ -63,7 +63,7 @@ export interface ICard {
 }
 
 export interface IBoardState {
-  board: IBoard;
-  columns: IColumn[];
-  cards: ICard[];
+  boardData: IBoard;
+  columnsData: IColumn[];
+  cardsData: ICard[];
 }
