@@ -5,6 +5,7 @@ import {
   deleteColumn,
   getAllColumns,
   updateColumnTitle,
+  updateCardOrder,
 } from '../controllers/columnController.js';
 
 const router = Router();
@@ -14,5 +15,6 @@ router.patch('/', updateColumnTitle);
 router.get('/', getAllColumns);
 router.get('/:boardId', getAllColumnsOnBoard);
 router.delete('/:userId/:boardId/:columnId', deleteColumn);
+router.post('/update-card-order', updateCardOrder);
 
 export default router;

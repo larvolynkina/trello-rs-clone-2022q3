@@ -112,4 +112,37 @@ async function updateColumnTitle(req, res) {
   }
 }
 
-export { createColumn, getAllColumnsOnBoard, deleteColumn, getAllColumns, updateColumnTitle };
+async function updateCardOrder(req, res) {
+  try {
+    const { userId, boardId, data } = req.body;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: 'You are not a member of this board',
+      });
+    }
+    // update changed columns
+    const promises = [];
+    data.forEach((value) => {
+      const updateColumn = Column.findByIdAndUpdate(value.columnId, { cards: value.columnCards });
+      promises.push(updateColumn);
+    });
+    await Promise.all(promises);
+    // get all columns on the board
+    const allColumns = await Column.find().where('_id').in(board.columns).exec();
+    return res.status(200).json(allColumns);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+export {
+  createColumn,
+  getAllColumnsOnBoard,
+  deleteColumn,
+  getAllColumns,
+  updateColumnTitle,
+  updateCardOrder,
+};
