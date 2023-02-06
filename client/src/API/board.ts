@@ -15,10 +15,8 @@ export async function getColumns(boardId: string): Promise<IColumn[] | Error> {
   } catch (e: unknown) {
     let message = '';
     if (typeof e === 'string') {
-      console.error('error fetching columns: ', e);
       message = e;
     } else if (e instanceof Error) {
-      console.error('error fetching columns: ', e.message);
       message = e.message;
     }
     return new Error(message);
@@ -44,10 +42,8 @@ export async function createColumn(
   } catch (e: unknown) {
     let message = '';
     if (typeof e === 'string') {
-      console.error('error fetching columns: ', e);
       message = e;
     } else if (e instanceof Error) {
-      console.error('error fetching columns: ', e.message);
       message = e.message;
     }
     return new Error(message);
@@ -75,10 +71,8 @@ export async function updateTitleColumn(
   } catch (e: unknown) {
     let message = '';
     if (typeof e === 'string') {
-      console.error('error fetching update columns: ', e);
       message = e;
     } else if (e instanceof Error) {
-      console.error('error fetching update columns: ', e.message);
       message = e.message;
     }
     return new Error(message);
@@ -94,10 +88,8 @@ export async function getCardsOnBoard(boardId: string): Promise<IColumn[] | Erro
   } catch (e: unknown) {
     let message = '';
     if (typeof e === 'string') {
-      console.error('error fetching cards: ', e);
       message = e;
     } else if (e instanceof Error) {
-      console.error('error fetching cards: ', e.message);
       message = e.message;
     }
     return new Error(message);
@@ -125,10 +117,35 @@ export async function createCard(
   } catch (e: unknown) {
     let message = '';
     if (typeof e === 'string') {
-      console.error('error fetching cards: ', e);
       message = e;
     } else if (e instanceof Error) {
-      console.error('error fetching cards: ', e.message);
+      message = e.message;
+    }
+    return new Error(message);
+  }
+}
+
+export async function updateCardOrder(
+  userId: string,
+  boardId: string,
+  data: {columnId: string, columnCards: string[]}[],
+): Promise<IColumn | Error> {
+  try {
+    const body = {
+      userId,
+      boardId,
+      data
+    };
+    const responce = await axios.post<IColumn>(
+      `${ServerDetails.url}:${ServerDetails.port}/columns/update-card-order`,
+      body,
+    );
+    return responce.data;
+  } catch (e: unknown) {
+    let message = '';
+    if (typeof e === 'string') {
+      message = e;
+    } else if (e instanceof Error) {
       message = e.message;
     }
     return new Error(message);

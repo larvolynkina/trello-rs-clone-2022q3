@@ -5,7 +5,7 @@ async function verifyAuth(req, res, next) {
     let token = req.headers.authorization || '';
 
     if (!token) {
-      return res.status(403).json({ message: 'Access denied' });
+      return res.status(401).json({ message: 'Unauthorized' });
     }
     if (token.startsWith('Bearer ')) {
       token = token.slice(7);

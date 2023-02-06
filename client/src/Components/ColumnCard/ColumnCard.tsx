@@ -29,7 +29,7 @@ function ColumnCard({
       onDrop={(e) => onDrop(e, card)}
       onDragLeave={() => onDragLeave()}
     >
-      {card._id}
+      {card.title}
     </li>
   );
 }

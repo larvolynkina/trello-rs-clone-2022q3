@@ -3,7 +3,7 @@ import { ChangeEvent, DragEvent, KeyboardEvent, useState, useEffect } from 'reac
 
 import { RootState } from '../../store/rootReducer';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { changeTitleColumn, addCardInColumn, updateColumns } from '../../store/reducers/boardState';
+import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardState';
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
@@ -40,7 +40,6 @@ function Column({
   const [cards, setCards] = useState<ICard[]>([]);
 
   useEffect(() => {
-    console.log('cards from Column:', getCardsOfColumn(cardIds, cardsData))
     setCards(getCardsOfColumn(cardIds, cardsData))
   }, [cardsData, column]);
   const handleDragStartCard = (card: ICard) => {
@@ -98,8 +97,6 @@ function Column({
   const updateTitleOnServerAndStore = () => {
     if (userId && boardId && title)
       updateTitleColumn(userId, boardId, column._id, title).then((res) => {
-        console.log(res);
-        
         if (!(res instanceof Error)) {
           dispatch(changeTitleColumn({ id: column._id, title }));
         }

@@ -1,14 +1,15 @@
 import './board.scss';
-import { useEffect, useState, MouseEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { RootState } from '../../store/rootReducer';
 import { updateCardInColumn, updateColumns } from '../../store/reducers/boardState';
 
-import Column from '../../Components/Column';
-import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
-import { AddButtonsOnBoardText, userId } from '../../const/const';
-import { createColumn, getCardsOnBoard, getColumns } from '../../API/board';
+import { AddButtonsOnBoardText, boardId, userId } from '../../const/const';
+import { createColumn, getCardsOnBoard, getColumns, updateCardOrder } from '../../API/board';
+import { getTranspositionColumns } from './utils';
+import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
+import Column from '../../Components/Column';
 
 function Board() {
   const { boardData, columnsData } = useAppSelector((state: RootState) => state.BOARD);
@@ -21,44 +22,20 @@ function Board() {
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
-      const newColumns: IColumn[] = columnsData.map((column) => {
-        if (
-          dragColumnFromCard._id === dropColumnFromCard._id &&
-          column._id === dragColumnFromCard._id
-        ) {
-          const dragIndex = column.cards.indexOf(dragCard._id);
-          const tempDropIndex = column.cards.indexOf(dropCard._id);
-          const dropIndex = tempDropIndex > dragIndex ? tempDropIndex : tempDropIndex + 1;
-          const newCards = [...column.cards.slice()];
-          newCards.splice(dragIndex, 1);
-          newCards.splice(dropIndex, 0, dragCard._id);
-          return { ...column, cards: newCards } as IColumn;
-        }
-        if (column._id === dragColumnFromCard._id) {
-          const dragIndex = column.cards.indexOf(dragCard._id);
-          const newCards = [
-            ...column.cards.slice(0, dragIndex),
-            ...column.cards.slice(dragIndex + 1),
-          ];
-          console.log('from: ', newCards);
-          
-          return { ...column, cards: newCards } as IColumn;
-        }
-        if (column._id === dropColumnFromCard._id) {
-          const dropIndex = column.cards.indexOf(dropCard._id) + 1;
-          const newCards = [
-            ...column.cards.slice(0, dropIndex),
-            dragCard._id,
-            ...column.cards.slice(dropIndex),
-          ];
-          console.log('to: ', newCards);
-
-          return { ...column, cards: newCards } as IColumn;
-        }
-        return column;
+      const { newColumns, resultColumn } = getTranspositionColumns({
+        dragColumnFromCard,
+        dropColumnFromCard,
+        dragCard,
+        dropCard,
+        columnsData,
       });
-      console.log('newColumns from Board:', newColumns)
-      dispatch(updateColumns(newColumns));
+      if (resultColumn) {
+        updateCardOrder(userId, boardId, resultColumn).then((res) => {
+          if (!(res instanceof Error)) {
+            dispatch(updateColumns(newColumns));
+          }
+        });
+      }
       setDragColumnFromCard(null);
       setDropColumnFromCard(null);
       setDragCard(null);
@@ -78,9 +55,6 @@ function Board() {
           dispatch(updateCardInColumn(res));
         }
       });
-    } else {
-      // TODO:
-      console.log('need board details');
     }
   }, []);
 
@@ -94,7 +68,7 @@ function Board() {
       });
     }
   };
-  
+
   return (
     <main className="board">
       <aside className="board__aside">Рабочее пространство</aside>
