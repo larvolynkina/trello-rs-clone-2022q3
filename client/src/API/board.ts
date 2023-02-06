@@ -71,7 +71,6 @@ export async function updateTitleColumn(
       `${ServerDetails.url}:${ServerDetails.port}/columns`,
       body,
     );
-    console.log('responce', responce)
     return responce.data;
   } catch (e: unknown) {
     let message = '';
