@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { createCard, updateCardTitleOrDescr, deleteCard, getAllCards, getAllCardsOnBoard } from '../controllers/cardController.js';
+import verifyAuth from "../middlewares/auth.js";
 
 const router = Router();
 
-router.post('/', createCard);
-router.patch('/', updateCardTitleOrDescr);
-router.delete('/:userId/:boardId/:cardId', deleteCard);
-router.get('/', getAllCards);
-router.get('/:boardId', getAllCardsOnBoard);
+router.post('/', verifyAuth, createCard);
+router.patch('/', verifyAuth, updateCardTitleOrDescr);
+router.delete('/:boardId/:cardId', verifyAuth, deleteCard);
+router.get('/', verifyAuth, getAllCards);
+router.get('/:boardId', verifyAuth, getAllCardsOnBoard);
 
 export default router;

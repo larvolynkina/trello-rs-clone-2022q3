@@ -5,7 +5,8 @@ import { defaultMarks } from '../helpers.js';
 
 async function createBoard(req, res) {
   try {
-    const { userId, workspaceId, title, backgroundColor, backgroundImage } = req.body;
+    const { workspaceId, title, backgroundColor, backgroundImage } = req.body;
+    const { userId } = req;
     const board = new Board({
       title,
       backgroundColor,
@@ -35,16 +36,23 @@ async function createBoard(req, res) {
   }
 }
 
-async function addNewMark(req, res) {
+async function addNewMarkOnBoard(req, res) {
   try {
-    const { color, text } = req.body;
-    const { id } = req.params;
+    const { boardId, color, text } = req.body;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: 'Вы не являетесь участником этой доски',
+      });
+    }
+    // create new mark
     const newMark = {
       color,
       text,
-      checked: true,
     };
-    const board = await Board.findById(id);
     board.marks.push(newMark);
     await board.save();
     return res.status(200).json(board.marks.at(-1));
@@ -53,4 +61,4 @@ async function addNewMark(req, res) {
   }
 }
 
-export { createBoard, addNewMark };
+export { createBoard, addNewMarkOnBoard };

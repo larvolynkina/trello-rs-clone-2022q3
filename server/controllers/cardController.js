@@ -5,7 +5,16 @@ import Board from '../models/boardModel.js';
 
 async function createCard(req, res) {
   try {
-    const { userId, boardId, columnId, title, marks, participants, position } = req.body;
+    const { boardId, columnId, title, marks, participants, position } = req.body;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: 'Вы не являетесь участником этой доски',
+      });
+    }
     // create card
     const card = new Card({
       title,
@@ -19,7 +28,6 @@ async function createCard(req, res) {
     column.cards.push(savedCard._id);
     await column.save();
     // add card creation to card activities array
-    const user = await User.findById(userId);
     const activity = {
       userId,
       action: `${user.userName} создал(а) карточку ${title} в колонке ${column.title}`,
@@ -27,7 +35,6 @@ async function createCard(req, res) {
     savedCard.activities.push(activity);
     await savedCard.save();
     // add card creation to board activities array
-    const board = await Board.findById(boardId);
     board.activities.push(activity);
     await board.save();
     return res.status(200).json(savedCard);
@@ -65,13 +72,14 @@ async function getAllCardsOnBoard(req, res) {
 
 async function updateCardTitleOrDescr(req, res) {
   try {
-    const { userId, boardId, cardId, title, description } = req.body;
+    const { boardId, cardId, title, description } = req.body;
+    const { userId } = req;
     // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: 'Вы не являетесь участником этой доски',
       });
     }
     // update card
@@ -104,13 +112,14 @@ async function updateCardTitleOrDescr(req, res) {
 
 async function deleteCard(req, res) {
   try {
-    const { userId, boardId, cardId } = req.params;
+    const { boardId, cardId } = req.params;
+    const { userId } = req;
     // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: 'Вы не являетесь участником этой доски',
       });
     }
     const card = await Card.findById(cardId);
@@ -127,7 +136,7 @@ async function deleteCard(req, res) {
     await Card.findByIdAndDelete(cardId);
     board.activities.push(activity);
     await board.save();
-    return res.status(200).json({ message: 'Card deleted' });
+    return res.status(200).json({ message: 'Карточка удалена' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
