@@ -1,5 +1,14 @@
 import './column.scss';
-import { ChangeEvent, DragEvent, KeyboardEvent, useState, useEffect, MouseEvent } from 'react';
+import {
+  ChangeEvent,
+  DragEvent,
+  KeyboardEvent,
+  useState,
+  useEffect,
+  MouseEvent,
+  useRef,
+  RefObject,
+} from 'react';
 
 import { RootState } from '../../store/rootReducer';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -40,6 +49,8 @@ function Column({
   const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
   const [cards, setCards] = useState<ICard[]>([]);
+  const [isEditTitle, setIsEditTitle] = useState(false);
+  const inputRef  = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setCards(getCardsOfColumn(cardIds, cardsData));
@@ -97,6 +108,7 @@ function Column({
     setIsOpenAddForm(false);
   };
   const updateTitleOnServerAndStore = () => {
+    setIsEditTitle(false)
     if (userId && boardId && title)
       updateTitleColumn(userId, boardId, column._id, title).then((res) => {
         if (!(res instanceof Error)) {
@@ -104,6 +116,10 @@ function Column({
         }
       });
   };
+  const handleClickTitleWrapper = () => {
+    setIsEditTitle(true);
+    inputRef.current?.focus();
+  }
   return (
     <li
       className="column"
@@ -116,9 +132,21 @@ function Column({
       }}
     >
       <div className="column__header">
+        <button
+          type="button"
+          onClick={handleClickTitleWrapper}
+          className={
+            isEditTitle
+              ? 'column__title-wrapper column__title-wrapper--hidden'
+              : 'column__title-wrapper'
+          }
+        >
+          Редактировать заголовок списка
+        </button>
         <input
           type="text"
           className="column__title"
+          ref={inputRef}
           value={title}
           onChange={(e) => handleChangeTitle(e)}
           onFocus={(e) => {
