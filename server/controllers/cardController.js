@@ -2,6 +2,7 @@ import Card from '../models/cardModel.js';
 import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
+import { errors } from '../helpers.js';
 
 async function createCard(req, res) {
   try {
@@ -12,7 +13,7 @@ async function createCard(req, res) {
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     // create card
@@ -38,6 +39,25 @@ async function createCard(req, res) {
     board.activities.push(activity);
     await board.save();
     return res.status(200).json(savedCard);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function getCardById(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
+    const card = await Card.findById(cardId);
+    return res.status(200).json(card);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -79,7 +99,7 @@ async function updateCardTitleOrDescr(req, res) {
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     // update card
@@ -119,7 +139,7 @@ async function deleteCard(req, res) {
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     const card = await Card.findById(cardId);
@@ -142,4 +162,11 @@ async function deleteCard(req, res) {
   }
 }
 
-export { createCard, updateCardTitleOrDescr, deleteCard, getAllCards, getAllCardsOnBoard };
+export {
+  createCard,
+  updateCardTitleOrDescr,
+  deleteCard,
+  getAllCards,
+  getAllCardsOnBoard,
+  getCardById,
+};

@@ -1,7 +1,7 @@
 import Board from '../models/boardModel.js';
 import User from '../models/userModel.js';
 import Workspace from '../models/workspaceModel.js';
-import { defaultMarks } from '../helpers.js';
+import { defaultMarks, errors } from '../helpers.js';
 
 async function createBoard(req, res) {
   try {
@@ -36,6 +36,24 @@ async function createBoard(req, res) {
   }
 }
 
+async function getBoardById(req, res) {
+  try {
+    const { boardId } = req.params;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
+    return res.status(200).json(board);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 async function addNewMarkOnBoard(req, res) {
   try {
     const { boardId, color, text } = req.body;
@@ -45,7 +63,7 @@ async function addNewMarkOnBoard(req, res) {
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     // create new mark
@@ -61,4 +79,4 @@ async function addNewMarkOnBoard(req, res) {
   }
 }
 
-export { createBoard, addNewMarkOnBoard };
+export { createBoard, addNewMarkOnBoard, getBoardById };

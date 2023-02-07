@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import Workspace from '../models/workspaceModel.js';
 import User from '../models/userModel.js';
-import { chooseRandomColor } from '../helpers.js';
+import { chooseRandomColor, errors } from '../helpers.js';
 
 async function createWorkspace(req, res) {
   try {
@@ -44,9 +44,7 @@ async function updateWorkspaceTextFields(req, res) {
     const currentWorkspace = await Workspace.findById(workspaceId);
     // check if user is member of workspace
     if (!currentWorkspace.participants.includes(userId)) {
-      return res
-        .status(403)
-        .json({ message: 'Вы не являетесь участником этого рабочего пространства' });
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     const isShortTitleAlreadyExist = await Workspace.findOne({ shortTitle });
     if (isShortTitleAlreadyExist && shortTitle !== currentWorkspace.shortTitle) {
@@ -74,9 +72,7 @@ async function deleteWorkspace(req, res) {
     }
     // check if user is member of workspace
     if (!currentWorkspace.participants.includes(userId)) {
-      return res
-        .status(403)
-        .json({ message: 'Вы не являетесь участником этого рабочего пространства' });
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // delete workspace from participants User array
     const { participants } = currentWorkspace;

@@ -2,6 +2,7 @@ import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
 import Card from '../models/cardModel.js';
+import { errors } from '../helpers.js';
 
 async function createColumn(req, res) {
   try {
@@ -12,7 +13,7 @@ async function createColumn(req, res) {
     // check if user is member of this board
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     // create column
@@ -64,7 +65,7 @@ async function deleteColumn(req, res) {
     // check if user is member of this board
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     const column = await Column.findById(columnId);
@@ -101,7 +102,7 @@ async function updateColumnTitle(req, res) {
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     // update column
@@ -129,7 +130,7 @@ async function updateCardOrder(req, res) {
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     // update changed columns
@@ -156,7 +157,7 @@ async function updateColumnOrder(req, res) {
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'Вы не являетесь участником этой доски',
+        message: errors.notABoardMember,
       });
     }
     // update board columns array
