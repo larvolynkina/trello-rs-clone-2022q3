@@ -4,24 +4,29 @@
   flex: 0 0 270px;
   border-radius: 5px;
   background-color: $columnBackgroundColor;
-  padding: 15px 8px 8px;
+  color: $buttonAddColumnTextColor;
+  padding: 0 8px 8px;
   user-select: none;
   transition: all 0.5s;
 
   &__header {
+    height: 40px;
     position: relative;
     display: flex;
+    align-items: center;
     justify-content: space-between;
   }
 
   &__title {
     font-weight: 600;
     height: 28px;
+    width: 100%;
     border-radius: 3px;
     outline: none;
     background: none;
     padding: 4px 8px;
     margin: -4px 0;
+    color: inherit;
 
     &--edit, 
     &:focus {
@@ -30,11 +35,26 @@
     }
   }
 
+  &__actions {
+    width: 40px;
+    height: 30px;
+    padding: 0 0 6px 0;
+    font-weight: 500;
+    transition: all 0.3s;
+    border-radius: 3px;
+    outline: none;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+  }
+
   &__cards {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin: 10px 0 10px 0;
+    margin: 0 0 10px 0;
   }
 
   &__footer {
@@ -52,7 +72,7 @@
     transition: all 0.3s;
 
     &:hover {
-      background-color: rgba(0, 0, 0, 0.2);
+      background-color: rgba(0, 0, 0, 0.1);
       color: $mainColor;
     }
   }

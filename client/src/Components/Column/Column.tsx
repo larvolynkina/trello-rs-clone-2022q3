@@ -1,5 +1,5 @@
 import './column.scss';
-import { ChangeEvent, DragEvent, KeyboardEvent, useState, useEffect } from 'react';
+import { ChangeEvent, DragEvent, KeyboardEvent, useState, useEffect, MouseEvent } from 'react';
 
 import { RootState } from '../../store/rootReducer';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -21,6 +21,7 @@ type ColumnProps = {
   setDropCard: (card: ICard) => void;
   setDragColumnFromCard: (column: IColumn) => void;
   setDropColumn: (column: IColumn) => void;
+  openColumnMenu: (e: MouseEvent<HTMLButtonElement>, column: IColumn) => void;
 };
 function Column({
   boardId,
@@ -31,6 +32,7 @@ function Column({
   setDropCard,
   setDragColumnFromCard,
   setDropColumn,
+  openColumnMenu,
 }: ColumnProps) {
   const { cardsData } = useAppSelector((state: RootState) => state.BOARD);
   const dispatch = useAppDispatch();
@@ -40,7 +42,7 @@ function Column({
   const [cards, setCards] = useState<ICard[]>([]);
 
   useEffect(() => {
-    setCards(getCardsOfColumn(cardIds, cardsData))
+    setCards(getCardsOfColumn(cardIds, cardsData));
   }, [cardsData, column]);
   const handleDragStartCard = (card: ICard) => {
     setDragCard(card);
@@ -125,7 +127,11 @@ function Column({
           onKeyUp={(e) => handleTitleKeyUp(e)}
           onBlur={updateTitleOnServerAndStore}
         />
-        <button className="column__actions" type="button">
+        <button
+          className="column__actions"
+          type="button"
+          onClick={(e) => openColumnMenu(e, column)}
+        >
           ...
         </button>
       </div>
@@ -142,6 +148,7 @@ function Column({
           />
         ))}
       </ul>
+
       {isOpenAddForm && (
         <AddCardOrColumnForm
           placeholderTextarea="Ввести заголовок для этой карточки"

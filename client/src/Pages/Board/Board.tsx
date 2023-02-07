@@ -1,5 +1,5 @@
 import './board.scss';
-import { useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useState, KeyboardEvent } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { RootState } from '../../store/rootReducer';
 import { updateCardInColumn, updateColumns } from '../../store/reducers/boardState';
@@ -10,6 +10,7 @@ import { createColumn, getCardsOnBoard, getColumns, updateCardOrder } from '../.
 import { getTranspositionColumns } from './utils';
 import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import Column from '../../Components/Column';
+import ColumnMenu from '../../Components/ColumnMenu/ColumnMenu';
 
 function Board() {
   const { boardData, columnsData } = useAppSelector((state: RootState) => state.BOARD);
@@ -19,6 +20,8 @@ function Board() {
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
   const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
+  const [isOpenColumnMenu, setIsOpenColumnMenu] = useState(false);
+  const [columnMenuPosition, setColumnMenuPosition] = useState(0);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
@@ -68,9 +71,29 @@ function Board() {
       });
     }
   };
-
+  const handleOpenColumnMenu = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setColumnMenuPosition(e.clientX + 46);
+    setIsOpenColumnMenu(true);
+  };
+  const handleCloseColumnMenu = () => {
+    setIsOpenColumnMenu(false);
+  };
+  const handleClickBoard = () => {
+    setIsOpenColumnMenu(false);
+  };
+  const handleKeyUpBoard = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      setIsOpenColumnMenu(false);
+    }
+  };
   return (
-    <main className="board">
+    <main
+      className="board"
+      onClick={handleClickBoard}
+      onKeyUp={handleKeyUpBoard}
+      aria-hidden="true"
+    >
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body">
@@ -97,6 +120,7 @@ function Board() {
               setDragColumnFromCard={setDragColumnFromCard}
               dragCard={dragCard}
               setDropColumn={setDropColumnFromCard}
+              openColumnMenu={handleOpenColumnMenu}
             />
           ))}
           <div className="board__last-column">
@@ -121,6 +145,11 @@ function Board() {
             )}
           </div>
         </ul>
+        {isOpenColumnMenu && (
+          <div className="board__column-menu" style={{ left: columnMenuPosition }}>
+            <ColumnMenu onClose={handleCloseColumnMenu} />
+          </div>
+        )}
       </div>
     </main>
   );
