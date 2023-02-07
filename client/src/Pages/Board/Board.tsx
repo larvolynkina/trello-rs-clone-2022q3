@@ -6,8 +6,8 @@ import { updateCardInColumn, updateColumns } from '../../store/reducers/boardSta
 
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, boardId, userId } from '../../const/const';
-import { createColumn, getCardsOnBoard, getColumns, updateCardOrder } from '../../API/board';
-import { getTranspositionColumns } from './utils';
+import { createColumn, getCardsOnBoard, getColumns, updateCardOrder, updateColumnOrder } from '../../API/board';
+import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
 import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import Column from '../../Components/Column';
 import ColumnMenu from '../../Components/ColumnMenu/ColumnMenu';
@@ -19,13 +19,15 @@ function Board() {
   const [dropCard, setDropCard] = useState<ICard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
   const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
+  const [dragColumn, setDragColum] = useState<IColumn | null>(null);
+  const [dropColumn, setDropColum] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
   const [isOpenColumnMenu, setIsOpenColumnMenu] = useState(false);
-  const [columnMenuPosition, setColumnMenuPosition] = useState(0);
+  const [columnMenuPosition, setColumnMenuPosition] = useState<number>(0);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
-      const { newColumns, resultColumn } = getTranspositionColumns({
+      const { newColumns, resultColumn } = getTranspositionColumnCards({
         dragColumnFromCard,
         dropColumnFromCard,
         dragCard,
@@ -33,6 +35,7 @@ function Board() {
         columnsData,
       });
       if (resultColumn) {
+        dispatch(updateColumns(newColumns));
         updateCardOrder(userId, boardId, resultColumn).then((res) => {
           if (!(res instanceof Error)) {
             dispatch(updateColumns(newColumns));
@@ -60,6 +63,19 @@ function Board() {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (dragColumn && dropColumn) {
+      console.log('before', columnsData)
+      const newOrderColumn = getTranspositionColumns({dragColumn, dropColumn, columnsData});
+      console.log('after', newOrderColumn)
+      updateColumnOrder(userId, boardId, newOrderColumn).then((res) => {
+        console.log('res', res);
+      });
+      setDragColum(null);
+      setDropColum(null);
+    }
+  }, [dropColumn]);
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
@@ -119,8 +135,11 @@ function Board() {
               setDropCard={setDropCard}
               setDragColumnFromCard={setDragColumnFromCard}
               dragCard={dragCard}
-              setDropColumn={setDropColumnFromCard}
+              setDropColumnFromCard={setDropColumnFromCard}
               openColumnMenu={handleOpenColumnMenu}
+              dragColumn={dragColumn}
+              setDragColum={setDragColum}
+              setDropColum={setDropColum}
             />
           ))}
           <div className="board__last-column">

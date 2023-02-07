@@ -1,6 +1,6 @@
 import { ICard, IColumn } from '../../types/board';
 
-type getTranspositionColumnsProps = {
+type getTranspositionColumnCardsProps = {
   dragColumnFromCard: IColumn;
   dropColumnFromCard: IColumn;
   dragCard: ICard;
@@ -9,24 +9,24 @@ type getTranspositionColumnsProps = {
 };
 
 type updateCardOrderProps = {
-  columnId: string, 
-  columnCards: string[],
-}
+  columnId: string;
+  columnCards: string[];
+};
 
-type returnObject = {
-  newColumns: IColumn[],
-  resultColumn: updateCardOrderProps[], 
-}
+type returnColumnsCardsObject = {
+  newColumns: IColumn[];
+  resultColumn: updateCardOrderProps[];
+};
 
-export function getTranspositionColumns({
+export function getTranspositionColumnCards({
   dragColumnFromCard,
   dropColumnFromCard,
   dragCard,
   dropCard,
   columnsData,
-}: getTranspositionColumnsProps): returnObject {
-  const firstResultColumn: updateCardOrderProps = {columnId: '', columnCards: []};
-  const secondResultColumn: updateCardOrderProps = {columnId: '', columnCards: []};
+}: getTranspositionColumnCardsProps): returnColumnsCardsObject {
+  const firstResultColumn: updateCardOrderProps = { columnId: '', columnCards: [] };
+  const secondResultColumn: updateCardOrderProps = { columnId: '', columnCards: [] };
 
   const newColumns: IColumn[] = columnsData.map((column) => {
     if (
@@ -67,9 +67,26 @@ export function getTranspositionColumns({
   if (secondResultColumn.columnId.length > 0) {
     resultColumn.push(secondResultColumn);
   }
-  
-  return {newColumns, resultColumn};
+
+  return { newColumns, resultColumn };
 }
-export function doSomething() {
-  throw new Error('no do');
+
+type getTranspositionColumnsProps = {
+  dragColumn: IColumn;
+  dropColumn: IColumn;
+  columnsData: IColumn[];
+};
+
+export function getTranspositionColumns({
+  dragColumn,
+  dropColumn,
+  columnsData,
+}: getTranspositionColumnsProps): string[] {
+  const columns = columnsData.map((column) => column._id);
+  const dragIndex = columns.indexOf(dragColumn._id);
+  const dropIndex = columns.indexOf(dropColumn._id);
+  columns.splice(dragIndex, 1);
+  const destIndex = dropIndex > dragIndex ? dropIndex : dropIndex + 1;
+  columns.splice(destIndex, 0, dragColumn._id);
+  return columns;
 }

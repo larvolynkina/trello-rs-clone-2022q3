@@ -7,7 +7,6 @@ import {
   useEffect,
   MouseEvent,
   useRef,
-  RefObject,
 } from 'react';
 
 import { RootState } from '../../store/rootReducer';
@@ -29,8 +28,11 @@ type ColumnProps = {
   setDragCard: (card: ICard) => void;
   setDropCard: (card: ICard) => void;
   setDragColumnFromCard: (column: IColumn) => void;
-  setDropColumn: (column: IColumn) => void;
+  setDropColumnFromCard: (column: IColumn) => void;
   openColumnMenu: (e: MouseEvent<HTMLButtonElement>, column: IColumn) => void;
+  dragColumn: IColumn | null;
+  setDragColum: (column: IColumn | null) => void;
+  setDropColum: (column: IColumn | null) => void;
 };
 function Column({
   boardId,
@@ -40,8 +42,11 @@ function Column({
   setDragCard,
   setDropCard,
   setDragColumnFromCard,
-  setDropColumn,
+  setDropColumnFromCard,
   openColumnMenu,
+  dragColumn,
+  setDragColum,
+  setDropColum,
 }: ColumnProps) {
   const { cardsData } = useAppSelector((state: RootState) => state.BOARD);
   const dispatch = useAppDispatch();
@@ -50,22 +55,27 @@ function Column({
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
   const [cards, setCards] = useState<ICard[]>([]);
   const [isEditTitle, setIsEditTitle] = useState(false);
-  const inputRef  = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [columnWithStyleID, setColumnWithStyleID] = useState<string>('');
 
   useEffect(() => {
     setCards(getCardsOfColumn(cardIds, cardsData));
   }, [cardsData, column]);
-  const handleDragStartCard = (card: ICard) => {
+
+  const handleDragStartCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
+    e.stopPropagation();
     setDragCard(card);
     setDragColumnFromCard(column);
   };
 
   const handleDragOverCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
     e.preventDefault();
-    if (card._id !== dragCard?._id) {
-      setCardWithStyleID(card._id);
-    } else {
-      setCardWithStyleID('');
+    if (dragCard) {
+      if (card._id !== dragCard._id) {
+        setCardWithStyleID(card._id);
+      } else {
+        setCardWithStyleID('');
+      }
     }
   };
 
@@ -74,13 +84,20 @@ function Column({
   };
   const handleDropCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
     e.preventDefault();
-    setCardWithStyleID('');
+    if (dragCard) {
+      setCardWithStyleID('');
+    }
+
     setDropCard(card);
   };
 
   const handleDropColumn = (e: DragEvent<HTMLLIElement>) => {
     e.preventDefault();
-    setDropColumn(column);
+    setDropColumnFromCard(column);
+    setColumnWithStyleID('');
+    if (dragColumn) {
+      setDropColum(column);
+    }
   };
 
   const stopPrevent = (e: DragEvent<HTMLLIElement>) => {
@@ -108,7 +125,7 @@ function Column({
     setIsOpenAddForm(false);
   };
   const updateTitleOnServerAndStore = () => {
-    setIsEditTitle(false)
+    setIsEditTitle(false);
     if (userId && boardId && title)
       updateTitleColumn(userId, boardId, column._id, title).then((res) => {
         if (!(res instanceof Error)) {
@@ -119,17 +136,32 @@ function Column({
   const handleClickTitleWrapper = () => {
     setIsEditTitle(true);
     inputRef.current?.focus();
-  }
+  };
+  const handleDragColumn = () => {
+    setDragColum(column);
+  };
+  const handleDragOverColumn = (e: DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+    if (dragColumn) {
+      if (dragColumn._id !== column._id) {
+        setColumnWithStyleID(column._id);
+      }
+    }
+  };
+  const handleDragLeaveColumn = () => {
+    setColumnWithStyleID('');
+  };
   return (
     <li
-      className="column"
+      draggable
+      className={`column ${columnWithStyleID === column._id ? 'column--insert' : ''}`}
+      onDragStart={handleDragColumn}
       onDrop={handleDropColumn}
       onDragEnter={(e) => {
         stopPrevent(e);
       }}
-      onDragOver={(e) => {
-        stopPrevent(e);
-      }}
+      onDragOver={handleDragOverColumn}
+      onDragLeave={handleDragLeaveColumn}
     >
       <div className="column__header">
         <button

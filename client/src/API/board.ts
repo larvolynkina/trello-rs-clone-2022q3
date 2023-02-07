@@ -151,3 +151,30 @@ export async function updateCardOrder(
     return new Error(message);
   }
 }
+
+export async function updateColumnOrder(
+  userId: string,
+  boardId: string,
+  data: string[],
+): Promise<IColumn | Error> {
+  try {
+    const body = {
+      userId,
+      boardId,
+      data
+    };
+    const responce = await axios.post<IColumn>(
+      `${ServerDetails.url}:${ServerDetails.port}/columns/update-column-order`,
+      body,
+    );
+    return responce.data;
+  } catch (e: unknown) {
+    let message = '';
+    if (typeof e === 'string') {
+      message = e;
+    } else if (e instanceof Error) {
+      message = e.message;
+    }
+    return new Error(message);
+  }
+}
