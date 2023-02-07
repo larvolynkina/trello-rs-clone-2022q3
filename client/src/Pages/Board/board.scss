@@ -1,13 +1,14 @@
 .board {
   display: flex;
-  background: url('./bg-image.jpeg');
+  background: url('../../../public/assets/bg-image.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 
   &__aside {
     flex: 0 0 260px;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.75);
+    padding: 20px;
   }
 
   &__body {
@@ -18,11 +19,15 @@
 
   &__header {
     display: flex;
+    align-items: center;
     gap: 10px;
+    margin: 0 0 10px 0;
   }
 
   &__title {
     flex: 1 0 auto;
+    font-size: 1.25rem;
+    font-weight: 500;
   }
 
   &__columns {
@@ -31,4 +36,11 @@
     align-items: flex-start;
   }
 
+  &__add-column {
+    user-select: none;
+    background-color: rgba(0, 0, 0, 0.078);
+    width: 272px;
+    min-height: 36px;
+    border-radius: 3px;
+  }
 }

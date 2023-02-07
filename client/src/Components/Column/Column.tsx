@@ -1,8 +1,12 @@
 import './column.scss';
-import { DragEvent, useState } from 'react';
+import { ChangeEvent, DragEvent, KeyboardEvent, useState } from 'react';
+import { useAppDispatch } from '../../hooks/redux';
+import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardState';
 
 import ColumnCard from '../ColumnCard';
+import AddCardOrColumnForm from '../AddCardOrColumnForm';
 import { IColumnCard, IColumn } from '../../types/columns';
+import { AddButtonsOnBoardText } from '../../const/const';
 
 type ColumnProps = {
   column: IColumn;
@@ -22,7 +26,10 @@ function Column({
   setDragColumnFromCard,
   setDropColumn,
 }: ColumnProps) {
-  const [cardWithStyle, setCardWithStyle] = useState<string>('');
+  const dispatch = useAppDispatch();
+  const [title, setTitle] = useState(column.title);
+  const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
+  const [isOpenAddForm, setIsOpenAddForm] = useState(false);
 
   const handleDragStartCard = (card: IColumnCard) => {
     setDragCard(card);
@@ -32,18 +39,18 @@ function Column({
   const handleDragOverCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
     e.preventDefault();
     if (card.id !== dragCard?.id) {
-      setCardWithStyle(card.id);
+      setCardWithStyleID(card.id);
     } else {
-      setCardWithStyle('');
+      setCardWithStyleID('');
     }
   };
 
   const handleDragLeaveCard = () => {
-    setCardWithStyle('');
+    setCardWithStyleID('');
   };
   const handleDropCard = (e: DragEvent<HTMLLIElement>, card: IColumnCard) => {
     e.preventDefault();
-    setCardWithStyle('');
+    setCardWithStyleID('');
     setDropCard(card);
   };
 
@@ -52,11 +59,49 @@ function Column({
     setDropColumn(column);
   };
 
+  const stopPrevent = (e: DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+  };
+  const handleTitleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
+    }
+  };
+  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value !== '') {
+      setTitle(e.target.value);
+    }
+  };
 
+  const saveCard = (cardTitle: string) => {
+    if (cardTitle) {
+      dispatch(addCardInColumn({ id: column.id, title: cardTitle }));
+    }
+    setIsOpenAddForm(false);
+  };
   return (
-    <li className="column" onDrop={handleDropColumn}>
+    <li
+      className="column"
+      onDrop={handleDropColumn}
+      onDragEnter={(e) => {
+        stopPrevent(e);
+      }}
+      onDragOver={(e) => {
+        stopPrevent(e);
+      }}
+    >
       <div className="column__header">
-        <h2 className="column__title">{column.title}</h2>
+        <input
+          type="text"
+          className="column__title"
+          value={title}
+          onChange={(e) => handleChangeTitle(e)}
+          onFocus={(e) => {
+            e.target.select();
+          }}
+          onKeyUp={(e) => handleTitleKeyUp(e)}
+          onBlur={() => dispatch(changeTitleColumn({ id: column.id, title }))}
+        />
         <button className="column__actions" type="button">
           ...
         </button>
@@ -64,26 +109,33 @@ function Column({
       <ul className="column__cards">
         {cards.map((card) => (
           <ColumnCard
-            key={card.title}
+            key={card.id}
             card={card}
             onDragStart={handleDragStartCard}
             onDragOver={handleDragOverCard}
             onDrop={handleDropCard}
             onDragLeave={handleDragLeaveCard}
-            cardWithStyle={cardWithStyle}
+            cardWithStyleID={cardWithStyleID}
           />
         ))}
       </ul>
-      <div className="column__footer">
-        <button className="column__add" type="button">
-          + Добавить карточку
-        </button>
-        <button className="column__create" type="button">
-          *
-        </button>
-      </div>
+      {isOpenAddForm && (
+        <AddCardOrColumnForm
+          placeholderTextarea="Ввести заголовок для этой карточки"
+          textButton="Добавить карточку"
+          saveCard={saveCard}
+          setIsOpenAddForm={setIsOpenAddForm}
+        />
+      )}
+      {!isOpenAddForm && (
+        <div className="column__footer">
+          <button className="column__add-card" type="button" onClick={() => setIsOpenAddForm(true)}>
+            {AddButtonsOnBoardText.addCard}
+          </button>
+        </div>
+      )}
     </li>
-  );  
+  );
 }
 
 export default Column;
