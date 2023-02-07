@@ -8,3 +8,7 @@ export interface IColumn {
   title: string;
   cards: IColumnCard[];
 }
+
+export interface IColumnState {
+  columns: IColumn[];
+}
