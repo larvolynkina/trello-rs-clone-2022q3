@@ -1,0 +1,13 @@
+@import '../../scss/base/mixins.scss';
+@import '../../scss/vars.scss';
+
+.login-form {
+  &__container {
+    padding-top: rem(100);
+  }
+
+  &__btn {
+    @include adaptiveValue('font-size', 20, 18);
+    font-weight: 500;
+  }
+}

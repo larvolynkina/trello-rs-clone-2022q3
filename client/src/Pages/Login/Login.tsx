@@ -1,5 +1,12 @@
+import LoginForm from '../../Components/LoginForm';
+import './Login.scss';
+
 function Login() {
-  return <div>Login Page</div>;
+  return (
+    <main className="login">
+      <LoginForm />
+    </main>
+  );
 }
 
 export default Login;
