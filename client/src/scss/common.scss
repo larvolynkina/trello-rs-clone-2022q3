@@ -52,6 +52,12 @@
     text-align: center;
   }
 
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: rem(5);
+  }
+
   &__input {
     padding: rem(15) rem(14) rem(13);
     font-size: rem(16);
@@ -60,6 +66,11 @@
     background-color: #fafbfc;
     border: rem(1) solid #e6e6e6;
     border-radius: rem(2);
+  }
+
+  &__input-error {
+    color: $errorColor;
+    font-size: rem(13);
   }
 
   &__separator {
