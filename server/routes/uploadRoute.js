@@ -7,6 +7,7 @@ router.post('/', upload.single('file'), (req, res) => {
   try {
     return res.json({
       url: `/uploads/${req.file.filename}`,
+      name: `${req.file.originalname}`,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });

@@ -2,10 +2,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import authRouter from './routes/authRoute.js';
 import userRouter from './routes/userRoute.js';
-import uploadRouter from './routes/uploadRoute.js';
 import workspaceRouter from './routes/workspaceRoute.js';
 import boardRouter from './routes/boardRoute.js';
+import columnRouter from './routes/columnRoute.js';
+import cardRouter from './routes/cardRoute.js';
+import uploadRouter from './routes/uploadRoute.js';
 
 dotenv.config();
 const app = express();
@@ -27,7 +30,10 @@ mongoose
   })
   .catch((error) => console.log(error));
 
-app.use('/', userRouter);
-app.use('/upload', uploadRouter);
+app.use('/', authRouter);
+app.use('/users', userRouter);
 app.use('/workspaces', workspaceRouter);
 app.use('/boards', boardRouter);
+app.use('/columns', columnRouter);
+app.use('/cards', cardRouter);
+app.use('/upload', uploadRouter);

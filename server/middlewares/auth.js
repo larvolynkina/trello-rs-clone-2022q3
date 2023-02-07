@@ -5,7 +5,7 @@ async function verifyAuth(req, res, next) {
     let token = req.headers.authorization || '';
 
     if (!token) {
-      return res.status(403).json({ message: 'Access denied' });
+      return res.status(401).json({ message: 'Необходимо войти в аккаунт или зарегистрироваться' });
     }
     if (token.startsWith('Bearer ')) {
       token = token.slice(7);
@@ -14,7 +14,7 @@ async function verifyAuth(req, res, next) {
     req.userId = decodedTokenData._id;
     return next();
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
