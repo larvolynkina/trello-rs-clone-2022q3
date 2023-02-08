@@ -5,7 +5,6 @@ interface ParticipantsProps {
 }
 
 function Participants({ participants }: ParticipantsProps) {
-  console.log(participants);
   return (
     <div>
       <h3>Участники</h3>
