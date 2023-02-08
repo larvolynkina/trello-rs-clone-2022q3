@@ -19,8 +19,7 @@ const setupStore = () =>
         thunk: {
           extraArgument: createAPI(),
         },
-      }),
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(cardsApi.middleware),
+      }).concat(cardsApi.middleware),
   });
 
 const store = setupStore();
