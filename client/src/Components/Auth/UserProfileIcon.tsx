@@ -1,11 +1,20 @@
 import { Link } from 'react-router-dom';
 
+import { useAppDispatch } from '../../hooks/redux';
+import { logoutAction } from '../../store/serviceActions';
+
 import './UserProfileIcon.scss';
 
 function UserProfileIcon() {
+  const dispatch = useAppDispatch();
+
+  const handleLogoutBtnClick = () => dispatch(logoutAction());
+
   return (
     <div className="user-profile-icon">
-      <button type="button">Выйти</button>
+      <button type="button" onClick={handleLogoutBtnClick}>
+        Выйти
+      </button>
       <Link to="/profile" className="user-profile-icon__profile">
         <svg
           xmlns="http://www.w3.org/2000/svg"

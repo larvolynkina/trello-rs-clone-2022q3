@@ -35,7 +35,8 @@
     "@typescript-eslint/no-shadow": "error",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "warn",
-    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }]
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
+    "react/jsx-props-no-spreading": "off"
   },
   "settings": {
     "import/resolver": {
@@ -43,5 +44,8 @@
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
+  },
+  "globals": {
+    "JSX": "readonly"
   }
 }

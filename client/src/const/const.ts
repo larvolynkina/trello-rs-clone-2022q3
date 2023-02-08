@@ -9,6 +9,19 @@ export enum NameSpace {
   board = 'BOARD',
 }
 
+export enum APIRoute {
+  login = '/login',
+  signup = '/signup',
+  me = '/me',
+}
+
+export enum APPRoute {
+  main = '/',
+  login = '/login',
+  signUp = '/signup',
+  board = '/board',
+  profile = '/profile',
+}
 
 export enum AddButtonsOnBoardText {
   addColumn = '+ Добавить список',

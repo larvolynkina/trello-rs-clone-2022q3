@@ -13,7 +13,7 @@ function Promo() {
           <p className="promo__text">
             Объедините все в одном месте, даже если участники вашей команды рассеяны по миру.
           </p>
-          <Link to="/signup" className="promo__signup-btn">
+          <Link to="/signup" className="promo__signup-btn form-btn">
             Зарегистрируйтесь — это бесплатно!
           </Link>
         </div>

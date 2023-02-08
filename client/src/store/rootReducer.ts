@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { cardsApi } from './reducers/cards/cards.api';
 import { NameSpace } from '../const/const';
+import createAPI from '../services/api';
 import { userState } from './reducers/userState';
 import { boardState } from './reducers/boardState';
 
@@ -13,6 +14,12 @@ export const rootReducer = combineReducers({
 const setupStore = () =>
   configureStore({
     reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        thunk: {
+          extraArgument: createAPI(),
+        },
+      }),
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(cardsApi.middleware),
   });
 
