@@ -11,7 +11,7 @@ import {
 
 import { RootState } from '../../store/rootReducer';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { changeTitleColumn, addCardInColumn } from '../../store/reducers/boardState';
+import { changeTitleColumn, addCardInColumn } from '../../store/reducers/board/boardState';
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';

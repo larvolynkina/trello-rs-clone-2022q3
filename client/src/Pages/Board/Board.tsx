@@ -2,18 +2,29 @@ import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { RootState } from '../../store/rootReducer';
-import { updateCardInColumn, updateColumns } from '../../store/reducers/boardState';
+import { updateCardInColumn, updateColumns } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, boardId, userId } from '../../const/const';
-import { createColumn, getCardsOnBoard, getColumns, updateCardOrder, updateColumnOrder } from '../../API/board';
-import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
+import {
+  createColumn,
+  getCardsOnBoard,
+  updateCardOrder,
+  updateColumnOrder,
+} from '../../API/board';
+import {
+  getColumnsByIds,
+  getTranspositionColumnCards,
+  getTranspositionColumns,
+} from './utils';
 import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import Column from '../../Components/Column';
 import ColumnMenu from '../../Components/ColumnMenu/ColumnMenu';
+import { useGetColumnsQuery } from '../../store/reducers/board/board.api';
 
 function Board() {
   const { boardData, columnsData } = useAppSelector((state: RootState) => state.BOARD);
+  const { data: columns } = useGetColumnsQuery(boardData._id);
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
@@ -51,26 +62,24 @@ function Board() {
 
   useEffect(() => {
     if (boardData._id) {
-      getColumns(boardData._id).then((res) => {
-        if (!(res instanceof Error)) {
-          dispatch(updateColumns(res));
-        }
-      });
+      if (columns) {
+        dispatch(updateColumns(columns));
+      }
       getCardsOnBoard(boardData._id).then((res) => {
         if (!(res instanceof Error)) {
           dispatch(updateCardInColumn(res));
         }
       });
     }
-  }, []);
+  }, [columns]);
 
   useEffect(() => {
     if (dragColumn && dropColumn) {
-      console.log('before', columnsData)
-      const newOrderColumn = getTranspositionColumns({dragColumn, dropColumn, columnsData});
-      console.log('after', newOrderColumn)
+      const newOrderColumn = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
       updateColumnOrder(userId, boardId, newOrderColumn).then((res) => {
-        console.log('res', res);
+        if (!(res instanceof Error)) {
+          dispatch(updateColumns(getColumnsByIds(res, columns)));
+        }
       });
       setDragColum(null);
       setDropColum(null);

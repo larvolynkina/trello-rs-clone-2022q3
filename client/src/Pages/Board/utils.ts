@@ -90,3 +90,11 @@ export function getTranspositionColumns({
   columns.splice(destIndex, 0, dragColumn._id);
   return columns;
 }
+
+export function getColumnsByIds(ids: string[], columns: IColumn[]): IColumn[] | [] {
+  if (ids.length > 0 && columns.length > 0) {
+    // eslint-disable-next-line
+    return ids.map((id) => columns.find((column) => column._id === id)!);
+  }
+  return [];
+}

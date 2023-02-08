@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IColumn, IBoardState, ICard } from '../../types/board';
-import { boardId } from '../../const/const';
+import { boardId } from '../../../const/const';
+import { IColumn, IBoardState, ICard } from '../../../types/board';
 
 const initialState: IBoardState = {
   boardData: {
     _id: boardId,
-    title: 'My board',
+    title: '',
   },
   columnsData: [],
   cardsData: [],
