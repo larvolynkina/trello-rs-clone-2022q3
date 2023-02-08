@@ -1,0 +1,96 @@
+.card {
+    position: absolute;
+    padding: 15px;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 780px;
+    min-height: 400px;
+    width: 90vw;
+    color: #172b4d;
+    background-color: #f4f5f7;
+    border-radius: 2px;
+
+
+    &__title-input {
+        height: 33px;
+        padding: 8px 4px;
+        width: 100%;
+        outline: 0;
+        font-size: 20px;
+        font-weight: 500;
+        color: #172b4d;
+        line-height: 24px;
+        background-color: transparent;
+
+        &:focus {
+            background-color: #fff;
+            border-radius: 3px;
+            border: 2px solid #0079bf;
+        }
+    }
+
+    &__description {
+        font-weight: 500;
+        margin-top: 30px;
+    }
+
+    &__description-button {
+        margin-top: 15px;
+        background-color: #eaecf0;
+        border: none;
+        border-radius: 3px;
+        display: block;
+        width: 100%;
+        min-height: 40px;
+        padding: 8px 8px 25px 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        text-align: left;
+
+        &:hover {
+            background-color: #091e4214;
+        }
+    }
+
+    &__description-textarea {
+        display: block;
+        margin-top: 15px;
+        padding: 10px;
+        color: #172b4d;
+
+        &:focus {
+            outline: none;
+            border-radius: 3px;
+            border: 2px solid #0079bf;
+        }
+    }
+
+    &__description-btn {
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        font-weight: 400;
+        padding: 6px 12px;
+        margin-top: 30px;
+
+
+        &--save {
+            background-color: #0079bf;
+            color: #fff;
+
+            &:hover {
+                background-color: #026aa7;
+            }
+        }
+
+        &--cancel {
+
+            &:hover {
+                background-color: #091e4214;
+            }
+        }
+    }
+}

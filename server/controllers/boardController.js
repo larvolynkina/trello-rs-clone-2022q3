@@ -54,6 +54,25 @@ async function getBoardById(req, res) {
   }
 }
 
+async function updateBoardTitle(req, res) {
+  try {
+    const { boardId, title } = req.body;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
+    const updatedBoard = await Board.findByIdAndUpdate(boardId, { title }, { new: true });
+    return res.status(200).json(updatedBoard);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 async function addNewMarkOnBoard(req, res) {
   try {
     const { boardId, color, text } = req.body;
@@ -79,4 +98,4 @@ async function addNewMarkOnBoard(req, res) {
   }
 }
 
-export { createBoard, addNewMarkOnBoard, getBoardById };
+export { createBoard, addNewMarkOnBoard, getBoardById, updateBoardTitle };

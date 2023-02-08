@@ -3,6 +3,7 @@ import Header from '../../Components/Header';
 import Main from '../../Pages/Main';
 import Board from '../../Pages/Board';
 import Footer from '../../Components/Footer';
+import Card from '../../Components/Card';
 
 function RootRouter() {
   return (
@@ -11,6 +12,7 @@ function RootRouter() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/board" element={<Board />} />
+        <Route path="/cards/:boardId/:cardId" element={<Card />} />
       </Routes>
       <Footer />
     </>
