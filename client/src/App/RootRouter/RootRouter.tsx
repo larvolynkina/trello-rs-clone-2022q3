@@ -22,7 +22,7 @@ function RootRouter() {
         <Route path={APPRoute.profile} element={<ProtectedRoute outlet={<Profile />} />} />
         <Route path={APPRoute.login} element={<Redirect outlet={<Login />} />} />
         <Route path={APPRoute.signUp} element={<Redirect outlet={<SignUp />} />} />
-        <Route path="/cards/:boardId/:cardId" element={<Card />} />
+        <Route path={APPRoute.card} element={<ProtectedRoute outlet={<Card />} />} />
       </Routes>
       <Footer />
     </>
