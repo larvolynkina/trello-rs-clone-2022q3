@@ -40,7 +40,17 @@ async function getAllColumnsOnBoard(req, res) {
   try {
     const { boardId } = req.params;
     const board = await Board.findById(boardId);
-    const allColumns = await Column.find().where('_id').in(board.columns).exec();
+    const query = [
+      { $match: { _id: { $in: board.columns } } },
+      { $addFields: { __order: { $indexOfArray: [board.columns, '$_id'] } } },
+      { $sort: { __order: 1 } },
+      {
+        $project: {
+          __order: 0,
+        },
+      },
+    ];
+    const allColumns = await Column.aggregate(query);
     return res.status(200).json(allColumns);
   } catch (error) {
     return res.status(500).json({ message: error.message });

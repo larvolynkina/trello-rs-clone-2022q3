@@ -21,6 +21,7 @@ export enum APPRoute {
   signUp = '/signup',
   board = '/board',
   profile = '/profile',
+  card = '/cards/:boardId/:cardId',
 }
 
 export enum AddButtonsOnBoardText {

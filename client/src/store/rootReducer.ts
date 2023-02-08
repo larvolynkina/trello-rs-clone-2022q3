@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-
+import { cardsApi } from './reducers/cards/cards.api';
 import { NameSpace } from '../const/const';
 import createAPI from '../services/api';
 import { userState } from './reducers/userState';
@@ -8,6 +8,7 @@ import { boardState } from './reducers/boardState';
 export const rootReducer = combineReducers({
   [NameSpace.user]: userState,
   [NameSpace.board]: boardState,
+  [cardsApi.reducerPath]: cardsApi.reducer,
 });
 
 const setupStore = () =>
@@ -18,7 +19,7 @@ const setupStore = () =>
         thunk: {
           extraArgument: createAPI(),
         },
-      }),
+      }).concat(cardsApi.middleware),
   });
 
 const store = setupStore();

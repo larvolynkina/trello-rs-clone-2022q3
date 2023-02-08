@@ -57,7 +57,8 @@ async function getCardById(req, res) {
       });
     }
     const card = await Card.findById(cardId);
-    return res.status(200).json(card);
+    const column = await Column.findOne({ cards: card._id });
+    return res.status(200).json({ card, column: column.title });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -107,14 +108,11 @@ async function updateCardTitleOrDescr(req, res) {
     const updatedCard = await Card.findByIdAndUpdate(cardId, { title, description }, { new: true });
     // create activity
     let action = '';
-    if (title && !description) {
+    if (title) {
       action = `${user.userName} изменил(а) название карточки c ${card.title} на ${title}`;
     }
-    if (!title && description) {
+    if (description) {
       action = `${user.userName} изменил(а) описание карточки c ${card.description} на ${description}`;
-    }
-    if (title && description) {
-      action = `${user.userName} изменил(а) название карточки c ${card.title} на ${title}, описание карточки c ${card.description} на ${description}`;
     }
     const activity = {
       userId,
