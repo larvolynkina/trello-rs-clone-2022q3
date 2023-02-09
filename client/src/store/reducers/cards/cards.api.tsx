@@ -23,6 +23,10 @@ type TGetCardParticipantsQueryArgs = {
   cardId: string;
 };
 
+type TGetBoardParticipantsQueryArgs = {
+  boardId: string;
+};
+
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
   baseQuery: fetchBaseQuery({
@@ -33,7 +37,7 @@ export const cardsApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Card', 'Participants'],
+  tagTypes: ['Card', 'CardParticipants', 'BoardParticipants'],
   endpoints: (builder) => ({
     getCardById: builder.query<TGetCardByIdQueryResponse, TGetCardByIdQueryArgs>({
       query: ({ boardId, cardId }) => ({
@@ -51,11 +55,22 @@ export const cardsApi = createApi({
     }),
     getCardParticipants: builder.query<IUser[], TGetCardParticipantsQueryArgs>({
       query: ({ boardId, cardId }) => ({
-        url: `/${boardId}/${cardId}/participants`
-      }), 
-      providesTags: ['Participants'],
+        url: `/${boardId}/${cardId}/participants`,
+      }),
+      providesTags: ['CardParticipants'],
+    }),
+    getBoardParticipants: builder.query<IUser[], TGetBoardParticipantsQueryArgs>({
+      query: ({ boardId }) => ({
+        url: `/${boardId}/participants`,
+      }),
+      providesTags: ['BoardParticipants'],
     }),
   }),
 });
 
-export const { useGetCardByIdQuery, useUpdateCardTitleOrDescrMutation, useGetCardParticipantsQuery } = cardsApi;
+export const {
+  useGetCardByIdQuery,
+  useUpdateCardTitleOrDescrMutation,
+  useGetCardParticipantsQuery,
+  useGetBoardParticipantsQuery,
+} = cardsApi;

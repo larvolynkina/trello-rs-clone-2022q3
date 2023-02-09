@@ -41,6 +41,7 @@
         margin-top: 2px;
         font-size: 14px;
         font-weight: 400;
+
         span {
             font-weight: 500;
             text-decoration: underline;
@@ -62,10 +63,47 @@
     &__participants {
         margin-left: 40px;
         margin-top: 30px;
+
         h3 {
             font-size: 14px;
             font-weight: 500;
         }
+    }
+
+    &__participants-list {
+        margin-top: 8px;
+        display: flex;
+        gap: 5px;
+    }
+
+    &__participants-add {
+        position: relative;
+        width: 32px;
+        height: 32px;
+        border-radius: 100%;
+        background-color: #eaecf0;
+        cursor: pointer;
+
+        &::after {
+            content: url('../../../public/assets/icon/plus.svg');
+            position: absolute;
+            left: 50%;
+            top: 52%;
+            transform: translate(-50%, -50%);
+        }
+    }
+
+    &__avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        cursor: pointer;
+        background-size: 100%;
+        background-position: center center;
     }
 
     &__description {
@@ -131,4 +169,18 @@
             }
         }
     }
+
+    &__participant-modal {
+        position: fixed;
+        left: 50%;
+        top: 30%;
+        transform: translateX(-50%);
+        width: 300px;
+    }
+
+    &__board-participant {
+        display: flex;
+    }
+
+
 }
