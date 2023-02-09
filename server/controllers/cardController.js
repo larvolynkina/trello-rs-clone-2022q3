@@ -190,6 +190,84 @@ async function getCardParticipants(req, res) {
   }
 }
 
+async function addCardParticipant(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { participantId } = req.body;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
+    const card = await Card.findById(cardId);
+    card.participants.push(participantId);
+
+    const participant = await User.findById(participantId);
+    let action = '';
+    if (userId === participantId) {
+      action = `${user.userName} присоединился(лась) к карточке ${card.title}`;
+    } else {
+      action = `${user.userName} добавил(а) пользователя ${participant.userName} к карточке ${card.title}`;
+    }
+    const activity = {
+      userId,
+      action,
+    };
+    card.activities.push(activity);
+    board.activities.push(activity);
+    await board.save();
+    await user.save();
+    await card.save();
+    return res.status(200).json({ message: 'Участник успешно добавлен' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function deleteCardParticipant(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { participantId } = req.body;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
+    const card = await Card.findById(cardId);
+
+    const participants = [...card.participants].filter((id) => id.toString() !== participantId);
+    card.participants = participants;
+
+    const participant = await User.findById(participantId);
+    let action = '';
+    if (userId === participantId) {
+      action = `${user.userName} покинул(а) карточку ${card.title}`;
+    } else {
+      action = `${user.userName} удалила пользователя ${participant.userName} из участников карточки ${card.title}`;
+    }
+    const activity = {
+      userId,
+      action,
+    };
+    card.activities.push(activity);
+    board.activities.push(activity);
+    await board.save();
+    await user.save();
+    await card.save();
+    return res.status(200).json({ message: 'Участник успешно удален' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createCard,
   updateCardTitleOrDescr,
@@ -198,4 +276,6 @@ export {
   getAllCardsOnBoard,
   getCardById,
   getCardParticipants,
+  addCardParticipant,
+  deleteCardParticipant,
 };

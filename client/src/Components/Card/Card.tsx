@@ -7,8 +7,8 @@ import ParticipantModal from './ParticipantModal/ParticipantModal';
 import {
   useGetCardByIdQuery,
   useGetCardParticipantsQuery,
-  useGetBoardParticipantsQuery,
 } from '../../store/reducers/cards/cards.api';
+import { useGetBoardParticipantsQuery } from '../../store/reducers/board/board.api';
 import './Card.scss';
 
 type ParamTypes = {
@@ -22,20 +22,25 @@ function Card() {
   const { data: cardParticipants } = useGetCardParticipantsQuery({ boardId, cardId });
   const { data: boardParticipants } = useGetBoardParticipantsQuery({ boardId });
 
-  const [addParticipantModalOpen] = useState(false);
+  const [addParticipantModalOpen] = useState(true);
 
   return (
     <>
       {data && (
         <div className="card">
           <Title title={data.card.title} boardId={boardId} cardId={cardId} column={data.column} />
-          <Participants participants={cardParticipants || []} />
+          {cardParticipants && cardParticipants.length > 0 && (
+            <Participants participants={cardParticipants} />
+          )}
           <Description description={data.card.description} boardId={boardId} cardId={cardId} />
         </div>
       )}
-      {
-        addParticipantModalOpen && <ParticipantModal participants={boardParticipants || []} />
-      }
+      {addParticipantModalOpen && (
+        <ParticipantModal
+          boardParticipants={boardParticipants || []}
+          cardParticipantsId={data?.card.participants || []}
+        />
+      )}
     </>
   );
 }

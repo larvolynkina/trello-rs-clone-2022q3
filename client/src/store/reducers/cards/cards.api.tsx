@@ -23,8 +23,10 @@ type TGetCardParticipantsQueryArgs = {
   cardId: string;
 };
 
-type TGetBoardParticipantsQueryArgs = {
+type TAddCardParticipantQueryArgs = {
   boardId: string;
+  cardId: string;
+  participantId: string;
 };
 
 export const cardsApi = createApi({
@@ -37,7 +39,7 @@ export const cardsApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Card', 'CardParticipants', 'BoardParticipants'],
+  tagTypes: ['Card', 'CardParticipants'],
   endpoints: (builder) => ({
     getCardById: builder.query<TGetCardByIdQueryResponse, TGetCardByIdQueryArgs>({
       query: ({ boardId, cardId }) => ({
@@ -59,11 +61,21 @@ export const cardsApi = createApi({
       }),
       providesTags: ['CardParticipants'],
     }),
-    getBoardParticipants: builder.query<IUser[], TGetBoardParticipantsQueryArgs>({
-      query: ({ boardId }) => ({
-        url: `/${boardId}/participants`,
+    addCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
+      query: ({ boardId, cardId, participantId }) => ({
+        url: `/${boardId}/${cardId}/add-participant`,
+        method: 'POST',
+        body: { participantId },
       }),
-      providesTags: ['BoardParticipants'],
+      invalidatesTags: ['Card', 'CardParticipants'],
+    }),
+    deleteCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
+      query: ({ boardId, cardId, participantId }) => ({
+        url: `/${boardId}/${cardId}/delete-participant`,
+        method: 'POST',
+        body: { participantId },
+      }),
+      invalidatesTags: ['Card', 'CardParticipants'],
     }),
   }),
 });
@@ -72,5 +84,6 @@ export const {
   useGetCardByIdQuery,
   useUpdateCardTitleOrDescrMutation,
   useGetCardParticipantsQuery,
-  useGetBoardParticipantsQuery,
+  useAddCardParticipantMutation,
+  useDeleteCardParticipantMutation,
 } = cardsApi;

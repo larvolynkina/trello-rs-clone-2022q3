@@ -7,6 +7,8 @@ import {
   getAllCardsOnBoard,
   getCardById,
   getCardParticipants,
+  addCardParticipant,
+  deleteCardParticipant,
 } from '../controllers/cardController.js';
 import verifyAuth from '../middlewares/auth.js';
 
@@ -19,5 +21,7 @@ router.get('/:boardId/:cardId', verifyAuth, getCardById);
 router.get('/', verifyAuth, getAllCards);
 router.get('/:boardId', verifyAuth, getAllCardsOnBoard);
 router.get('/:boardId/:cardId/participants', verifyAuth, getCardParticipants);
+router.post('/:boardId/:cardId/add-participant', verifyAuth, addCardParticipant);
+router.post('/:boardId/:cardId/delete-participant', verifyAuth, deleteCardParticipant);
 
 export default router;
