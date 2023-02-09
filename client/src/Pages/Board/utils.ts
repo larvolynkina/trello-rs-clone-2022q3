@@ -81,20 +81,20 @@ export function getTranspositionColumns({
   dragColumn,
   dropColumn,
   columnsData,
-}: getTranspositionColumnsProps): string[] {
+}: getTranspositionColumnsProps): {newOrderColumn: string[]} {
   const columns = columnsData.map((column) => column._id);
   const dragIndex = columns.indexOf(dragColumn._id);
   const dropIndex = columns.indexOf(dropColumn._id);
   columns.splice(dragIndex, 1);
   const destIndex = dropIndex > dragIndex ? dropIndex : dropIndex + 1;
   columns.splice(destIndex, 0, dragColumn._id);
-  return columns;
+  return {newOrderColumn: columns};
 }
 
-export function getColumnsByIds(ids: string[], columns: IColumn[]): IColumn[] | [] {
-  if (ids.length > 0 && columns.length > 0) {
-    // eslint-disable-next-line
-    return ids.map((id) => columns.find((column) => column._id === id)!);
-  }
-  return [];
-}
+// export function getColumnsByIds(ids: string[], columns: IColumn[]): IColumn[] | [] {
+//   if (ids.length > 0 && columns.length > 0) {
+//     // eslint-disable-next-line
+//     return ids.map((id) => columns.find((column) => column._id === id)!);
+//   }
+//   return [];
+// }

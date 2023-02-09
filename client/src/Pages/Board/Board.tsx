@@ -65,7 +65,7 @@ function Board() {
       }
     }
     if (dragColumn && dropColumn && columnsData) {
-      const newOrderColumn = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
+      const {newOrderColumn} = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
       updateOrderColumn(newOrderColumn);
     }
 
@@ -109,7 +109,7 @@ function Board() {
 
       <div className="board__body">
         <div className="board__header">
-          <h1 className="board__title">{boardId}</h1>
+          <h1 className="board__title">{boardDetails?.title}</h1>
           <div className="board__participants">Участники</div>
           <button type="button" className="board__share">
             Поделиться
@@ -124,7 +124,7 @@ function Board() {
             columnsData.map((column) => (
               <Column
                 key={column._id}
-                boardId={boardDetails?._id}
+                boardId={boardId}
                 column={column}
                 setDragCard={setDragCard}
                 setDropCard={setDropCard}
