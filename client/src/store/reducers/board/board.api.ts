@@ -4,31 +4,32 @@ import { ICard, IColumn } from '../../../types/board';
 
 export const boardApi = createApi({
   reducerPath: 'board',
-  tagTypes: ['Columns', 'Cards'],
+  tagTypes: ['Columns', 'ColumnsOrder', 'Cards'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${ServerDetails.url}:${ServerDetails.port}`,
     prepareHeaders: (headers) => {
       const token =
         localStorage.getItem('trello-rs-clone-token') ||
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2U0NmE5YWJiM2ZhMDRiZTJjNmU3N2EiLCJpYXQiOjE2NzU5MTM4ODIsImV4cCI6MTY3ODUwNTg4Mn0.VjNc_fSY0Ht1SZmgxTKvbsnfwiqKR7TCW3-i-qqg8tI';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2U0OTIzNTI1NDNkYjk5NDk4Y2JkZjAiLCJpYXQiOjE2NzU5MjQwMjEsImV4cCI6MTY3ODUxNjAyMX0.V_l2y6FysdMPaXuUxeGXSFVV2Vi4XNwnyrfV9ne2TsQ';
       headers.set('authorization', `Bearer ${token}`);
       return headers;
     },
   }),
   endpoints: (build) => ({
-    getBoard: build.query({
+    getBoardByID: build.query({
       query: (id: string) => ({
-        url: id,
+        url: `/boards/${id}`,
       }),
+      providesTags: [{ type: 'ColumnsOrder', id: 'LIST' }],
     }),
     getColumns: build.query<IColumn[], string>({
       query: (boardId: string) => ({
         url: `/columns/${boardId}`,
       }),
-      providesTags: (result) => [{ type: 'Columns', id: 'LIST' }],
+      providesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     createColumn: build.mutation({
-      query: (body: { userId: string; boardId: string; title: string }) => ({
+      query: (body: { boardId: string; title: string }) => ({
         url: '/columns',
         method: 'POST',
         body,
@@ -36,7 +37,7 @@ export const boardApi = createApi({
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     updateTitleColumn: build.mutation({
-      query: (body: { userId: string; boardId: string; columnId: string; title: string }) => ({
+      query: (body: { boardId: string; columnId: string; title: string }) => ({
         url: '/columns',
         method: 'PATCH',
         body,
@@ -44,7 +45,7 @@ export const boardApi = createApi({
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     updateColumnOrder: build.mutation({
-      query: (body: { userId: string; boardId: string; data: string[] }) => ({
+      query: (body: { boardId: string; data: string[] }) => ({
         url: '/columns/update-column-order',
         method: 'POST',
         body,
@@ -55,10 +56,10 @@ export const boardApi = createApi({
       query: (boardId: string) => ({
         url: `/cards/${boardId}`,
       }),
-      providesTags: (result) => [{ type: 'Cards', id: 'LIST' }],
+      providesTags: [{ type: 'Cards', id: 'LIST' }],
     }),
     createCard: build.mutation({
-      query: (body: { userId: string; boardId: string; columnId: string; title: string }) => ({
+      query: (body: { boardId: string; columnId: string; title: string }) => ({
         url: `/cards`,
         method: 'POST',
         body,
@@ -66,7 +67,6 @@ export const boardApi = createApi({
       invalidatesTags: [
         { type: 'Columns', id: 'LIST' },
         { type: 'Cards', id: 'LIST' },
-
       ],
     }),
     updateCardOrder: build.mutation({
@@ -85,7 +85,7 @@ export const boardApi = createApi({
 });
 
 export const {
-  useGetBoardQuery,
+  useGetBoardByIDQuery,
   useGetColumnsQuery,
   useGetCardsOnBoardQuery,
   useCreateCardMutation,

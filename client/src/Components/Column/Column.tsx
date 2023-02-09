@@ -119,7 +119,7 @@ function Column({
   const saveCard = async (cardTitle: string) => {
     setIsOpenAddForm(false);
     if (cardTitle) {
-      await createCard({ userId, boardId, columnId: column._id, title: cardTitle }).unwrap();
+      await createCard({ boardId, columnId: column._id, title: cardTitle }).unwrap();
       if (errorCreateCard) {
         throw new Error('Ошибка создания карточки');
       }
@@ -128,7 +128,7 @@ function Column({
   const updateTitleOnServerAndStore = async () => {
     setIsEditTitle(false);
     if (userId && boardId && title)
-      await updateTitleColumn({ userId, boardId, columnId: column._id, title }).unwrap();
+      await updateTitleColumn({ boardId, columnId: column._id, title }).unwrap();
     if (errorUpdateTitleColumn) {
       throw new Error('Ошибка изменения заголовка списка');
     }

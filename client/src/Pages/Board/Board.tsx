@@ -1,7 +1,6 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent } from 'react';
-import { useAppSelector, useAppDispatch } from '../../hooks/redux';
-import { RootState } from '../../store/rootReducer';
+import { useAppDispatch } from '../../hooks/redux';
 import { updateColumns } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
@@ -15,11 +14,12 @@ import {
   useCreateColumnMutation,
   useUpdateColumnOrderMutation,
   useUpdateCardOrderMutation,
+  useGetBoardByIDQuery,
 } from '../../store/reducers/board/board.api';
 
 function Board() {
-  const { boardData } = useAppSelector((state: RootState) => state.BOARD);
-  const { data: columnsData } = useGetColumnsQuery(boardData._id);
+  const { data: boardDetails } = useGetBoardByIDQuery(boardId);
+  const { data: columnsData } = useGetColumnsQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
@@ -45,7 +45,7 @@ function Board() {
       });
       if (resultColumn) {
         dispatch(updateColumns(newColumns));
-        updateCardOrder({userId, boardId, data: resultColumn})
+        updateCardOrder({ userId, boardId, data: resultColumn });
         if (errorUpdateCardOrder) {
           throw new Error('Ошибка изменения порядка карточек');
         }
@@ -57,25 +57,15 @@ function Board() {
     }
   }, [dropColumnFromCard, dropCard]);
 
-  // useEffect(() => {
-  //   if (boardData._id) {
-  //     if (cardsData) {
-  //       dispatch(updateCardInColumn(cardsData));
-  //     }
-  //   }
-  // }, [ cardsData]);
-
   useEffect(() => {
     async function updateOrderColumn(newOrderColumn: string[]) {
-      await updateColumnOrder({ userId, boardId, data: newOrderColumn }).unwrap();
+      await updateColumnOrder({ boardId, data: newOrderColumn }).unwrap();
       if (errorUpdateColumnOrder) {
         throw new Error('Ошибка изменения порядка списков');
       }
     }
     if (dragColumn && dropColumn && columnsData) {
-      console.log(columnsData);
       const newOrderColumn = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
-      console.log(newOrderColumn);
       updateOrderColumn(newOrderColumn);
     }
 
@@ -85,8 +75,8 @@ function Board() {
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
-    if (userId && boardData._id && title) {
-      createColumn({ userId, boardId: boardData._id, title }).unwrap();
+    if (userId && boardDetails._id && title) {
+      createColumn({ boardId: boardDetails._id, title }).unwrap();
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
       }
@@ -119,7 +109,7 @@ function Board() {
 
       <div className="board__body">
         <div className="board__header">
-          <h1 className="board__title">{boardData.title}</h1>
+          <h1 className="board__title">{boardDetails?.title}</h1>
           <div className="board__participants">Участники</div>
           <button type="button" className="board__share">
             Поделиться
@@ -130,11 +120,11 @@ function Board() {
         </div>
 
         <ul className="board__columns">
-          {columnsData &&
+          {columnsData && 
             columnsData.map((column) => (
               <Column
                 key={column._id}
-                boardId={boardData._id}
+                boardId={boardDetails?._id}
                 column={column}
                 setDragCard={setDragCard}
                 setDropCard={setDropCard}

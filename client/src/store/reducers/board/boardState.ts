@@ -1,10 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { boardId } from '../../../const/const';
-import { IColumn, IBoardState, ICard } from '../../../types/board';
+import { IColumn, IBoardState, ICard, IBoard } from '../../../types/board';
 
 const initialState: IBoardState = {
   boardData: {
-    _id: boardId,
+    _id: '',
     title: '',
   },
   columnsData: [],
@@ -15,6 +14,9 @@ export const boardStateSlice = createSlice({
   name: 'dataColumns',
   initialState,
   reducers: {
+    updateBoardDetails(state, action: PayloadAction<IBoard>) {
+      state.boardData = action.payload;
+    },
     changeTitleColumn(state, action: PayloadAction<{ id: string; title: string }>) {
       const columnForChange = state.columnsData.find((column) => column._id === action.payload.id);
       if (columnForChange) {
@@ -36,12 +38,17 @@ export const boardStateSlice = createSlice({
       } else {
         throw new Error(`Column № ${action.payload.id} not found`);
       }
-      state.cardsData = [...state.cardsData, action.payload.card]
+      state.cardsData = [...state.cardsData, action.payload.card];
     },
   },
 });
 
-export const { changeTitleColumn, updateColumns, addCardInColumn, updateCardInColumn } =
-  boardStateSlice.actions;
+export const {
+  changeTitleColumn,
+  updateColumns,
+  addCardInColumn,
+  updateCardInColumn,
+  updateBoardDetails,
+} = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;
