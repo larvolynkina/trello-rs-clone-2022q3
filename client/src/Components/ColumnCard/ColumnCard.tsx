@@ -1,23 +1,30 @@
 import './columnCard.scss';
 import { DragEvent } from 'react';
 
-import { IColumnCard } from '../../types/columns';
+import { ICard } from '../../types/board';
 
 type ColumnCardProps = {
-  card: IColumnCard;
-  onDragStart: (card: IColumnCard) => void;
-  onDragOver: (e: DragEvent<HTMLLIElement>, card: IColumnCard) => void;
-  onDrop: (e: DragEvent<HTMLLIElement>, card: IColumnCard) => void;
+  card: ICard;
+  onDragStart: (e: DragEvent<HTMLLIElement>, card: ICard) => void;
+  onDragOver: (e: DragEvent<HTMLLIElement>, card: ICard) => void;
+  onDrop: (e: DragEvent<HTMLLIElement>, card: ICard) => void;
   onDragLeave: () => void;
   cardWithStyleID: string;
 };
 
-function ColumnCard({ card, onDragStart, onDragOver, onDrop, cardWithStyleID, onDragLeave }: ColumnCardProps) {
+function ColumnCard({
+  card,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  cardWithStyleID,
+  onDragLeave,
+}: ColumnCardProps) {
   return (
     <li
       draggable
-      className={`column-card ${cardWithStyleID === card.id ? 'column-card--insert' : ''}`}
-      onDragStart={() => onDragStart(card)}
+      className={`column-card ${cardWithStyleID === card._id ? 'column-card--insert' : ''}`}
+      onDragStart={(e) => onDragStart(e, card)}
       onDragOver={(e) => onDragOver(e, card)}
       onDrop={(e) => onDrop(e, card)}
       onDragLeave={() => onDragLeave()}

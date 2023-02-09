@@ -1,10 +1,14 @@
+@import '../../scss/colors.scss';
+
 .board {
   display: flex;
   background: url('../../../public/assets/bg-image.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-
+  margin: 40px 0 0 0;
+  font-size: 14px;
+  
   &__aside {
     flex: 0 0 260px;
     background-color: rgba(255, 255, 255, 0.75);
@@ -15,6 +19,7 @@
     flex: 1 1 100%;
     overflow: auto;
     padding: 10px;
+    position: relative;
   }
 
   &__header {
@@ -35,6 +40,12 @@
     gap: 5px;
     align-items: flex-start;
   }
+  
+
+  &__last-column {
+    min-width: 287px;
+    padding: 0 15px 0 0;
+  }
 
   &__add-column {
     user-select: none;
@@ -42,5 +53,10 @@
     width: 272px;
     min-height: 36px;
     border-radius: 3px;
+  }
+
+  &__column-menu {
+    position: absolute;
+    top: 82px;
   }
 }
