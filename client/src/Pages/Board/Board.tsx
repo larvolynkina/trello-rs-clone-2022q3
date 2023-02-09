@@ -109,7 +109,7 @@ function Board() {
 
       <div className="board__body">
         <div className="board__header">
-          <h1 className="board__title">{boardDetails?.title}</h1>
+          <h1 className="board__title">{boardId}</h1>
           <div className="board__participants">Участники</div>
           <button type="button" className="board__share">
             Поделиться
