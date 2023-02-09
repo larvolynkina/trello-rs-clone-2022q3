@@ -8,15 +8,16 @@ import {
   updateCardOrder,
   updateColumnOrder,
 } from '../controllers/columnController.js';
+import verifyAuth from "../middlewares/auth.js";
 
 const router = Router();
 
-router.post('/', createColumn);
-router.patch('/', updateColumnTitle);
-router.get('/', getAllColumns);
-router.get('/:boardId', getAllColumnsOnBoard);
-router.delete('/:userId/:boardId/:columnId', deleteColumn);
-router.post('/update-card-order', updateCardOrder);
-router.post('/update-column-order', updateColumnOrder);
+router.post('/', verifyAuth, createColumn);
+router.patch('/', verifyAuth, updateColumnTitle);
+router.get('/', verifyAuth, getAllColumns);
+router.get('/:boardId', verifyAuth, getAllColumnsOnBoard);
+router.delete('/:boardId/:columnId', verifyAuth, deleteColumn);
+router.post('/update-card-order', verifyAuth, updateCardOrder);
+router.post('/update-column-order', verifyAuth, updateColumnOrder);
 
 export default router;

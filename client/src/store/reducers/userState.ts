@@ -6,6 +6,7 @@ import { User, UserState } from '../../types/userData';
 const initialState: UserState = {
   userData: null,
   authorizationStatus: AuthorizationStatus.Unknown,
+  isLoading: false,
 };
 
 export const userStateSlice = createSlice({
@@ -24,10 +25,18 @@ export const userStateSlice = createSlice({
     removeUserData(state) {
       state.userData = null;
     },
+    setIsLoadingUserData(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
   },
 });
 
-export const { requireAuthorization, requireLogout, loadUserData, removeUserData } =
-  userStateSlice.actions;
+export const {
+  requireAuthorization,
+  requireLogout,
+  loadUserData,
+  removeUserData,
+  setIsLoadingUserData,
+} = userStateSlice.actions;
 
 export const userState = userStateSlice.reducer;

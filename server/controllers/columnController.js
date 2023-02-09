@@ -2,21 +2,28 @@ import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
 import Card from '../models/cardModel.js';
+import { errors } from '../helpers.js';
 
 async function createColumn(req, res) {
   try {
-    const { userId, boardId, title } = req.body;
+    const { boardId, title } = req.body;
+    const { userId } = req;
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    // check if user is member of this board
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
     // create column
     const column = new Column({
       title,
     });
     const savedColumn = await column.save();
     // add column id to board
-    const board = await Board.findById(boardId);
     board.columns.push(savedColumn._id);
-    await board.save();
     // add column creations to board acivities
-    const user = await User.findById(userId);
     const activity = {
       userId,
       action: `${user.userName} создал(а) колонку ${title} на доске ${board.title}`,
@@ -33,7 +40,17 @@ async function getAllColumnsOnBoard(req, res) {
   try {
     const { boardId } = req.params;
     const board = await Board.findById(boardId);
-    const allColumns = await Column.find().where('_id').in(board.columns).exec();
+    const query = [
+      { $match: { _id: { $in: board.columns } } },
+      { $addFields: { __order: { $indexOfArray: [board.columns, '$_id'] } } },
+      { $sort: { __order: 1 } },
+      {
+        $project: {
+          __order: 0,
+        },
+      },
+    ];
+    const allColumns = await Column.aggregate(query);
     return res.status(200).json(allColumns);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -51,13 +68,14 @@ async function getAllColumns(_req, res) {
 
 async function deleteColumn(req, res) {
   try {
-    const { userId, boardId, columnId } = req.params;
-    // check if user is member of this board
+    const { boardId, columnId } = req.params;
+    const { userId } = req;
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
+    // check if user is member of this board
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: errors.notABoardMember,
       });
     }
     const column = await Column.findById(columnId);
@@ -79,7 +97,7 @@ async function deleteColumn(req, res) {
     await Column.findByIdAndDelete(columnId);
     board.activities.push(activity);
     await board.save();
-    return res.status(200).json({ message: 'Column deleted' });
+    return res.status(200).json({ message: 'Колонка удалена' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -87,13 +105,14 @@ async function deleteColumn(req, res) {
 
 async function updateColumnTitle(req, res) {
   try {
-    const { userId, boardId, columnId, title } = req.body;
+    const { boardId, columnId, title } = req.body;
+    const { userId } = req;
     // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: errors.notABoardMember,
       });
     }
     // update column
@@ -114,13 +133,14 @@ async function updateColumnTitle(req, res) {
 
 async function updateCardOrder(req, res) {
   try {
-    const { userId, boardId, data } = req.body;
+    const { boardId, data } = req.body;
+    const { userId } = req;
     // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: errors.notABoardMember,
       });
     }
     // update changed columns
@@ -140,13 +160,14 @@ async function updateCardOrder(req, res) {
 
 async function updateColumnOrder(req, res) {
   try {
-    const { userId, boardId, data } = req.body;
+    const { boardId, data } = req.body;
+    const { userId } = req;
     // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: errors.notABoardMember,
       });
     }
     // update board columns array

@@ -52,28 +52,11 @@
   }
 
   &__signup-btn {
-    display: inline-block;
-    background-color: #0065ff;
-    border: rem(1) solid #0065ff;
-    border-radius: rem(5);
-    line-height: 1.5;
-    padding: rem(14) rem(16);
-    transition: all 0.3s ease 0s;
-    @include adaptiveValue('font-size', 20, 14);
-
     @media (max-width: $tablet) {
       text-align: center;
       display: block;
       width: max-content;
       margin: 0 auto;
-    }
-
-    @media (any-hover: hover) {
-      &:hover {
-        background-color: #0747a6;
-        border-color: #0747a6;
-        box-shadow: #7a869a80 0 0 0 rem(3);
-      }
     }
   }
 

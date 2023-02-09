@@ -2,10 +2,20 @@ import Card from '../models/cardModel.js';
 import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
+import { errors } from '../helpers.js';
 
 async function createCard(req, res) {
   try {
-    const { userId, boardId, columnId, title, marks, participants, position } = req.body;
+    const { boardId, columnId, title, marks, participants, position } = req.body;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
     // create card
     const card = new Card({
       title,
@@ -19,7 +29,6 @@ async function createCard(req, res) {
     column.cards.push(savedCard._id);
     await column.save();
     // add card creation to card activities array
-    const user = await User.findById(userId);
     const activity = {
       userId,
       action: `${user.userName} создал(а) карточку ${title} в колонке ${column.title}`,
@@ -27,10 +36,29 @@ async function createCard(req, res) {
     savedCard.activities.push(activity);
     await savedCard.save();
     // add card creation to board activities array
-    const board = await Board.findById(boardId);
     board.activities.push(activity);
     await board.save();
     return res.status(200).json(savedCard);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function getCardById(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
+    const card = await Card.findById(cardId);
+    const column = await Column.findOne({ cards: card._id });
+    return res.status(200).json({ card, column: column.title });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -65,13 +93,14 @@ async function getAllCardsOnBoard(req, res) {
 
 async function updateCardTitleOrDescr(req, res) {
   try {
-    const { userId, boardId, cardId, title, description } = req.body;
+    const { boardId, cardId, title, description } = req.body;
+    const { userId } = req;
     // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: errors.notABoardMember,
       });
     }
     // update card
@@ -79,14 +108,11 @@ async function updateCardTitleOrDescr(req, res) {
     const updatedCard = await Card.findByIdAndUpdate(cardId, { title, description }, { new: true });
     // create activity
     let action = '';
-    if (title && !description) {
+    if (title) {
       action = `${user.userName} изменил(а) название карточки c ${card.title} на ${title}`;
     }
-    if (!title && description) {
+    if (description) {
       action = `${user.userName} изменил(а) описание карточки c ${card.description} на ${description}`;
-    }
-    if (title && description) {
-      action = `${user.userName} изменил(а) название карточки c ${card.title} на ${title}, описание карточки c ${card.description} на ${description}`;
     }
     const activity = {
       userId,
@@ -104,13 +130,14 @@ async function updateCardTitleOrDescr(req, res) {
 
 async function deleteCard(req, res) {
   try {
-    const { userId, boardId, cardId } = req.params;
+    const { boardId, cardId } = req.params;
+    const { userId } = req;
     // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
     if (!board.participants.includes(user._id)) {
       return res.status(403).json({
-        message: 'You are not a member of this board',
+        message: errors.notABoardMember,
       });
     }
     const card = await Card.findById(cardId);
@@ -127,10 +154,17 @@ async function deleteCard(req, res) {
     await Card.findByIdAndDelete(cardId);
     board.activities.push(activity);
     await board.save();
-    return res.status(200).json({ message: 'Card deleted' });
+    return res.status(200).json({ message: 'Карточка удалена' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 }
 
-export { createCard, updateCardTitleOrDescr, deleteCard, getAllCards, getAllCardsOnBoard };
+export {
+  createCard,
+  updateCardTitleOrDescr,
+  deleteCard,
+  getAllCards,
+  getAllCardsOnBoard,
+  getCardById,
+};
