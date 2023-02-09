@@ -1,10 +1,11 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/redux';
 import { updateColumns } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
-import { AddButtonsOnBoardText, boardId, userId } from '../../const/const';
+import { AddButtonsOnBoardText } from '../../const/const';
 import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
 import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import Column from '../../Components/Column';
@@ -16,10 +17,14 @@ import {
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
 } from '../../store/reducers/board/board.api';
+// import { RootState } from '../../store/rootReducer';
 
 function Board() {
+  const location = useLocation();
+  const boardId = location.pathname.split('/')[2];
   const { data: boardDetails } = useGetBoardByIDQuery(boardId);
   const { data: columnsData } = useGetColumnsQuery(boardId);
+  // const { userData } = useAppSelector((state: RootState) => state.USER)
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
@@ -45,7 +50,7 @@ function Board() {
       });
       if (resultColumn) {
         dispatch(updateColumns(newColumns));
-        updateCardOrder({ userId, boardId, data: resultColumn });
+        updateCardOrder({ boardId, data: resultColumn });
         if (errorUpdateCardOrder) {
           throw new Error('Ошибка изменения порядка карточек');
         }
@@ -65,7 +70,7 @@ function Board() {
       }
     }
     if (dragColumn && dropColumn && columnsData) {
-      const {newOrderColumn} = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
+      const { newOrderColumn } = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
       updateOrderColumn(newOrderColumn);
     }
 
@@ -75,7 +80,7 @@ function Board() {
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
-    if (userId && boardDetails._id && title) {
+    if (boardDetails._id && title) {
       createColumn({ boardId: boardDetails._id, title }).unwrap();
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
@@ -120,7 +125,7 @@ function Board() {
         </div>
 
         <ul className="board__columns">
-          {columnsData && 
+          {columnsData &&
             columnsData.map((column) => (
               <Column
                 key={column._id}

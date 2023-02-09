@@ -71,7 +71,6 @@ export const boardApi = createApi({
     }),
     updateCardOrder: build.mutation({
       query: (body: {
-        userId: string;
         boardId: string;
         data: { columnId: string; columnCards: string[] }[];
       }) => ({

@@ -19,7 +19,7 @@ export enum APPRoute {
   main = '/',
   login = '/login',
   signUp = '/signup',
-  board = '/board',
+  board = '/boards/:boardId',
   profile = '/profile',
   card = '/cards/:boardId/:cardId',
 }
@@ -38,5 +38,5 @@ export enum ServerDetails {
 }
 
   // временные константы
-export const boardId = '63e498d32543db99498cc044';
-export const userId = '63e492352543db99498cbdf0';
+// export const boardId = '63e498d32543db99498cc044';
+// export const userId = '63e492352543db99498cbdf0';

@@ -18,7 +18,7 @@ import {
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
-import { AddButtonsOnBoardText, userId } from '../../const/const';
+import { AddButtonsOnBoardText } from '../../const/const';
 import { getCardsOfColumn } from './utils';
 
 type ColumnProps = {
@@ -127,7 +127,7 @@ function Column({
   };
   const updateTitleOnServerAndStore = async () => {
     setIsEditTitle(false);
-    if (userId && boardId && title)
+    if (boardId && title)
       await updateTitleColumn({ boardId, columnId: column._id, title }).unwrap();
     if (errorUpdateTitleColumn) {
       throw new Error('Ошибка изменения заголовка списка');
