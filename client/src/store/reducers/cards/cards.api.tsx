@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ICard } from '../../../types/card';
+import { ICard, IUser } from '../../../types/card';
 
 type TGetCardByIdQueryArgs = {
   boardId: string;
@@ -18,6 +18,11 @@ type TUpdateCardTitleOrDescrQueryArgs = {
   description?: string;
 };
 
+type TGetCardParticipantsQueryArgs = {
+  boardId: string;
+  cardId: string;
+};
+
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
   baseQuery: fetchBaseQuery({
@@ -28,7 +33,7 @@ export const cardsApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Card'],
+  tagTypes: ['Card', 'Participants'],
   endpoints: (builder) => ({
     getCardById: builder.query<TGetCardByIdQueryResponse, TGetCardByIdQueryArgs>({
       query: ({ boardId, cardId }) => ({
@@ -44,7 +49,13 @@ export const cardsApi = createApi({
       }),
       invalidatesTags: ['Card'],
     }),
+    getCardParticipants: builder.query<IUser[], TGetCardParticipantsQueryArgs>({
+      query: ({ boardId, cardId }) => ({
+        url: `/${boardId}/${cardId}/participants`
+      }), 
+      providesTags: ['Participants'],
+    }),
   }),
 });
 
-export const { useGetCardByIdQuery, useUpdateCardTitleOrDescrMutation } = cardsApi;
+export const { useGetCardByIdQuery, useUpdateCardTitleOrDescrMutation, useGetCardParticipantsQuery } = cardsApi;

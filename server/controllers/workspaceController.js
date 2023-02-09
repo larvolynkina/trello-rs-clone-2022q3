@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import Workspace from '../models/workspaceModel.js';
 import User from '../models/userModel.js';
+import Board from '../models/boardModel.js';
 import { chooseRandomColor, errors } from '../helpers.js';
 
 async function createWorkspace(req, res) {
@@ -90,4 +91,43 @@ async function deleteWorkspace(req, res) {
   }
 }
 
-export { createWorkspace, updateWorkspaceTextFields, deleteWorkspace };
+async function getAllUsersWorkspaces(req, res) {
+  try {
+    const { userId } = req;
+    const user = await User.findById(userId);
+    const query = [
+      { $match: { _id: { $in: user.workspaces } } },
+      { $addFields: { __order: { $indexOfArray: [user.workspaces, '$_id'] } } },
+      { $sort: { __order: 1 } },
+      {
+        $project: {
+          __order: 0,
+        },
+      },
+      {
+        $lookup: {
+          from: 'boards',
+          localField: 'boards',
+          foreignField: '_id',
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                title: 1,
+                backgroundColor: 1,
+                backgroundImage: 1,
+              },
+            },
+          ],
+          as: 'boards',
+        },
+      },
+    ];
+    const allWorkspaces = await Workspace.aggregate(query);
+    return res.status(200).json(allWorkspaces);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+export { createWorkspace, updateWorkspaceTextFields, deleteWorkspace, getAllUsersWorkspaces };

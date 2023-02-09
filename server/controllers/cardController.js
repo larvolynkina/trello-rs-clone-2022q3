@@ -160,6 +160,36 @@ async function deleteCard(req, res) {
   }
 }
 
+async function getCardParticipants(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { userId } = req;
+    // check if user is member of this board
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    if (!board.participants.includes(user._id)) {
+      return res.status(403).json({
+        message: errors.notABoardMember,
+      });
+    }
+    const card = await Card.findById(cardId);
+    const query = [
+      { $match: { _id: { $in: card.participants } } },
+      { $addFields: { __order: { $indexOfArray: [card.participants, '$_id'] } } },
+      { $sort: { __order: 1 } },
+      {
+        $project: {
+          __order: 0,
+        },
+      },
+    ];
+    const allParticipants = await User.aggregate(query);
+    return res.status(200).json(allParticipants);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createCard,
   updateCardTitleOrDescr,
@@ -167,4 +197,5 @@ export {
   getAllCards,
   getAllCardsOnBoard,
   getCardById,
+  getCardParticipants,
 };
