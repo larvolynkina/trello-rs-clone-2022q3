@@ -4,19 +4,19 @@ import './addCardOrColumnForm.scss';
 type AddCardOrColumnFormProps = {
   textButton: string;
   placeholderTextarea: string;
-  saveCard: (title: string) => void;
+  saveObject: (title: string) => void;
   setIsOpenAddForm: (b: boolean) => void;
 }
 function AddCardOrColumnForm({
   textButton,
   placeholderTextarea,
-  saveCard,
+  saveObject,
   setIsOpenAddForm,
 }: AddCardOrColumnFormProps) {
   const [text, setText] = useState('');
 
   const handleClickAddButton = () => {
-    saveCard(text);
+    saveObject(text);
     setText('');
   };
   const handleChangeTextarea = (e: ChangeEvent<HTMLTextAreaElement>) => {

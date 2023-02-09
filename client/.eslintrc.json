@@ -36,8 +36,8 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "warn",
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
-    "react/jsx-props-no-spreading": "off",
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    "react/jsx-props-no-spreading": "off"
   },
   "settings": {
     "import/resolver": {
