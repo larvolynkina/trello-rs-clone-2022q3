@@ -9,21 +9,21 @@ import {
   useRef,
 } from 'react';
 
-import { RootState } from '../../store/rootReducer';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { changeTitleColumn, addCardInColumn } from '../../store/reducers/board/boardState';
+import {
+  useCreateCardMutation,
+  useGetCardsOnBoardQuery,
+  useUpdateTitleColumnMutation,
+} from '../../store/reducers/board/board.api';
 
 import ColumnCard from '../ColumnCard';
 import AddCardOrColumnForm from '../AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, userId } from '../../const/const';
-import { createCard, updateTitleColumn } from '../../API/board';
 import { getCardsOfColumn } from './utils';
 
 type ColumnProps = {
   boardId: string;
   column: IColumn;
-  cardIds: string[];
   dragCard: ICard | null;
   setDragCard: (card: ICard) => void;
   setDropCard: (card: ICard) => void;
@@ -37,7 +37,6 @@ type ColumnProps = {
 function Column({
   boardId,
   column,
-  cardIds,
   dragCard,
   setDragCard,
   setDropCard,
@@ -48,8 +47,9 @@ function Column({
   setDragColum,
   setDropColum,
 }: ColumnProps) {
-  const { cardsData } = useAppSelector((state: RootState) => state.BOARD);
-  const dispatch = useAppDispatch();
+  const { data: cardsData } = useGetCardsOnBoardQuery(boardId);
+  const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
+  const [updateTitleColumn, { isError: errorUpdateTitleColumn }] = useUpdateTitleColumnMutation();
   const [title, setTitle] = useState(column.title);
   const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
@@ -59,7 +59,9 @@ function Column({
   const [columnWithStyleID, setColumnWithStyleID] = useState<string>('');
 
   useEffect(() => {
-    setCards(getCardsOfColumn(cardIds, cardsData));
+    if (cardsData) {
+      setCards(getCardsOfColumn(column.cards, cardsData));
+    }
   }, [cardsData, column]);
 
   const handleDragStartCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
@@ -114,24 +116,22 @@ function Column({
     }
   };
 
-  const saveCard = (cardTitle: string) => {
-    if (cardTitle) {
-      createCard(userId, boardId, column._id, cardTitle).then((res) => {
-        if (!(res instanceof Error)) {
-          dispatch(addCardInColumn({ card: res, id: column._id }));
-        }
-      });
-    }
+  const saveCard = async (cardTitle: string) => {
     setIsOpenAddForm(false);
+    if (cardTitle) {
+      await createCard({ userId, boardId, columnId: column._id, title: cardTitle }).unwrap();
+      if (errorCreateCard) {
+        throw new Error('Ошибка создания карточки');
+      }
+    }
   };
-  const updateTitleOnServerAndStore = () => {
+  const updateTitleOnServerAndStore = async () => {
     setIsEditTitle(false);
     if (userId && boardId && title)
-      updateTitleColumn(userId, boardId, column._id, title).then((res) => {
-        if (!(res instanceof Error)) {
-          dispatch(changeTitleColumn({ id: column._id, title }));
-        }
-      });
+      await updateTitleColumn({ userId, boardId, columnId: column._id, title }).unwrap();
+    if (errorUpdateTitleColumn) {
+      throw new Error('Ошибка изменения заголовка списка');
+    }
   };
   const handleClickTitleWrapper = () => {
     setIsEditTitle(true);
@@ -196,17 +196,18 @@ function Column({
         </button>
       </div>
       <ul className="column__cards">
-        {cards.map((card) => (
-          <ColumnCard
-            key={card._id}
-            card={card}
-            onDragStart={handleDragStartCard}
-            onDragOver={handleDragOverCard}
-            onDrop={handleDropCard}
-            onDragLeave={handleDragLeaveCard}
-            cardWithStyleID={cardWithStyleID}
-          />
-        ))}
+        {cards &&
+          cards.map((card) => (
+            <ColumnCard
+              key={card._id}
+              card={card}
+              onDragStart={handleDragStartCard}
+              onDragOver={handleDragOverCard}
+              onDrop={handleDropCard}
+              onDragLeave={handleDragLeaveCard}
+              cardWithStyleID={cardWithStyleID}
+            />
+          ))}
       </ul>
 
       {isOpenAddForm && (

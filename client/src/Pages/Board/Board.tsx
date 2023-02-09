@@ -2,29 +2,27 @@ import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent } from 'react';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { RootState } from '../../store/rootReducer';
-import { updateCardInColumn, updateColumns } from '../../store/reducers/board/boardState';
+import { updateColumns } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText, boardId, userId } from '../../const/const';
-import {
-  createColumn,
-  getCardsOnBoard,
-  updateCardOrder,
-  updateColumnOrder,
-} from '../../API/board';
-import {
-  getColumnsByIds,
-  getTranspositionColumnCards,
-  getTranspositionColumns,
-} from './utils';
+import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
 import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
 import Column from '../../Components/Column';
 import ColumnMenu from '../../Components/ColumnMenu/ColumnMenu';
-import { useGetColumnsQuery } from '../../store/reducers/board/board.api';
+import {
+  useGetColumnsQuery,
+  useCreateColumnMutation,
+  useUpdateColumnOrderMutation,
+  useUpdateCardOrderMutation,
+} from '../../store/reducers/board/board.api';
 
 function Board() {
-  const { boardData, columnsData } = useAppSelector((state: RootState) => state.BOARD);
-  const { data: columns } = useGetColumnsQuery(boardData._id);
+  const { boardData } = useAppSelector((state: RootState) => state.BOARD);
+  const { data: columnsData } = useGetColumnsQuery(boardData._id);
+  const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
+  const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
+  const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
@@ -37,7 +35,7 @@ function Board() {
   const [columnMenuPosition, setColumnMenuPosition] = useState<number>(0);
 
   useEffect(() => {
-    if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard) {
+    if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
       const { newColumns, resultColumn } = getTranspositionColumnCards({
         dragColumnFromCard,
         dropColumnFromCard,
@@ -47,11 +45,10 @@ function Board() {
       });
       if (resultColumn) {
         dispatch(updateColumns(newColumns));
-        updateCardOrder(userId, boardId, resultColumn).then((res) => {
-          if (!(res instanceof Error)) {
-            dispatch(updateColumns(newColumns));
-          }
-        });
+        updateCardOrder({userId, boardId, data: resultColumn})
+        if (errorUpdateCardOrder) {
+          throw new Error('Ошибка изменения порядка карточек');
+        }
       }
       setDragColumnFromCard(null);
       setDropColumnFromCard(null);
@@ -60,40 +57,39 @@ function Board() {
     }
   }, [dropColumnFromCard, dropCard]);
 
-  useEffect(() => {
-    if (boardData._id) {
-      if (columns) {
-        dispatch(updateColumns(columns));
-      }
-      getCardsOnBoard(boardData._id).then((res) => {
-        if (!(res instanceof Error)) {
-          dispatch(updateCardInColumn(res));
-        }
-      });
-    }
-  }, [columns]);
+  // useEffect(() => {
+  //   if (boardData._id) {
+  //     if (cardsData) {
+  //       dispatch(updateCardInColumn(cardsData));
+  //     }
+  //   }
+  // }, [ cardsData]);
 
   useEffect(() => {
-    if (dragColumn && dropColumn) {
-      const newOrderColumn = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
-      updateColumnOrder(userId, boardId, newOrderColumn).then((res) => {
-        if (!(res instanceof Error)) {
-          dispatch(updateColumns(getColumnsByIds(res, columns)));
-        }
-      });
-      setDragColum(null);
-      setDropColum(null);
+    async function updateOrderColumn(newOrderColumn: string[]) {
+      await updateColumnOrder({ userId, boardId, data: newOrderColumn }).unwrap();
+      if (errorUpdateColumnOrder) {
+        throw new Error('Ошибка изменения порядка списков');
+      }
     }
+    if (dragColumn && dropColumn && columnsData) {
+      console.log(columnsData);
+      const newOrderColumn = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
+      console.log(newOrderColumn);
+      updateOrderColumn(newOrderColumn);
+    }
+
+    setDragColum(null);
+    setDropColum(null);
   }, [dropColumn]);
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
     if (userId && boardData._id && title) {
-      createColumn(userId, boardData._id, title).then((res) => {
-        if (!(res instanceof Error)) {
-          dispatch(updateColumns([...columnsData, res]));
-        }
-      });
+      createColumn({ userId, boardId: boardData._id, title }).unwrap();
+      if (errorCreateColumn) {
+        throw new Error('Ошибка создания колонки');
+      }
     }
   };
   const handleOpenColumnMenu = (e: MouseEvent<HTMLButtonElement>) => {
@@ -134,23 +130,23 @@ function Board() {
         </div>
 
         <ul className="board__columns">
-          {columnsData.map((column) => (
-            <Column
-              key={column._id}
-              boardId={boardData._id}
-              column={column}
-              cardIds={column.cards}
-              setDragCard={setDragCard}
-              setDropCard={setDropCard}
-              setDragColumnFromCard={setDragColumnFromCard}
-              dragCard={dragCard}
-              setDropColumnFromCard={setDropColumnFromCard}
-              openColumnMenu={handleOpenColumnMenu}
-              dragColumn={dragColumn}
-              setDragColum={setDragColum}
-              setDropColum={setDropColum}
-            />
-          ))}
+          {columnsData &&
+            columnsData.map((column) => (
+              <Column
+                key={column._id}
+                boardId={boardData._id}
+                column={column}
+                setDragCard={setDragCard}
+                setDropCard={setDropCard}
+                setDragColumnFromCard={setDragColumnFromCard}
+                dragCard={dragCard}
+                setDropColumnFromCard={setDropColumnFromCard}
+                openColumnMenu={handleOpenColumnMenu}
+                dragColumn={dragColumn}
+                setDragColum={setDragColum}
+                setDropColum={setDropColum}
+              />
+            ))}
           <div className="board__last-column">
             {!isOpenAddForm && (
               <button
@@ -158,7 +154,7 @@ function Board() {
                 className="board__add-column"
                 onClick={() => setIsOpenAddForm(true)}
               >
-                {columnsData.length === 0
+                {columnsData && columnsData.length === 0
                   ? AddButtonsOnBoardText.addColumn
                   : AddButtonsOnBoardText.addOneMoreColumn}
               </button>

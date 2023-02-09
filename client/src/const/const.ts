@@ -24,5 +24,5 @@ export enum ServerDetails {
 }
 
   // временные константы
-export const boardId = '63df5189de8296a5fef0b011';
-export const userId = '63df5113de8296a5fef0b00a';
+export const boardId = '63e46b00bb3fa04be2c6e781';
+export const userId = '63e46a9abb3fa04be2c6e77a';
