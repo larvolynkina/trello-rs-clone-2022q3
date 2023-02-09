@@ -41,6 +41,7 @@ function Board() {
   const [isOpenCardMenu, setIsOpenCardMenu] = useState(false);
   const [columnMenuPosition, setColumnMenuPosition] = useState<number>(0);
   const [cardMenuPosition, setCardMenuPosition] = useState({ x: 0, y: 0 });
+  const [textFromCard, setTextFromCard] = useState('');
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -90,22 +91,29 @@ function Board() {
       }
     }
   };
-  // TODO, проблема с местоположением карадаша
+
   const handleOpenCardMenu = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(e.currentTarget.localName);
-    const x =
-      e.currentTarget.localName === 'li'
-        ? e.currentTarget.offsetLeft
-        : e.currentTarget.offsetLeft + 69;
-    const y =
-      e.currentTarget.localName === 'li'
-        ? e.currentTarget.offsetTop
-        : e.currentTarget.offsetTop + 5;
-    console.log(e);
+    let x = 0;
+    let y = 0;
+    if (e.currentTarget.localName === 'li') {
+      x = e.currentTarget.offsetLeft;
+      y = e.currentTarget.offsetTop;
+      if (e.currentTarget.firstChild?.textContent) {
+        setTextFromCard(e.currentTarget.firstChild.textContent);
+      }
+    } else if (e.currentTarget.parentElement) {
+      x = e.currentTarget.parentElement.offsetLeft;
+      y = e.currentTarget.parentElement.offsetTop;
+      if (e.currentTarget.parentElement?.firstChild?.textContent) {
+        setTextFromCard(e.currentTarget.parentElement.firstChild.textContent);
+      }
+    }
+    document.body.style.overflow = 'hidden';
     setCardMenuPosition({ x, y });
     setIsOpenCardMenu(true);
+    setIsOpenColumnMenu(false);
   };
   const handleOpenColumnMenu = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -118,6 +126,8 @@ function Board() {
   const handleClickBoard = () => {
     setIsOpenColumnMenu(false);
     setIsOpenCardMenu(false);
+    setTextFromCard('');
+    document.body.style.overflow = '';
   };
   const handleKeyUpBoard = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
@@ -192,15 +202,8 @@ function Board() {
             <ColumnMenu onClose={handleCloseColumnMenu} />
           </div>
         )}
-        {isOpenCardMenu && (
-          <div
-            className="board__card-menu"
-            style={{ left: cardMenuPosition.x, top: cardMenuPosition.y }}
-          >
-            <CardMenu />
-          </div>
-        )}
       </div>
+      {isOpenCardMenu && <CardMenu text={textFromCard} position={cardMenuPosition} />}
     </main>
   );
 }
