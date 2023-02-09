@@ -7,6 +7,7 @@ import { LoginData, SignUpData } from '../types/userData';
 
 export const emailInputData: LoginDataInputTypeWithoutId = {
   name: 'email',
+  type: 'email',
   validation: {
     required: 'Поле обязательно к заполнению',
     pattern: {
@@ -19,6 +20,7 @@ export const emailInputData: LoginDataInputTypeWithoutId = {
 
 export const passwordInputData: LoginDataInputTypeWithoutId = {
   name: 'password',
+  type: 'password',
   validation: {
     required: 'Поле обязательно к заполнению',
     minLength: {
@@ -35,6 +37,7 @@ export const passwordInputData: LoginDataInputTypeWithoutId = {
 
 export const userNameInputData: SignUpDataInputTypeWithoutId = {
   name: 'userName',
+  type: 'text',
   validation: {
     required: 'Поле обязательно к заполнению',
     minLength: {
