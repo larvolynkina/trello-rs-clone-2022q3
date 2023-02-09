@@ -1,0 +1,46 @@
+.column-card {
+  border-radius: 3px;
+  background-color: #ffff;
+  padding: 7px;
+  line-height: 150%;
+  cursor: pointer;
+  box-shadow: 0 1px 0 #091e4240;
+  transition: all 0.3s;
+  position: relative;
+
+  &--insert {
+    box-shadow: 0 4px brown;
+  }
+
+  &__input {
+    resize: none;
+    
+  }
+
+  &__pensil {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    right: 5px;
+    top: 5px;
+    padding: 5px;
+    background-image: url('./icon-pensil.png');
+    background-repeat: no-repeat;
+    background-position: 50% 38%;
+    border-radius: 3px;
+    background-color: rgba(240, 240, 240, 0.8);
+    transition: all 0.3s;
+    font-size: 0;
+    opacity: 0;
+
+    &:hover {
+      background-color: rgb(226, 226, 226);
+    }
+  }
+  &:hover {
+    background-color: rgb(240, 240, 240);
+  }
+  &:hover &__pensil {
+    opacity: 1;
+  }
+}

@@ -15,8 +15,8 @@ import {
   useUpdateTitleColumnMutation,
 } from '../../store/reducers/board/board.api';
 
-import ColumnCard from '../ColumnCard';
-import AddCardOrColumnForm from '../AddCardOrColumnForm';
+import ColumnCard from './ColumnCard';
+import AddCardOrColumnForm from './AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
 import { getCardsOfColumn } from './utils';
@@ -29,10 +29,12 @@ type ColumnProps = {
   setDropCard: (card: ICard) => void;
   setDragColumnFromCard: (column: IColumn) => void;
   setDropColumnFromCard: (column: IColumn) => void;
-  openColumnMenu: (e: MouseEvent<HTMLButtonElement>, column: IColumn) => void;
+  openColumnMenu: (e: MouseEvent<HTMLButtonElement>) => void;
   dragColumn: IColumn | null;
   setDragColum: (column: IColumn | null) => void;
   setDropColum: (column: IColumn | null) => void;
+  openCardMenu: (e: MouseEvent<HTMLElement>) => void;
+  isOpenCardMenu: boolean;
 };
 function Column({
   boardId,
@@ -46,6 +48,8 @@ function Column({
   dragColumn,
   setDragColum,
   setDropColum,
+  openCardMenu,
+  isOpenCardMenu,
 }: ColumnProps) {
   const { data: cardsData } = useGetCardsOnBoardQuery(boardId);
   const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
@@ -119,7 +123,7 @@ function Column({
   const saveCard = async (cardTitle: string) => {
     setIsOpenAddForm(false);
     if (cardTitle) {
-      await createCard({ boardId, columnId: column._id, title: cardTitle }).unwrap();
+      await createCard({ boardId, columnId: column._id, title: cardTitle.trim() }).unwrap();
       if (errorCreateCard) {
         throw new Error('Ошибка создания карточки');
       }
@@ -128,7 +132,7 @@ function Column({
   const updateTitleOnServerAndStore = async () => {
     setIsEditTitle(false);
     if (boardId && title)
-      await updateTitleColumn({ boardId, columnId: column._id, title }).unwrap();
+      await updateTitleColumn({ boardId, columnId: column._id, title: title.trim() }).unwrap();
     if (errorUpdateTitleColumn) {
       throw new Error('Ошибка изменения заголовка списка');
     }
@@ -190,7 +194,7 @@ function Column({
         <button
           className="column__actions"
           type="button"
-          onClick={(e) => openColumnMenu(e, column)}
+          onClick={(e) => openColumnMenu(e)}
         >
           ...
         </button>
@@ -206,6 +210,8 @@ function Column({
               onDrop={handleDropCard}
               onDragLeave={handleDragLeaveCard}
               cardWithStyleID={cardWithStyleID}
+              openCardMenu={openCardMenu}
+              isOpenCardMenu={isOpenCardMenu}
             />
           ))}
       </ul>

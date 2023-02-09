@@ -7,9 +7,9 @@ import { updateColumns } from '../../store/reducers/board/boardState';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
 import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
-import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
+import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
-import ColumnMenu from '../../Components/ColumnMenu/ColumnMenu';
+import ColumnMenu from './ColumnMenu/ColumnMenu';
 import {
   useGetColumnsQuery,
   useCreateColumnMutation,
@@ -17,6 +17,7 @@ import {
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
 } from '../../store/reducers/board/board.api';
+import CardMenu from './CardMenu';
 // import { RootState } from '../../store/rootReducer';
 
 function Board() {
@@ -37,7 +38,9 @@ function Board() {
   const [dropColumn, setDropColum] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
   const [isOpenColumnMenu, setIsOpenColumnMenu] = useState(false);
+  const [isOpenCardMenu, setIsOpenCardMenu] = useState(false);
   const [columnMenuPosition, setColumnMenuPosition] = useState<number>(0);
+  const [cardMenuPosition, setCardMenuPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -81,11 +84,28 @@ function Board() {
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
     if (boardDetails._id && title) {
-      createColumn({ boardId: boardDetails._id, title }).unwrap();
+      createColumn({ boardId: boardDetails._id, title: title.trim() }).unwrap();
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
       }
     }
+  };
+  // TODO, проблема с местоположением карадаша
+  const handleOpenCardMenu = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(e.currentTarget.localName);
+    const x =
+      e.currentTarget.localName === 'li'
+        ? e.currentTarget.offsetLeft
+        : e.currentTarget.offsetLeft + 69;
+    const y =
+      e.currentTarget.localName === 'li'
+        ? e.currentTarget.offsetTop
+        : e.currentTarget.offsetTop + 5;
+    console.log(e);
+    setCardMenuPosition({ x, y });
+    setIsOpenCardMenu(true);
   };
   const handleOpenColumnMenu = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -97,6 +117,7 @@ function Board() {
   };
   const handleClickBoard = () => {
     setIsOpenColumnMenu(false);
+    setIsOpenCardMenu(false);
   };
   const handleKeyUpBoard = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
@@ -140,6 +161,8 @@ function Board() {
                 dragColumn={dragColumn}
                 setDragColum={setDragColum}
                 setDropColum={setDropColum}
+                openCardMenu={handleOpenCardMenu}
+                isOpenCardMenu={isOpenCardMenu}
               />
             ))}
           <div className="board__last-column">
@@ -167,6 +190,14 @@ function Board() {
         {isOpenColumnMenu && (
           <div className="board__column-menu" style={{ left: columnMenuPosition }}>
             <ColumnMenu onClose={handleCloseColumnMenu} />
+          </div>
+        )}
+        {isOpenCardMenu && (
+          <div
+            className="board__card-menu"
+            style={{ left: cardMenuPosition.x, top: cardMenuPosition.y }}
+          >
+            <CardMenu />
           </div>
         )}
       </div>
