@@ -34,6 +34,7 @@ type ColumnProps = {
   setDragColum: (column: IColumn | null) => void;
   setDropColum: (column: IColumn | null) => void;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
+  setIdOpenedColumn: ({boardId, columnId}: { boardId: string; columnId: string }) => void;
 };
 function Column({
   boardId,
@@ -48,6 +49,7 @@ function Column({
   setDragColum,
   setDropColum,
   openCardMenu,
+  setIdOpenedColumn,
 }: ColumnProps) {
   const { data: cardsData } = useGetCardsOnBoardQuery(boardId);
   const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
@@ -152,6 +154,10 @@ function Column({
   const handleDragLeaveColumn = () => {
     setColumnWithStyleID('');
   };
+  const handleOpenMenu = (e: MouseEvent<HTMLButtonElement>) => {
+    openColumnMenu(e);
+    setIdOpenedColumn({boardId, columnId: column._id});
+  };
   return (
     <li
       draggable
@@ -188,11 +194,7 @@ function Column({
           onKeyUp={(e) => handleTitleKeyUp(e)}
           onBlur={updateTitleOnServerAndStore}
         />
-        <button
-          className="column__actions"
-          type="button"
-          onClick={(e) => openColumnMenu(e)}
-        >
+        <button className="column__actions" type="button" onClick={handleOpenMenu}>
           ...
         </button>
       </div>

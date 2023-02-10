@@ -9,7 +9,6 @@ import { AddButtonsOnBoardText } from '../../const/const';
 import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
-import ColumnMenu from './ColumnMenu/ColumnMenu';
 import {
   useGetColumnsQuery,
   useCreateColumnMutation,
@@ -18,6 +17,7 @@ import {
   useGetBoardByIDQuery,
 } from '../../store/reducers/board/board.api';
 import CardMenu from './CardMenu';
+import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
 // import { RootState } from '../../store/rootReducer';
 
 function Board() {
@@ -42,6 +42,7 @@ function Board() {
   const [columnMenuPosition, setColumnMenuPosition] = useState<number>(0);
   const [cardMenuPosition, setCardMenuPosition] = useState({ x: 0, y: 0 });
   const [textFromCard, setTextFromCard] = useState('');
+  const [idOpenedColumn, setIdOpenedColumn] = useState({boardId, columnId: ''});
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -176,6 +177,7 @@ function Board() {
                 setDragColum={setDragColum}
                 setDropColum={setDropColum}
                 openCardMenu={handleOpenCardMenu}
+                setIdOpenedColumn={setIdOpenedColumn}
               />
             ))}
           <div className="board__last-column">
@@ -202,7 +204,7 @@ function Board() {
         </ul>
         {isOpenColumnMenu && (
           <div className="board__column-menu" style={{ left: columnMenuPosition }}>
-            <ColumnMenu onClose={handleCloseColumnMenu} />
+            <ColumnMenu onClose={handleCloseColumnMenu} idOpenedColumn={idOpenedColumn} />
           </div>
         )}
       </div>

@@ -1,9 +1,22 @@
 import './columnMenu.scss';
+import { useDeleteColumnMutation } from '../../../store/reducers/board/board.api';
 
 type ColumnMenuProps = {
   onClose: () => void;
+  idOpenedColumn: {boardId: string, columnId: string};
 };
-function ColumnMenu({ onClose }: ColumnMenuProps) {
+function ColumnMenu({ onClose, idOpenedColumn }: ColumnMenuProps) {
+  const [deleteColumn, { isError: errorDeleteColumn }] = useDeleteColumnMutation();
+
+  async function asyncDelColumn(idObj: {boardId: string, columnId: string}) {
+    await deleteColumn(idObj);
+    if (errorDeleteColumn) throw new Error('Ошибка удаления списка');
+  }
+
+  const handleDeleteColumn = () => {
+    asyncDelColumn(idOpenedColumn);
+  };
+
   return (
     <ul className="column-menu">
       <div className="column-menu__header">
@@ -22,7 +35,11 @@ function ColumnMenu({ onClose }: ColumnMenuProps) {
         <li className="column-menu__item">Архивировать все карточки списка...</li>
       </ul>
       <ul className="column-menu__group">
-        <li className="column-menu__item">Архивировать список</li>
+        <li className="column-menu__item column-menu__item--del">
+          <button className="column-menu__button" type="button" onClick={handleDeleteColumn}>
+            Удалить список
+          </button>
+        </li>
       </ul>
     </ul>
   );

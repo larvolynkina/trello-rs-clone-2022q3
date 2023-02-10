@@ -52,6 +52,13 @@ export const boardApi = createApi({
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
+    deleteColumn: build.mutation({
+      query: (ids: {boardId: string, columnId: string}) => ({
+        url: `/columns/${ids.boardId}/${ids.columnId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+    }),
     getCardsOnBoard: build.query<ICard[], string>({
       query: (boardId: string) => ({
         url: `/cards/${boardId}`,
@@ -92,4 +99,5 @@ export const {
   useUpdateTitleColumnMutation,
   useUpdateColumnOrderMutation,
   useUpdateCardOrderMutation,
+  useDeleteColumnMutation,
 } = boardApi;
