@@ -1,5 +1,6 @@
 import UserNameForm from './UserNameForm';
 import './ProfileForm.scss';
+import ChangePasswordForm from './ChangePasswordForm';
 
 function ProfileForm() {
   return (
@@ -12,6 +13,10 @@ function ProfileForm() {
         <hr className="profile-form__separator" />
 
         <UserNameForm />
+
+        <hr className="profile-form__separator" />
+
+        <ChangePasswordForm />
       </div>
     </div>
   );

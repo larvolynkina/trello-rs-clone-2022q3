@@ -29,3 +29,8 @@ export type SignUpData = {
 export type NewUserName = {
   newUserName: string;
 };
+
+export type ChangePasswordData = {
+  currentPassword: string;
+  newPassword: string;
+};

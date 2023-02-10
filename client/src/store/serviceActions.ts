@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { APIRoute, AuthorizationStatus, NameSpace } from '../const/const';
 import { dropToken, saveToken } from '../services/token';
-import { User, LoginData, SignUpData, NewUserName } from '../types/userData';
+import { User, LoginData, SignUpData, NewUserName, ChangePasswordData } from '../types/userData';
 import {
   loadUserData,
   removeUserData,
@@ -94,7 +94,7 @@ export const logoutAction = createAppAsyncThunk(
 );
 
 export const changeUserNameAction = createAppAsyncThunk(
-  `${NameSpace.user}/changeName`,
+  `${NameSpace.user}/changeUserNameAction`,
   async (newName: NewUserName, { dispatch, extra: api }) => {
     try {
       dispatch(setIsLoadingUserData(true));
@@ -103,6 +103,25 @@ export const changeUserNameAction = createAppAsyncThunk(
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));
       toast.success('Имя пользователя изменено.');
+    } catch (err) {
+      if (axios.isAxiosError<ErrorMessage>(err)) {
+        const message = err.response?.data.message || UNKNOWN_ERROR;
+        toast.error(message);
+      }
+      dispatch(setIsLoadingUserData(false));
+    }
+  },
+);
+
+export const changeUserPasswordAction = createAppAsyncThunk(
+  `${NameSpace.user}/changeUserPasswordAction`,
+  async (passwordData: ChangePasswordData, { dispatch, getState, extra: api }) => {
+    try {
+      dispatch(setIsLoadingUserData(true));
+      const { userData } = getState().USER;
+      await api.patch<User>(`${APIRoute.users}/${userData?._id}`, passwordData);
+      dispatch(setIsLoadingUserData(false));
+      toast.success('Пароль успешно изменен!');
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
         const message = err.response?.data.message || UNKNOWN_ERROR;

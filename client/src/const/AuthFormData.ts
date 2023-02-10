@@ -5,50 +5,56 @@ import {
 } from '../types/AuthFormData';
 import { LoginData, SignUpData } from '../types/userData';
 
+export const emailValidation = {
+  required: 'Поле обязательно к заполнению',
+  pattern: {
+    value: /\S+@\S+\.\S+/,
+    message: 'Значение не соответствует формату эл. почты',
+  },
+};
+
 export const emailInputData: LoginDataInputTypeWithoutId = {
   name: 'email',
   type: 'email',
-  validation: {
-    required: 'Поле обязательно к заполнению',
-    pattern: {
-      value: /\S+@\S+\.\S+/,
-      message: 'Значение не соответствует формату эл. почты',
-    },
-  },
+  validation: emailValidation,
   placeholder: 'Укажите адрес электронной почты',
+};
+
+export const passwordValidation = {
+  required: 'Поле обязательно к заполнению',
+  minLength: {
+    value: 6,
+    message: 'Минимальная длина пароля 6 символов',
+  },
+  maxLength: {
+    value: 20,
+    message: 'Максимальная длина пароля 20 символов',
+  },
 };
 
 export const passwordInputData: LoginDataInputTypeWithoutId = {
   name: 'password',
   type: 'password',
-  validation: {
-    required: 'Поле обязательно к заполнению',
-    minLength: {
-      value: 6,
-      message: 'Минимальная длина пароля 6 символов',
-    },
-    maxLength: {
-      value: 20,
-      message: 'Максимальная длина пароля 20 символов',
-    },
-  },
+  validation: passwordValidation,
   placeholder: 'Введите пароль',
+};
+
+export const userNameValidation = {
+  required: 'Поле обязательно к заполнению',
+  minLength: {
+    value: 3,
+    message: 'Минимальная длина имени 3 символа',
+  },
+  maxLength: {
+    value: 20,
+    message: 'Максимальная длина имени 20 символов',
+  },
 };
 
 export const userNameInputData: SignUpDataInputTypeWithoutId = {
   name: 'userName',
   type: 'text',
-  validation: {
-    required: 'Поле обязательно к заполнению',
-    minLength: {
-      value: 3,
-      message: 'Минимальная длина имени 3 символа',
-    },
-    maxLength: {
-      value: 20,
-      message: 'Максимальная длина имени 20 символов',
-    },
-  },
+  validation: userNameValidation,
   placeholder: 'Укажите свое имя',
 };
 

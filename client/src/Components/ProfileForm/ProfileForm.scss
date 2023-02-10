@@ -2,6 +2,10 @@
 
 .profile-form {
   &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: rem(17);
+
     margin: 0 auto;
     max-width: rem(400);
     display: flex;
@@ -10,7 +14,7 @@
 
   &__title {
     margin-bottom: rem(28);
-    font-size: rem(32);
+    @include adaptiveValue('font-size', 32, 25);
     line-height: 1.1875;
     font-weight: 700;
     font-style: oblique;
@@ -21,6 +25,5 @@
     width: 100%;
     background-color: #dfe1e6;
     height: rem(2);
-    margin-bottom: rem(20);
   }
 }
