@@ -49,15 +49,23 @@
         }
     }
 
-    &__title-icon {
+    &__icon {
         position: absolute;
-        background-image: url('../../../public/assets/icon/card-title.svg');
         left: -40px;
         top: 5px;
         width: 24px;
         height: 24px;
         background-repeat: no-repeat;
         background-position: center center;
+
+        &--title {
+            background-image: url('../../../public/assets/icon/card-title.svg');
+        }
+
+        &--descr {
+            background-image: url('../../../public/assets/icon/card-description.svg');
+            top: 2px;
+        }
     }
 
     &__participants {
@@ -96,6 +104,19 @@
     &__description {
         font-weight: 500;
         margin-top: 30px;
+        position: relative;
+        margin-left: 40px;
+        h3 {
+            padding: 6px 0;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+
+    &__description-header {
+        display: flex;
+        gap: 20px;
+        align-items: center;
     }
 
     &__description-button {
@@ -131,13 +152,18 @@
         }
     }
 
+    &__description-btn-wrapper {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
     &__description-btn {
         border: none;
         border-radius: 3px;
         font-size: 14px;
         font-weight: 400;
         padding: 6px 12px;
-        margin-top: 30px;
 
 
         &--save {
@@ -150,6 +176,14 @@
         }
 
         &--cancel {
+
+            &:hover {
+                background-color: #091e4214;
+            }
+        }
+
+        &--edit {
+            background-color: #eaecf0;
 
             &:hover {
                 background-color: #091e4214;

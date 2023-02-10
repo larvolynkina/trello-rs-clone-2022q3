@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useUpdateCardTitleOrDescrMutation } from '../../store/reducers/cards/cards.api';
 
 interface DescriptionProps {
@@ -45,7 +45,19 @@ function Description({ description, boardId, cardId }: DescriptionProps) {
 
   return (
     <div className="card__description">
-      <h3>Описание</h3>
+      <span className="card__icon card__icon--descr" />
+      <div className="card__description-header">
+        <h3>Описание</h3>
+        {buttonText !== 'Добавить более подробное описание...' && buttonText && (
+          <button
+            type="button"
+            className="card__description-btn card__description-btn--edit"
+            onClick={onClickHandler}
+          >
+            Изменить
+          </button>
+        )}
+      </div>
 
       {!isEditing ? (
         <button onClick={onClickHandler} className="card__description-button" type="button">
@@ -64,7 +76,7 @@ function Description({ description, boardId, cardId }: DescriptionProps) {
               rows={5}
             />
           </div>
-          <div>
+          <div className="card__description-btn-wrapper">
             <button
               className="card__description-btn card__description-btn--save"
               type="button"
