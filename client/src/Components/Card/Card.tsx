@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Title from './Title';
 import Description from './Description';
 import Participants from './Participants';
 import BoardParticipantsModal from '../BoardParticipantsModal';
+import AsideList from './AsideList';
+import { asideAddButtons, asideActionButtons } from './helpers';
 import {
   useGetCardByIdQuery,
   useGetCardParticipantsQuery,
 } from '../../store/reducers/cards/cards.api';
 import { useGetBoardParticipantsQuery } from '../../store/reducers/board/board.api';
 import './Card.scss';
+import { useAppSelector, useAppDispatch } from '../../hooks/redux';
+import {
+  setBoardParticipantsModalClose,
+  setBoardParticipantsModalOpen,
+} from '../../store/reducers/cards/cardSlice';
 
 type ParamTypes = {
   boardId: string;
@@ -21,16 +27,18 @@ function Card() {
   const { data } = useGetCardByIdQuery({ boardId, cardId });
   const { data: cardParticipants } = useGetCardParticipantsQuery({ boardId, cardId });
   const { data: boardParticipants } = useGetBoardParticipantsQuery({ boardId });
-
-  const [boardParticipantsModalActive, setBoardParticipantsModalActive] = useState(false);
+  const dispatch = useAppDispatch();
+  const boardParticipantsModalActive = useAppSelector(
+    (state) => state.CARD.boardParticipantsModalActive,
+  );
 
   function closeBoardParticipantsModal() {
-    setBoardParticipantsModalActive(false);
+    dispatch(setBoardParticipantsModalClose());
   }
 
   function openBoardParticipantsModal() {
     setTimeout(() => {
-      setBoardParticipantsModalActive(true);
+      dispatch(setBoardParticipantsModalOpen());
     }, 0);
   }
 
@@ -44,7 +52,7 @@ function Card() {
           !targetParent.classList.contains('board-participants-modal__list') &&
           !targetParent.classList.contains('board-participants-modal__participant')
         ) {
-          setBoardParticipantsModalActive(false);
+          dispatch(setBoardParticipantsModalClose());
         }
       }
     }
@@ -55,13 +63,21 @@ function Card() {
       {data && (
         <div className="card">
           <Title title={data.card.title} boardId={boardId} cardId={cardId} column={data.column} />
-          {cardParticipants && cardParticipants.length > 0 && (
-            <Participants
-              participants={cardParticipants}
-              onClick={() => openBoardParticipantsModal()}
-            />
-          )}
-          <Description description={data.card.description} boardId={boardId} cardId={cardId} />
+          <div className="card__wrapper">
+            <div className="card__main">
+              {cardParticipants && cardParticipants.length > 0 && (
+                <Participants
+                  participants={cardParticipants}
+                  onClick={() => openBoardParticipantsModal()}
+                />
+              )}
+              <Description description={data.card.description} boardId={boardId} cardId={cardId} />
+            </div>
+            <aside className="card__aside">
+              <AsideList title="Добавить на карточку" buttons={asideAddButtons} />
+              <AsideList title="Действия" buttons={asideActionButtons} />
+            </aside>
+          </div>
         </div>
       )}
       {boardParticipantsModalActive && (

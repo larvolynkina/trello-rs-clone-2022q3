@@ -7,6 +7,7 @@ export enum AuthorizationStatus {
 export enum NameSpace {
   user = 'USER',
   board = 'BOARD',
+  card = 'CARD',
 }
 
 export enum APIRoute {
@@ -37,6 +38,6 @@ export enum ServerDetails {
   port = '3001',
 }
 
-  // временные константы
+// временные константы
 // export const boardId = '63e498d32543db99498cc044';
 // export const userId = '63e492352543db99498cbdf0';

@@ -5,8 +5,10 @@ import createAPI from '../services/api';
 import { userState } from './reducers/userState';
 import { boardState } from './reducers/board/boardState';
 import { boardApi } from './reducers/board/board.api';
+import cardsSlice from './reducers/cards/cardSlice';
 
 export const rootReducer = combineReducers({
+  [NameSpace.card]: cardsSlice,
   [NameSpace.user]: userState,
   [NameSpace.board]: boardState,
   [boardApi.reducerPath]: boardApi.reducer,

@@ -16,6 +16,25 @@
         margin-left: 40px;
     }
 
+    &__wrapper {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__main {
+        flex-basis: 74%;
+    }
+
+    &__aside {
+        flex-basis: 22%;
+        h3 {
+            text-align: left;
+            padding: 10px 0;
+            color: #5e6c84;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
 
     &__title-input {
         position: relative;
@@ -194,8 +213,38 @@
     &__board-participants-modal {
         position: fixed;
         left: 50%;
-        top: 30%;
+        top: 15%;
         transform: translateX(-50%);
+    }
+
+    &__aside-list {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    &__aside-btn {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: #172b4d;
+        font-size: 14px;
+        font-weight: 400;
+        background-color: #eaecf0;
+        padding: 8px 12px;
+        width: 90%;
+        text-align: left;
+        margin-bottom: 5px;
+        border-radius: 3px;
+        &:hover {
+            background-color: #e2e4e9;
+        }
+    }
+
+    &__aside-btn-ico {
+        width: 20px;
+        height: 20px;
+        background-repeat: no-repeat
     }
 
 }
