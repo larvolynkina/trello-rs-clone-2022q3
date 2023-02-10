@@ -10,11 +10,12 @@ export type TabsProps = {
   currentId: number;
   tabs: Tab[];
   handleTabClick: (id: number) => void;
+  className?: string;
 };
 
-function Tabs({ currentId, tabs, handleTabClick }: TabsProps) {
+function Tabs({ currentId, tabs, handleTabClick, className = '' }: TabsProps) {
   return (
-    <ul className="tabs">
+    <ul className={classNames('tabs', { [className]: className !== '' })}>
       {tabs.map(({ id, label }) => (
         <li
           key={id}
@@ -28,5 +29,9 @@ function Tabs({ currentId, tabs, handleTabClick }: TabsProps) {
     </ul>
   );
 }
+
+Tabs.defaultProps = {
+  className: '',
+};
 
 export default Tabs;

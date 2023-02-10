@@ -25,3 +25,7 @@ export type LoginData = {
 export type SignUpData = {
   userName: string;
 } & LoginData;
+
+export type NewUserName = {
+  newUserName: string;
+};

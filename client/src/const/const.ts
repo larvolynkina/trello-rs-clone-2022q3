@@ -13,6 +13,7 @@ export enum APIRoute {
   login = '/login',
   signup = '/signup',
   me = '/me',
+  users = '/users',
 }
 
 export enum APPRoute {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import Tabs, { Tab } from '../../Components/Tabs';
+import ProfileForm from '../../Components/ProfileForm';
 import './Profile.scss';
 
 const tabs: Tab[] = [
@@ -16,7 +17,14 @@ function Profile() {
   return (
     <main className="profile">
       <div className="profile__container">
-        <Tabs tabs={tabs} currentId={currentTab} handleTabClick={handleTabClick} />
+        <Tabs
+          tabs={tabs}
+          currentId={currentTab}
+          handleTabClick={handleTabClick}
+          className="profile__tabs"
+        />
+        {tabs[0].id === currentTab && <ProfileForm />}
+        {tabs[1].id === currentTab && <div>Действия</div>}
       </div>
     </main>
   );

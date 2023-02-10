@@ -1,0 +1,26 @@
+@import '../../scss/base/mixins.scss';
+
+.profile-form {
+  &__wrapper {
+    margin: 0 auto;
+    max-width: rem(400);
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    margin-bottom: rem(28);
+    font-size: rem(32);
+    line-height: 1.1875;
+    font-weight: 700;
+    font-style: oblique;
+    text-align: center;
+  }
+
+  &__separator {
+    width: 100%;
+    background-color: #dfe1e6;
+    height: rem(2);
+    margin-bottom: rem(20);
+  }
+}

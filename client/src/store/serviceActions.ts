@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { APIRoute, AuthorizationStatus, NameSpace } from '../const/const';
 import { dropToken, saveToken } from '../services/token';
-import { User, LoginData, SignUpData } from '../types/userData';
+import { User, LoginData, SignUpData, NewUserName } from '../types/userData';
 import {
   loadUserData,
   removeUserData,
@@ -15,6 +15,8 @@ import {
 import { AppDispatch, RootState } from './rootReducer';
 
 const SERVER_CONNECTION_ERROR = 'Please, check server connection!';
+
+const UNKNOWN_ERROR = 'Oops, something went wrong!';
 
 type ErrorMessage = { message: string };
 
@@ -53,7 +55,7 @@ export const loginAction = createAppAsyncThunk(
       dispatch(setIsLoadingUserData(false));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
-        const message = err.response?.data.message || SERVER_CONNECTION_ERROR;
+        const message = err.response?.data.message || UNKNOWN_ERROR;
         toast.error(message);
       }
       dispatch(setIsLoadingUserData(false));
@@ -74,7 +76,7 @@ export const signUpAction = createAppAsyncThunk(
       dispatch(setIsLoadingUserData(false));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
-        const message = err.response?.data.message || SERVER_CONNECTION_ERROR;
+        const message = err.response?.data.message || UNKNOWN_ERROR;
         toast.error(message);
       }
       dispatch(setIsLoadingUserData(false));
@@ -88,5 +90,25 @@ export const logoutAction = createAppAsyncThunk(
     dropToken();
     dispatch(requireLogout());
     dispatch(removeUserData());
+  },
+);
+
+export const changeUserNameAction = createAppAsyncThunk(
+  `${NameSpace.user}/changeName`,
+  async (newName: NewUserName, { dispatch, extra: api }) => {
+    try {
+      dispatch(setIsLoadingUserData(true));
+      const { data } = await api.patch<User>(APIRoute.users, newName);
+
+      dispatch(loadUserData(data));
+      dispatch(setIsLoadingUserData(false));
+      toast.success('Имя пользователя изменено.');
+    } catch (err) {
+      if (axios.isAxiosError<ErrorMessage>(err)) {
+        const message = err.response?.data.message || UNKNOWN_ERROR;
+        toast.error(message);
+      }
+      dispatch(setIsLoadingUserData(false));
+    }
   },
 );
