@@ -125,7 +125,6 @@ function Board() {
   };
   const handleClickBoard = () => {
     setIsOpenColumnMenu(false);
-    setIsOpenCardMenu(false);
     setTextFromCard('');
     document.body.style.overflow = '';
   };
@@ -203,7 +202,9 @@ function Board() {
           </div>
         )}
       </div>
-      {isOpenCardMenu && <CardMenu text={textFromCard} position={cardMenuPosition} />}
+      {isOpenCardMenu && (
+        <CardMenu text={textFromCard} position={cardMenuPosition} closeMenu={setIsOpenCardMenu} />
+      )}
     </main>
   );
 }
