@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useState } from 'react';
 import './addCardOrColumnForm.scss';
 
 type AddCardOrColumnFormProps = {
@@ -6,7 +6,7 @@ type AddCardOrColumnFormProps = {
   placeholderTextarea: string;
   saveObject: (title: string) => void;
   setIsOpenAddForm: (b: boolean) => void;
-}
+};
 function AddCardOrColumnForm({
   textButton,
   placeholderTextarea,
@@ -22,8 +22,19 @@ function AddCardOrColumnForm({
   const handleChangeTextarea = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value);
   };
+  const handleKeyUp = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsOpenAddForm(false);
+      setText('');
+    }
+  };
   return (
-    <div className="AddCardOrColumnForm">
+    <div
+      className="AddCardOrColumnForm"
+      onClick={(e) => e.stopPropagation()}
+      onKeyUp={handleKeyUp}
+      aria-hidden="true"
+    >
       <textarea
         className="AddCardOrColumnForm__text"
         placeholder={placeholderTextarea}

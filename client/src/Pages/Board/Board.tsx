@@ -125,6 +125,7 @@ function Board() {
   };
   const handleClickBoard = () => {
     setIsOpenColumnMenu(false);
+    setIsOpenAddForm(false);
     setTextFromCard('');
     document.body.style.overflow = '';
   };
@@ -133,6 +134,10 @@ function Board() {
       setIsOpenColumnMenu(false);
     }
   };
+  const handleAddColumn = (e: MouseEvent) => {
+    e.stopPropagation();
+    setIsOpenAddForm(true);
+  }
   return (
     <main
       className="board"
@@ -178,7 +183,7 @@ function Board() {
               <button
                 type="button"
                 className="board__add-column"
-                onClick={() => setIsOpenAddForm(true)}
+                onClick={handleAddColumn}
               >
                 {columnsData && columnsData.length === 0
                   ? AddButtonsOnBoardText.addColumn

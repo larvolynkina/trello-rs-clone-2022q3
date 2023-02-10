@@ -91,7 +91,6 @@ function Column({
     if (dragCard) {
       setCardWithStyleID('');
     }
-
     setDropCard(card);
   };
 
