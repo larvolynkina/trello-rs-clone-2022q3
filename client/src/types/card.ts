@@ -28,9 +28,9 @@ export interface IChecklist {
 }
 
 export interface IAttachment {
-    type: 'link' | 'file',
-    url: string,
-    date: Date,
+  type: 'link' | 'file';
+  url: string;
+  date: Date;
 }
 
 export interface ICard {
@@ -50,4 +50,15 @@ export interface ICard {
   createdAt: Date;
   updatedAt: Date;
   __v: number;
+}
+export interface IUser {
+  _id: string;
+  userName: string;
+  email: string;
+  avatarColor?: string;
+  avatarImage?: string;
+  workspaces: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  __v: string;
 }
