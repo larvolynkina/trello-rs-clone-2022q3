@@ -171,7 +171,6 @@ function Board() {
                 setDragColum={setDragColum}
                 setDropColum={setDropColum}
                 openCardMenu={handleOpenCardMenu}
-                isOpenCardMenu={isOpenCardMenu}
               />
             ))}
           <div className="board__last-column">

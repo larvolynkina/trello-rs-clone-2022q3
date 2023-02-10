@@ -34,7 +34,6 @@ type ColumnProps = {
   setDragColum: (column: IColumn | null) => void;
   setDropColum: (column: IColumn | null) => void;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
-  isOpenCardMenu: boolean;
 };
 function Column({
   boardId,
@@ -49,7 +48,6 @@ function Column({
   setDragColum,
   setDropColum,
   openCardMenu,
-  isOpenCardMenu,
 }: ColumnProps) {
   const { data: cardsData } = useGetCardsOnBoardQuery(boardId);
   const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
@@ -211,7 +209,6 @@ function Column({
               onDragLeave={handleDragLeaveCard}
               cardWithStyleID={cardWithStyleID}
               openCardMenu={openCardMenu}
-              isOpenCardMenu={isOpenCardMenu}
             />
           ))}
       </ul>

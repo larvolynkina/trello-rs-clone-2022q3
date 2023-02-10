@@ -1,5 +1,5 @@
 import './columnCard.scss';
-import { DragEvent, MouseEvent, useState } from 'react';
+import { DragEvent, MouseEvent } from 'react';
 
 import { ICard } from '../../../types/board';
 
@@ -11,7 +11,6 @@ type ColumnCardProps = {
   onDragLeave: () => void;
   cardWithStyleID: string;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
-  isOpenCardMenu: boolean;
 };
 
 function ColumnCard({
@@ -22,9 +21,7 @@ function ColumnCard({
   cardWithStyleID,
   onDragLeave,
   openCardMenu,
-  isOpenCardMenu,
 }: ColumnCardProps) {
-  // const [isEditTitle, setIsEditTitle] = useState(false);
 
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
     openCardMenu(e);
