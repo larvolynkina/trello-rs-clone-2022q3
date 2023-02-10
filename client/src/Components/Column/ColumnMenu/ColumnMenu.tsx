@@ -3,12 +3,13 @@ import { useDeleteColumnMutation } from '../../../store/reducers/board/board.api
 
 type ColumnMenuProps = {
   onClose: () => void;
-  idOpenedColumn: {boardId: string, columnId: string};
+  idOpenedColumn: { boardId: string; columnId: string };
+  setAddCardFromMenu: (b: boolean) => void;
 };
-function ColumnMenu({ onClose, idOpenedColumn }: ColumnMenuProps) {
+function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuProps) {
   const [deleteColumn, { isError: errorDeleteColumn }] = useDeleteColumnMutation();
 
-  async function asyncDelColumn(idObj: {boardId: string, columnId: string}) {
+  async function asyncDelColumn(idObj: { boardId: string; columnId: string }) {
     await deleteColumn(idObj);
     if (errorDeleteColumn) throw new Error('Ошибка удаления списка');
   }
@@ -16,7 +17,9 @@ function ColumnMenu({ onClose, idOpenedColumn }: ColumnMenuProps) {
   const handleDeleteColumn = () => {
     asyncDelColumn(idOpenedColumn);
   };
-
+  const handleAddCard = () => {
+    setAddCardFromMenu(true);
+  }
   return (
     <ul className="column-menu">
       <div className="column-menu__header">
@@ -26,7 +29,9 @@ function ColumnMenu({ onClose, idOpenedColumn }: ColumnMenuProps) {
         </button>
       </div>
       <ul className="column-menu__group">
-        <li className="column-menu__item">Добавить карточку...</li>
+        <li className="column-menu__item">
+          <button type="button" onClick={handleAddCard}>Добавить карточку...</button>
+        </li>
         <li className="column-menu__item">Копировать список...</li>
         <li className="column-menu__item">Переместить список...</li>
       </ul>

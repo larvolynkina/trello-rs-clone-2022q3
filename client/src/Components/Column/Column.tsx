@@ -35,6 +35,9 @@ type ColumnProps = {
   setDropColum: (column: IColumn | null) => void;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
   setIdOpenedColumn: ({boardId, columnId}: { boardId: string; columnId: string }) => void;
+  idOpenedColumn: {boardId: string, columnId: string};
+  addCardFromMenu: boolean;
+  setAddCardFromMenu: (b: boolean) => void;
 };
 function Column({
   boardId,
@@ -50,6 +53,9 @@ function Column({
   setDropColum,
   openCardMenu,
   setIdOpenedColumn,
+  addCardFromMenu,
+  idOpenedColumn,
+  setAddCardFromMenu,
 }: ColumnProps) {
   const { data: cardsData } = useGetCardsOnBoardQuery(boardId);
   const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
@@ -62,6 +68,12 @@ function Column({
   const inputRef = useRef<HTMLInputElement>(null);
   const [columnWithStyleID, setColumnWithStyleID] = useState<string>('');
 
+  useEffect(() => {
+    if (addCardFromMenu && idOpenedColumn.columnId === column._id) {
+      setIsOpenAddForm(true);
+    }
+    setAddCardFromMenu(false);
+  }, [addCardFromMenu]);
   useEffect(() => {
     if (cardsData) {
       setCards(getCardsOfColumn(column.cards, cardsData));

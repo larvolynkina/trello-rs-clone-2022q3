@@ -49,6 +49,7 @@ function Board() {
   const [idOpenedColumn, setIdOpenedColumn] = useState({ boardId, columnId: '' });
   const boardBody = useRef<HTMLDivElement | null>(null);
   const boardInputTitle = useRef<HTMLInputElement>(null);
+  const [addCardFromMenu, setAddCardFromMenu] = useState(false); 
 
   useEffect(() => {
     if (boardDetails) {
@@ -143,6 +144,7 @@ function Board() {
     setIsOpenColumnMenu(false);
   };
   const handleClickBoard = () => {
+    setIsOpenAddForm(false);
     setIsOpenColumnMenu(false);
     setIsOpenAddForm(false);
     setTextFromCard('');
@@ -251,6 +253,9 @@ function Board() {
                 setDropColum={setDropColum}
                 openCardMenu={handleOpenCardMenu}
                 setIdOpenedColumn={setIdOpenedColumn}
+                idOpenedColumn={idOpenedColumn}
+                addCardFromMenu={addCardFromMenu}
+                setAddCardFromMenu={setAddCardFromMenu}
               />
             ))}
           <div className="board__last-column">
@@ -273,7 +278,11 @@ function Board() {
         </ul>
         {isOpenColumnMenu && (
           <div className="board__column-menu" style={{ left: columnMenuPosition }}>
-            <ColumnMenu onClose={handleCloseColumnMenu} idOpenedColumn={idOpenedColumn} />
+            <ColumnMenu
+              onClose={handleCloseColumnMenu}
+              idOpenedColumn={idOpenedColumn}
+              setAddCardFromMenu={setAddCardFromMenu}
+            />
           </div>
         )}
       </div>
