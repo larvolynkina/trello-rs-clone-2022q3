@@ -7,6 +7,12 @@ async function createBoard(req, res) {
   try {
     const { workspaceId, title, backgroundColor, backgroundImage } = req.body;
     const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    // create board
     const board = new Board({
       title,
       backgroundColor,
@@ -15,13 +21,10 @@ async function createBoard(req, res) {
       marks: defaultMarks,
     });
     const savedBoard = await board.save();
-
-    const workspace = await Workspace.findById(workspaceId);
     workspace.boards.push(savedBoard._id);
     await workspace.save();
 
     const user = await User.findById(userId);
-
     const activity = {
       userId,
       action: `${user.userName} создал(а) доску ${title} в рабочем пространстве ${workspace.title}`,
@@ -40,13 +43,11 @@ async function getBoardById(req, res) {
   try {
     const { boardId } = req.params;
     const { userId } = req;
-    // check if user is member of this board
-    const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     return res.status(200).json(board);
   } catch (error) {
@@ -58,13 +59,10 @@ async function updateBoardTitle(req, res) {
   try {
     const { boardId, title } = req.body;
     const { userId } = req;
-    // check if user is member of this board
-    const user = await User.findById(userId);
-    const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     const updatedBoard = await Board.findByIdAndUpdate(boardId, { title }, { new: true });
     return res.status(200).json(updatedBoard);
@@ -77,13 +75,11 @@ async function addNewMarkOnBoard(req, res) {
   try {
     const { boardId, color, text } = req.body;
     const { userId } = req;
-    // check if user is member of this board
-    const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // create new mark
     const newMark = {
@@ -98,4 +94,31 @@ async function addNewMarkOnBoard(req, res) {
   }
 }
 
-export { createBoard, addNewMarkOnBoard, getBoardById, updateBoardTitle };
+async function getBoardParticipants(req, res) {
+  try {
+    const { boardId } = req.params;
+    const { userId } = req;
+    const board = await Board.findById(boardId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const query = [
+      { $match: { _id: { $in: board.participants } } },
+      { $addFields: { __order: { $indexOfArray: [board.participants, '$_id'] } } },
+      { $sort: { __order: 1 } },
+      {
+        $project: {
+          __order: 0,
+        },
+      },
+    ];
+    const allParticipants = await User.aggregate(query);
+    return res.status(200).json(allParticipants);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+export { createBoard, addNewMarkOnBoard, getBoardById, updateBoardTitle, getBoardParticipants };

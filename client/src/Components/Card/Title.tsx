@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { useUpdateCardTitleOrDescrMutation } from '../../../store/reducers/cards/cards.api';
+import { useUpdateCardTitleOrDescrMutation } from '../../store/reducers/cards/cards.api';
 
 interface TitleProps {
   title: string;
   boardId: string;
   cardId: string;
+  column: string;
 }
 
-function Title({ title, boardId, cardId }: TitleProps) {
+function Title({ title, boardId, cardId, column }: TitleProps) {
   const [text, setText] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
   const [updateCardTitle] = useUpdateCardTitleOrDescrMutation();
@@ -26,6 +27,7 @@ function Title({ title, boardId, cardId }: TitleProps) {
 
   return (
     <div className="card__title">
+      <span className="card__title-icon" />
       <input
         ref={inputRef}
         className="card__title-input"
@@ -35,6 +37,9 @@ function Title({ title, boardId, cardId }: TitleProps) {
         onBlur={onBlurHandler}
         onKeyDown={(event) => onKeyDownHandler(event)}
       />
+      <p className="card__title-column">
+        в колонке <span>{column}</span>{' '}
+      </p>
     </div>
   );
 }

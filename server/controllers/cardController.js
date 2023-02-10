@@ -2,19 +2,19 @@ import Card from '../models/cardModel.js';
 import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
+import Workspace from '../models/workspaceModel.js';
 import { errors } from '../helpers.js';
 
 async function createCard(req, res) {
   try {
     const { boardId, columnId, title, marks, participants, position } = req.body;
     const { userId } = req;
-    // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // create card
     const card = new Card({
@@ -48,13 +48,10 @@ async function getCardById(req, res) {
   try {
     const { boardId, cardId } = req.params;
     const { userId } = req;
-    // check if user is member of this board
-    const user = await User.findById(userId);
-    const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     const card = await Card.findById(cardId);
     const column = await Column.findOne({ cards: card._id });
@@ -76,6 +73,12 @@ async function getAllCards(_req, res) {
 async function getAllCardsOnBoard(req, res) {
   try {
     const { boardId } = req.params;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
     const board = await Board.findById(boardId);
     const allColumns = await Column.find().where('_id').in(board.columns).exec();
     const allCardsId = allColumns
@@ -95,13 +98,12 @@ async function updateCardTitleOrDescr(req, res) {
   try {
     const { boardId, cardId, title, description } = req.body;
     const { userId } = req;
-    // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // update card
     const card = await Card.findById(cardId);
@@ -132,13 +134,12 @@ async function deleteCard(req, res) {
   try {
     const { boardId, cardId } = req.params;
     const { userId } = req;
-    // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     const card = await Card.findById(cardId);
     // delete cardId from column cards array
@@ -160,6 +161,109 @@ async function deleteCard(req, res) {
   }
 }
 
+async function getCardParticipants(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    const query = [
+      { $match: { _id: { $in: card.participants } } },
+      { $addFields: { __order: { $indexOfArray: [card.participants, '$_id'] } } },
+      { $sort: { __order: 1 } },
+      {
+        $project: {
+          __order: 0,
+        },
+      },
+    ];
+    const allParticipants = await User.aggregate(query);
+    return res.status(200).json(allParticipants);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function addCardParticipant(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { participantId } = req.body;
+    const { userId } = req;
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    card.participants.push(participantId);
+
+    const participant = await User.findById(participantId);
+    let action = '';
+    if (userId === participantId) {
+      action = `${user.userName} присоединился(лась) к карточке ${card.title}`;
+    } else {
+      action = `${user.userName} добавил(а) пользователя ${participant.userName} к карточке ${card.title}`;
+    }
+    const activity = {
+      userId,
+      action,
+    };
+    card.activities.push(activity);
+    board.activities.push(activity);
+    await board.save();
+    await user.save();
+    await card.save();
+    return res.status(200).json({ message: 'Участник успешно добавлен' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function deleteCardParticipant(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { participantId } = req.body;
+    const { userId } = req;
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+
+    const participants = [...card.participants].filter((id) => id.toString() !== participantId);
+    card.participants = participants;
+
+    const participant = await User.findById(participantId);
+    let action = '';
+    if (userId === participantId) {
+      action = `${user.userName} покинул(а) карточку ${card.title}`;
+    } else {
+      action = `${user.userName} удалила пользователя ${participant.userName} из участников карточки ${card.title}`;
+    }
+    const activity = {
+      userId,
+      action,
+    };
+    card.activities.push(activity);
+    board.activities.push(activity);
+    await board.save();
+    await user.save();
+    await card.save();
+    return res.status(200).json({ message: 'Участник успешно удален' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createCard,
   updateCardTitleOrDescr,
@@ -167,4 +271,7 @@ export {
   getAllCards,
   getAllCardsOnBoard,
   getCardById,
+  getCardParticipants,
+  addCardParticipant,
+  deleteCardParticipant,
 };

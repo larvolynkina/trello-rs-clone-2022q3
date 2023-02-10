@@ -6,13 +6,14 @@ import { chooseRandomColor } from '../helpers.js';
 async function signup(req, res) {
   try {
     const { userName, email } = req.body;
+    const lowercaseEmail = email.toLowerCase();
     // check is userName unique
     const isUserNameExist = await User.findOne({ userName });
     if (isUserNameExist) {
       return res.status(400).json({ message: 'Такое имя пользователя уже существует' });
     }
     // check is email unique
-    const isEmailExist = await User.findOne({ email });
+    const isEmailExist = await User.findOne({ email: lowercaseEmail });
     if (isEmailExist) {
       return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
     }
@@ -24,7 +25,7 @@ async function signup(req, res) {
 
     const user = new User({
       userName,
-      email,
+      email: lowercaseEmail,
       password: passwordHashed,
       avatarColor,
     });
@@ -54,7 +55,8 @@ async function signup(req, res) {
 async function login(req, res) {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const lowercaseEmail = email.toLowerCase();
+    const user = await User.findOne({ email: lowercaseEmail });
 
     if (!user) {
       return res.status(400).json({ message: 'Неверно указаны почта или пароль' });
