@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useUpdateCardTitleOrDescrMutation } from '../../../store/reducers/cards/cards.api';
+import { useUpdateCardTitleOrDescrMutation } from '../../store/reducers/cards/cards.api';
 
 interface TitleProps {
   title: string;

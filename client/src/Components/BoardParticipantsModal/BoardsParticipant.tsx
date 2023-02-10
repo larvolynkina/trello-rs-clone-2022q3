@@ -5,9 +5,9 @@ import { useParams } from 'react-router-dom';
 import {
   useAddCardParticipantMutation,
   useDeleteCardParticipantMutation,
-} from '../../../store/reducers/cards/cards.api';
-import { IUser } from '../../../types/card';
-import Avatar from '../Avatar/Avatar';
+} from '../../store/reducers/cards/cards.api';
+import { IUser } from '../../types/card';
+import Avatar from '../UserAvatar/UserAvatar';
 
 interface BoardsParticipantProps {
   participant: IUser;
@@ -46,8 +46,8 @@ function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipan
     <div
       className={
         active
-          ? 'card__board-participant card__board-participant--active'
-          : 'card__board-participant'
+          ? 'board-participants-modal__participant board-participants-modal__participant--active'
+          : 'board-participants-modal__participant'
       }
       onClick={onClickHandler}
     >

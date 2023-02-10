@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Title from './Title/Title';
-import Description from './Description/Description';
-import Participants from './Participants/Participants';
-import ParticipantModal from './ParticipantModal/ParticipantModal';
+import Title from './Title';
+import Description from './Description';
+import Participants from './Participants';
+import BoardParticipantsModal from '../BoardParticipantsModal';
 import {
   useGetCardByIdQuery,
   useGetCardParticipantsQuery,
@@ -22,7 +22,33 @@ function Card() {
   const { data: cardParticipants } = useGetCardParticipantsQuery({ boardId, cardId });
   const { data: boardParticipants } = useGetBoardParticipantsQuery({ boardId });
 
-  const [addParticipantModalOpen] = useState(true);
+  const [boardParticipantsModalActive, setBoardParticipantsModalActive] = useState(false);
+
+  function closeBoardParticipantsModal() {
+    setBoardParticipantsModalActive(false);
+  }
+
+  function openBoardParticipantsModal() {
+    setTimeout(() => {
+      setBoardParticipantsModalActive(true);
+    }, 0);
+  }
+
+  document.addEventListener('click', (event) => {
+    if (boardParticipantsModalActive) {
+      const target = event.target as HTMLElement;
+      const targetParent = target.closest('div');
+      if (targetParent) {
+        if (
+          !targetParent.classList.contains('board-participants-modal') &&
+          !targetParent.classList.contains('board-participants-modal__list') &&
+          !targetParent.classList.contains('board-participants-modal__participant')
+        ) {
+          setBoardParticipantsModalActive(false);
+        }
+      }
+    }
+  });
 
   return (
     <>
@@ -30,16 +56,22 @@ function Card() {
         <div className="card">
           <Title title={data.card.title} boardId={boardId} cardId={cardId} column={data.column} />
           {cardParticipants && cardParticipants.length > 0 && (
-            <Participants participants={cardParticipants} />
+            <Participants
+              participants={cardParticipants}
+              onClick={() => openBoardParticipantsModal()}
+            />
           )}
           <Description description={data.card.description} boardId={boardId} cardId={cardId} />
         </div>
       )}
-      {addParticipantModalOpen && (
-        <ParticipantModal
-          boardParticipants={boardParticipants || []}
-          cardParticipantsId={data?.card.participants || []}
-        />
+      {boardParticipantsModalActive && (
+        <div className="card__board-participants-modal">
+          <BoardParticipantsModal
+            boardParticipants={boardParticipants || []}
+            cardParticipantsId={data?.card.participants || []}
+            onClick={() => closeBoardParticipantsModal()}
+          />
+        </div>
       )}
     </>
   );
