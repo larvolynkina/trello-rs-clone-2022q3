@@ -247,4 +247,23 @@
         background-repeat: no-repeat
     }
 
+    &__checklist-modal {
+        position: fixed;
+        left: 50%;
+        top: 15%;
+        transform: translateX(-50%);
+        width: 300px;
+        border-radius: 3px;
+        background-color: #ffffff;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: 400;
+        color: #172b4d;
+    
+        h3 {
+            text-align: center;
+            padding: 5px 0 10px 0;
+        }
+    }
+
 }

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ICard, IUser } from '../../../types/card';
+import { ICard, IUser, IChecklist, ICheckItem } from '../../../types/card';
 
 type TGetCardByIdQueryArgs = {
   boardId: string;
@@ -28,6 +28,28 @@ type TAddCardParticipantQueryArgs = {
   cardId: string;
   participantId: string;
 };
+
+type TAddCheckListQueryArgs = {
+  boardId: string;
+  cardId: string;
+  title: string;
+};
+
+type TDeleteCheckListQueryArgs = {
+  boardId: string;
+  cardId: string;
+  title: string;
+  id: string;
+};
+
+type TAddCheckListItemQueryArgs = TDeleteCheckListQueryArgs;
+
+type TDeleteCheckListItemQueryArgs = {
+  boardId: string;
+  cardId: string;
+  id: string;
+  checkListIndex: number;
+}
 
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
@@ -77,6 +99,38 @@ export const cardsApi = createApi({
       }),
       invalidatesTags: ['Card', 'CardParticipants'],
     }),
+    addCheckList: builder.mutation<IChecklist, TAddCheckListQueryArgs>({
+      query: ({ boardId, cardId, title }) => ({
+        url: `/${boardId}/${cardId}/add-checklist`,
+        method: 'POST',
+        body: { title },
+      }),
+      invalidatesTags: ['Card'],
+    }),
+    deleteCheckList: builder.mutation<void, TDeleteCheckListQueryArgs>({
+      query: ({ boardId, cardId, title, id }) => ({
+        url: `/${boardId}/${cardId}/delete-checklist`,
+        method: 'POST',
+        body: { title, id },
+      }),
+      invalidatesTags: ['Card'],
+    }),
+    addCheckListItem: builder.mutation<ICheckItem, TAddCheckListItemQueryArgs>({
+      query: ({ boardId, cardId, title, id }) => ({
+        url: `/${boardId}/${cardId}/add-checklist-item`,
+        method: 'POST',
+        body: { title, id },
+      }),
+      invalidatesTags: ['Card'],
+    }),
+    deleteCheckListItem: builder.mutation<void, TDeleteCheckListItemQueryArgs>({
+      query: ({ boardId, cardId, id, checkListIndex }) => ({
+        url: `/${boardId}/${cardId}/delete-checklist-item`,
+        method: 'POST',
+        body: { id , checkListIndex },
+      }),
+      invalidatesTags: ['Card'],
+    }),
   }),
 });
 
@@ -86,4 +140,8 @@ export const {
   useGetCardParticipantsQuery,
   useAddCardParticipantMutation,
   useDeleteCardParticipantMutation,
+  useAddCheckListMutation,
+  useDeleteCheckListMutation,
+  useAddCheckListItemMutation,
+  useDeleteCheckListItemMutation,
 } = cardsApi;

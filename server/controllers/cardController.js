@@ -264,6 +264,123 @@ async function deleteCardParticipant(req, res) {
   }
 }
 
+async function addCheckListToCard(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { title } = req.body;
+    const { userId } = req;
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+
+    const checklist = {
+      title,
+      checkItems: [],
+    };
+    card.checklists.push(checklist);
+    // create activity
+    const activity = {
+      userId,
+      action: `${user.userName} добавил(а) чек-лист ${title} в карточку ${card.title} на доске ${board.title} `,
+    };
+    card.activities.push(activity);
+    board.activities.push(activity);
+    await card.save();
+    await board.save();
+    return res.status(200).json(checklist);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function deleteCheckListFromCard(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { id, title } = req.body;
+    const { userId } = req;
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    // update checklists
+    const updateCheckListsArray = [...card.checklists].filter(
+      (checklist) => checklist._id.toString() !== id,
+    );
+    card.checklists = updateCheckListsArray;
+    // create activity
+    const activity = {
+      userId,
+      action: `${user.userName} удалил(а) чек-лист ${title} из карточки ${card.title} на доске ${board.title} `,
+    };
+    card.activities.push(activity);
+    board.activities.push(activity);
+    await card.save();
+    await board.save();
+    return res.status(200).json({ message: 'Чек-лист успешно удален' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function addCheckListItem(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { id, title } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+
+    const checkItem = {
+      title,
+    };
+    const checkListId = id;
+    const checkListIndex = card.checklists.findIndex((item) => item._id.toString() === checkListId);
+    const updatedCheckListArray = [...card.checklists];
+    updatedCheckListArray[checkListIndex].checkItems.push(checkItem);
+    card.checklists = updatedCheckListArray;
+    await card.save();
+    return res.status(200).json(checkItem);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function deleteCheckListItem(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { id , checkListIndex } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    const checkListItemId = id;
+    const updatedCheckListsArray = [...card.checklists];
+    const updatedCheckItemsArray = updatedCheckListsArray[checkListIndex].checkItems.filter((item) => item._id.toString() !== checkListItemId);
+    updatedCheckListsArray[checkListIndex].checkItems = updatedCheckItemsArray;
+    card.checklists = updatedCheckListsArray;
+    await card.save();
+    return res.status(200).json({message: 'Элемент чек-листа успешно удален'});
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createCard,
   updateCardTitleOrDescr,
@@ -274,4 +391,8 @@ export {
   getCardParticipants,
   addCardParticipant,
   deleteCardParticipant,
+  addCheckListToCard,
+  deleteCheckListFromCard,
+  addCheckListItem,
+  deleteCheckListItem,
 };

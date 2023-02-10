@@ -21,6 +21,10 @@ function Description({ description, boardId, cardId }: DescriptionProps) {
     setTimeout(() => {
       if (textAreaRef.current) {
         textAreaRef.current.focus();
+        textAreaRef.current.setSelectionRange(
+          textAreaRef.current.value.length,
+          textAreaRef.current.value.length,
+        );
       }
     }, 100);
   }

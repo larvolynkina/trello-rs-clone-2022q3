@@ -3,6 +3,8 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
   setBoardParticipantsModalClose,
   setBoardParticipantsModalOpen,
+  setCheckListModalClose,
+  setCheckListModalOpen,
 } from '../../store/reducers/cards/cardSlice';
 
 interface AsideButtonProps {
@@ -15,6 +17,7 @@ function AsideButton({ text, ico }: AsideButtonProps) {
   const boardParticipantsModalActive = useAppSelector(
     (state) => state.CARD.boardParticipantsModalActive,
   );
+  const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
 
   function onClickHandler() {
     if (text === 'Участники') {
@@ -23,6 +26,15 @@ function AsideButton({ text, ico }: AsideButtonProps) {
       } else {
         setTimeout(() => {
           dispatch(setBoardParticipantsModalOpen());
+        }, 0);
+      }
+    }
+    if (text === 'Чек-лист') {
+      if (checkListModalActive) {
+        dispatch(setCheckListModalClose());
+      } else {
+        setTimeout(() => {
+          dispatch(setCheckListModalOpen());
         }, 0);
       }
     }

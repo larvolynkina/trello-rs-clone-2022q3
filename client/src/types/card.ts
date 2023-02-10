@@ -20,11 +20,13 @@ export interface IMark {
 export interface ICheckItem {
   title: string;
   checked: boolean;
+  _id: string;
 }
 
 export interface IChecklist {
   title: string;
   checkItems: ICheckItem[];
+  _id: string;
 }
 
 export interface IAttachment {
@@ -62,3 +64,8 @@ export interface IUser {
   updatedAt: Date;
   __v: string;
 }
+
+export type ParamTypes = {
+  boardId: string;
+  cardId: string;
+};

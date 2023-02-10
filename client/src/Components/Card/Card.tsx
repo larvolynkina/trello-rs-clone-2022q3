@@ -16,11 +16,9 @@ import {
   setBoardParticipantsModalClose,
   setBoardParticipantsModalOpen,
 } from '../../store/reducers/cards/cardSlice';
-
-type ParamTypes = {
-  boardId: string;
-  cardId: string;
-};
+import CheckListModal from './CheckListModal';
+import CheckListList from './CheckListList';
+import { ParamTypes } from '../../types/card';
 
 function Card() {
   const { boardId, cardId } = useParams() as ParamTypes;
@@ -31,6 +29,7 @@ function Card() {
   const boardParticipantsModalActive = useAppSelector(
     (state) => state.CARD.boardParticipantsModalActive,
   );
+  const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
 
   function closeBoardParticipantsModal() {
     dispatch(setBoardParticipantsModalClose());
@@ -72,6 +71,7 @@ function Card() {
                 />
               )}
               <Description description={data.card.description} boardId={boardId} cardId={cardId} />
+              <CheckListList items={data.card.checklists}/>
             </div>
             <aside className="card__aside">
               <AsideList title="Добавить на карточку" buttons={asideAddButtons} />
@@ -89,6 +89,7 @@ function Card() {
           />
         </div>
       )}
+      {checkListModalActive && <CheckListModal />}
     </>
   );
 }
