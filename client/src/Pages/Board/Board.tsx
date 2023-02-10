@@ -1,5 +1,5 @@
 import './board.scss';
-import { MouseEvent, useEffect, useState, KeyboardEvent } from 'react';
+import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/redux';
 import { updateColumns } from '../../store/reducers/board/boardState';
@@ -15,6 +15,7 @@ import {
   useUpdateColumnOrderMutation,
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
+  useUpdateBoardTitleMutation,
 } from '../../store/reducers/board/board.api';
 import CardMenu from './CardMenu';
 import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
@@ -25,10 +26,13 @@ function Board() {
   const boardId = location.pathname.split('/')[2];
   const { data: boardDetails } = useGetBoardByIDQuery(boardId);
   const { data: columnsData } = useGetColumnsQuery(boardId);
+  const [titleBoardText, setTitleBoardText] = useState('');
+  const [isUpdateTitleBoard, setIsUpdateTitleBoard] = useState(false);
   // const { userData } = useAppSelector((state: RootState) => state.USER)
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
+  const [updateBoardTitle, { isError: errorUpdateBoardTitle }] = useUpdateBoardTitleMutation();
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
@@ -42,7 +46,15 @@ function Board() {
   const [columnMenuPosition, setColumnMenuPosition] = useState<number>(0);
   const [cardMenuPosition, setCardMenuPosition] = useState({ x: 0, y: 0 });
   const [textFromCard, setTextFromCard] = useState('');
-  const [idOpenedColumn, setIdOpenedColumn] = useState({boardId, columnId: ''});
+  const [idOpenedColumn, setIdOpenedColumn] = useState({ boardId, columnId: '' });
+  const boardBody = useRef<HTMLDivElement | null>(null);
+  const boardInputTitle = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (boardDetails) {
+      setTitleBoardText(boardDetails.title);
+    }
+  }, [boardDetails]);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -100,12 +112,18 @@ function Board() {
     let y = 0;
     if (e.currentTarget.localName === 'li') {
       x = e.currentTarget.offsetLeft;
+      if (boardBody.current?.scrollLeft) {
+        x -= boardBody.current.scrollLeft;
+      }
       y = e.currentTarget.offsetTop;
       if (e.currentTarget.firstChild?.textContent) {
         setTextFromCard(e.currentTarget.firstChild.textContent);
       }
     } else if (e.currentTarget.parentElement) {
       x = e.currentTarget.parentElement.offsetLeft;
+      if (boardBody.current?.scrollLeft) {
+        x -= boardBody.current.scrollLeft;
+      }
       y = e.currentTarget.parentElement.offsetTop;
       if (e.currentTarget.parentElement?.firstChild?.textContent) {
         setTextFromCard(e.currentTarget.parentElement.firstChild.textContent);
@@ -138,7 +156,39 @@ function Board() {
   const handleAddColumn = (e: MouseEvent) => {
     e.stopPropagation();
     setIsOpenAddForm(true);
-  }
+  };
+  const handleClickTitle = () => {
+    setIsUpdateTitleBoard(true);
+    if (boardInputTitle.current) {
+      boardInputTitle.current.focus();
+    }
+  };
+
+  const changeTitleBoard = () => {
+    async function asyncUpdateBoardTitle({
+      boardIdforUpdate,
+      titleforUpdate,
+    }: {
+      boardIdforUpdate: string;
+      titleforUpdate: string;
+    }) {
+      await updateBoardTitle({ boardId: boardIdforUpdate, title: titleforUpdate });
+    }
+    setIsUpdateTitleBoard(false);
+    if (titleBoardText.trim() !== '' && titleBoardText.trim() !== boardDetails.title) {
+      asyncUpdateBoardTitle({ boardIdforUpdate: boardDetails._id, titleforUpdate: titleBoardText });
+      if (errorUpdateBoardTitle) throw new Error('Ошибка обновления названия доски');
+    }
+  };
+  const handleKeyDownChangeTitleBoard = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      changeTitleBoard();
+      setIsUpdateTitleBoard(false);
+    }
+    if (e.key === 'Escape') {
+      setIsUpdateTitleBoard(false);
+    }
+  };
   return (
     <main
       className="board"
@@ -148,9 +198,32 @@ function Board() {
     >
       <aside className="board__aside">Рабочее пространство</aside>
 
-      <div className="board__body">
+      <div className="board__body" ref={boardBody}>
         <div className="board__header">
-          <h1 className="board__title">{boardDetails?.title}</h1>
+          <div className="board__title">
+            <h1
+              className="board__title-text"
+              onClick={handleClickTitle}
+              onKeyUp={handleClickTitle}
+              aria-hidden="true"
+            >
+              {titleBoardText}
+            </h1>
+            <input
+              ref={boardInputTitle}
+              type="text"
+              className={`board__title-input ${
+                isUpdateTitleBoard ? 'board__title-input--is-edit' : ''
+              }`}
+              value={titleBoardText}
+              onChange={(e) => setTitleBoardText(e.target.value)}
+              onBlur={() => changeTitleBoard()}
+              onKeyDown={handleKeyDownChangeTitleBoard}
+              onFocus={(e) => {
+                e.target.select();
+              }}
+            />
+          </div>
           <div className="board__participants">Участники</div>
           <button type="button" className="board__share">
             Поделиться
@@ -182,11 +255,7 @@ function Board() {
             ))}
           <div className="board__last-column">
             {!isOpenAddForm && (
-              <button
-                type="button"
-                className="board__add-column"
-                onClick={handleAddColumn}
-              >
+              <button type="button" className="board__add-column" onClick={handleAddColumn}>
                 {columnsData && columnsData.length === 0
                   ? AddButtonsOnBoardText.addColumn
                   : AddButtonsOnBoardText.addOneMoreColumn}

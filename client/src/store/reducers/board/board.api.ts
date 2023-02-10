@@ -22,6 +22,13 @@ export const boardApi = createApi({
       }),
       providesTags: [{ type: 'ColumnsOrder', id: 'LIST' }],
     }),
+    updateBoardTitle: build.mutation({
+      query: (body: {boardId: string, title: string}) => ({
+        url: '/boards',
+        method: 'PATCH',
+        body,
+      }),
+    }),
     getColumns: build.query<IColumn[], string>({
       query: (boardId: string) => ({
         url: `/columns/${boardId}`,
@@ -100,4 +107,5 @@ export const {
   useUpdateColumnOrderMutation,
   useUpdateCardOrderMutation,
   useDeleteColumnMutation,
+  useUpdateBoardTitleMutation,
 } = boardApi;
