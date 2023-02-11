@@ -1,9 +1,23 @@
+import { useState, MouseEvent } from 'react';
+import classNames from 'classnames';
+import { useDetectClickOutside } from 'react-detect-click-outside';
+
 import { useAppSelector } from '../../hooks/redux';
 import UserAvatar from '../UserAvatar';
 import './UserInfo.scss';
 
 function UserInfo() {
   const { userData } = useAppSelector((state) => state.USER);
+  const [isMenuActive, setIsMenuActive] = useState<boolean>(false);
+
+  const ref = useDetectClickOutside({
+    onTriggered: () => setIsMenuActive(false),
+  });
+
+  const toggleMenu = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.stopPropagation();
+    setIsMenuActive((prev) => !prev);
+  };
 
   if (!userData) return null;
 
@@ -12,8 +26,27 @@ function UserInfo() {
       <div className="user-info__icon">
         <UserAvatar participant={userData} className="user-info__avatar" />
 
-        <div className="user-info__hover">
-          <button type="button" className="user-info__btn" aria-label="load image" />
+        <div
+          className={classNames('user-info__hover', {
+            'user-info__hover--active': isMenuActive,
+          })}
+        >
+          <button
+            type="button"
+            className="user-info__btn"
+            aria-label="change avatar"
+            onClick={toggleMenu}
+          />
+
+          <ul
+            ref={ref}
+            className={classNames('user-info__menu', {
+              'user-info__menu--active': isMenuActive,
+            })}
+          >
+            <li className="user-info__item">Загрузить картинку</li>
+            <li className="user-info__item">Сменить цвет аватара</li>
+          </ul>
         </div>
       </div>
 
