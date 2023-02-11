@@ -7,6 +7,7 @@ import {
   updateColumnTitle,
   updateCardOrder,
   updateColumnOrder,
+  copyColumn,
 } from '../controllers/columnController.js';
 import verifyAuth from "../middlewares/auth.js";
 
@@ -19,5 +20,6 @@ router.get('/:boardId', verifyAuth, getAllColumnsOnBoard);
 router.delete('/:boardId/:columnId', verifyAuth, deleteColumn);
 router.post('/update-card-order', verifyAuth, updateCardOrder);
 router.post('/update-column-order', verifyAuth, updateColumnOrder);
+router.post('/copy', verifyAuth, copyColumn);
 
 export default router;
