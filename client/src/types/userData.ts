@@ -3,10 +3,14 @@ import { AuthorizationStatus } from '../const/const';
 export type User = {
   _id: string;
   userName: string;
-  avatarImage: string;
-  avatarColor: string;
   email: string;
+  avatarColor?: string;
+  avatarImage?: string;
+  workspaces: string[];
+  createdAt: Date;
+  updatedAt: Date;
   token: string;
+  __v: string;
 };
 
 export type UserData = User | null;

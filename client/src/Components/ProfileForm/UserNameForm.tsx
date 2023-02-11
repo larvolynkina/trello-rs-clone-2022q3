@@ -24,7 +24,7 @@ function UserNameForm() {
 
   return (
     <form className="new-name-form" onSubmit={handleSubmit(handleFormSubmit)}>
-      <h3 className="new-name-form__title">Имя пользователя</h3>
+      <h3 className="new-name-form__title">Изменить имя пользователя</h3>
 
       <FormInput
         register={register}

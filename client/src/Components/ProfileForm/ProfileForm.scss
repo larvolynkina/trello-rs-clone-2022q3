@@ -13,7 +13,7 @@
   }
 
   &__title {
-    margin-bottom: rem(28);
+    margin-bottom: rem(10);
     @include adaptiveValue('font-size', 32, 25);
     line-height: 1.1875;
     font-weight: 700;
