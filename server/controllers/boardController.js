@@ -64,6 +64,16 @@ async function updateBoardTitle(req, res) {
     if (!workspace.participants.includes(userId)) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
+    // add activity
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    const activity = {
+      userId,
+      action: `${user.userName} сменил(а) название доски c ${board.title} на ${title}`,
+    };
+    board.activities.push(activity);
+    await board.save();
+    // update title
     const updatedBoard = await Board.findByIdAndUpdate(boardId, { title }, { new: true });
     return res.status(200).json(updatedBoard);
   } catch (error) {
@@ -80,7 +90,21 @@ async function updateBoardBackground(req, res) {
     if (!workspace.participants.includes(userId)) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
-    const updatedBoard = await Board.findByIdAndUpdate(boardId, { backgroundColor, backgroundImage }, { new: true });
+    // add activity
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    const activity = {
+      userId,
+      action: `${user.userName} сменил(а) фон доски ${board.title}`,
+    };
+    board.activities.push(activity);
+    await board.save();
+    // update background
+    const updatedBoard = await Board.findByIdAndUpdate(
+      boardId,
+      { backgroundColor, backgroundImage },
+      { new: true },
+    );
     return res.status(200).json(updatedBoard);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -137,4 +161,11 @@ async function getBoardParticipants(req, res) {
   }
 }
 
-export { createBoard, addNewMarkOnBoard, getBoardById, updateBoardTitle, updateBoardBackground, getBoardParticipants };
+export {
+  createBoard,
+  addNewMarkOnBoard,
+  getBoardById,
+  updateBoardTitle,
+  updateBoardBackground,
+  getBoardParticipants,
+};
