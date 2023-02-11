@@ -71,6 +71,22 @@ async function updateBoardTitle(req, res) {
   }
 }
 
+async function updateBoardBackground(req, res) {
+  try {
+    const { boardId, backgroundColor, backgroundImage } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const updatedBoard = await Board.findByIdAndUpdate(boardId, { backgroundColor, backgroundImage }, { new: true });
+    return res.status(200).json(updatedBoard);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 async function addNewMarkOnBoard(req, res) {
   try {
     const { boardId, color, text } = req.body;
@@ -121,4 +137,4 @@ async function getBoardParticipants(req, res) {
   }
 }
 
-export { createBoard, addNewMarkOnBoard, getBoardById, updateBoardTitle, getBoardParticipants };
+export { createBoard, addNewMarkOnBoard, getBoardById, updateBoardTitle, updateBoardBackground, getBoardParticipants };
