@@ -1,8 +1,13 @@
 import './headerBoard.scss';
 
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { useUpdateBoardTitleMutation } from '../../../store/reducers/board/board.api';
+import {
+  useUpdateBoardTitleMutation,
+  useGetBoardParticipantsQuery,
+} from '../../../store/reducers/board/board.api';
 import { IBoard } from '../../../types/board';
+import UserAvatar from '../../../Components/UserAvatar';
+import { IUser } from '../../../types/card';
 
 type HeaderBoardType = {
   boardDetails: IBoard;
@@ -10,15 +15,24 @@ type HeaderBoardType = {
 
 function HeaderBoard({ boardDetails }: HeaderBoardType) {
   const boardInputTitle = useRef<HTMLInputElement>(null);
+  const { data: participantsData } = useGetBoardParticipantsQuery({ boardId: boardDetails._id });
   const [updateBoardTitle, { isError: errorUpdateBoardTitle }] = useUpdateBoardTitleMutation();
   const [titleBoardText, setTitleBoardText] = useState('');
   const [isUpdateTitleBoard, setIsUpdateTitleBoard] = useState(false);
+  const [participants, setParticipants] = useState<IUser[] | []>([]);
+  const [isShowFormAdd, setIsShowFormAdd] = useState(false);
 
   useEffect(() => {
     if (boardDetails) {
       setTitleBoardText(boardDetails.title);
     }
   }, [boardDetails]);
+
+  useEffect(() => {
+    if (participantsData) {
+      setParticipants(participantsData);
+    }
+  }, [participantsData]);
 
   const handleClickTitle = () => {
     setIsUpdateTitleBoard(true);
@@ -52,6 +66,14 @@ function HeaderBoard({ boardDetails }: HeaderBoardType) {
       setIsUpdateTitleBoard(false);
     }
   };
+  const handleSavePrincipant = () => {
+    setIsShowFormAdd(false);
+  };
+
+  const handleCancelPrincipant = () => {
+    setIsShowFormAdd(false);
+  };
+
   return (
     <div className="board__header">
       <div className="board__title">
@@ -78,13 +100,32 @@ function HeaderBoard({ boardDetails }: HeaderBoardType) {
           }}
         />
       </div>
-      <div className="board__participants">Участники</div>
-      <button type="button" className="board__share">
-        Поделиться
+      <div className="board__participants">
+        {participants.map((participant) => (
+          <UserAvatar participant={participant} key={participant._id} />
+        ))}
+      </div>
+      <button type="button" className="board__share" onClick={() => setIsShowFormAdd(true)}>
+        Добавить участника
       </button>
       <button type="button" className="board__menu">
         ...
       </button>
+      {isShowFormAdd && (
+        <form className="add-principant">
+          <input type="email" className="add-principant__input" />
+          <button type="button" className="add-principant__add-btn" onClick={handleSavePrincipant}>
+            Добавить
+          </button>
+          <button
+            type="button"
+            className="add-principant__cancel-btn"
+            onClick={handleCancelPrincipant}
+          >
+            Отмена
+          </button>
+        </form>
+      )}
     </div>
   );
 }

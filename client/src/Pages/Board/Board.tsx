@@ -162,7 +162,7 @@ function Board() {
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body" ref={boardBody}>
-        <HeaderBoard boardDetails={boardDetails}/>
+        {boardDetails && <HeaderBoard boardDetails={boardDetails}/>}
 
         <ul className="board__columns">
           {columnsData &&

@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
@@ -177,6 +179,59 @@ async function updateColumnOrder(req, res) {
   }
 }
 
+async function copyColumn(req, res) {
+  try {
+    const { boardId, columnId, newTitle } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    const currentColumn = await Column.findById(columnId);
+
+    const newActivities = [];
+    const activity = {
+      userId,
+      action: `${user.userName} скопировал колонку c ${currentColumn.title} с новым названием ${newTitle} на доске ${board.title}`,
+    };
+    newActivities.push(activity);
+
+    const promises = [];
+    currentColumn.cards.forEach((cardId) => {
+      const card = Card.findById(cardId);
+      promises.push(card);
+    });
+    const cards = await Promise.all(promises);
+   
+    const newCards = [];
+    for (const { _id, title, ...rest } of cards) {
+      const newCard = new Card({
+        title,
+        activities: newActivities,
+        ...rest,
+      });
+      const newCardSaved = await newCard.save();
+      newCards.push(newCardSaved);
+    }
+    const newCardsIdArray = newCards.map((item) => item._id.toString());
+
+    const column = new Column({
+      title: newTitle,
+      cards: newCardsIdArray,
+    });
+    const copiedColumn = await column.save();
+    board.columns.push(copiedColumn._id);
+    board.activities.push(activity);
+    await board.save();
+    return res.status(200).json(copiedColumn);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createColumn,
   getAllColumnsOnBoard,
@@ -185,4 +240,5 @@ export {
   updateColumnTitle,
   updateCardOrder,
   updateColumnOrder,
+  copyColumn,
 };

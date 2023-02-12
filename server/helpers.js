@@ -41,7 +41,6 @@ const defaultMarks = [
 ];
 
 const errors = {
-  notABoardMember: 'Вы не являетесь участником этой доски',
   notAWorkspaceMember: 'Вы не являетесь участником этого рабочего пространства',
 };
 

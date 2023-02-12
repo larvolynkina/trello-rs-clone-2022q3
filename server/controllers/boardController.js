@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import Board from '../models/boardModel.js';
 import User from '../models/userModel.js';
 import Workspace from '../models/workspaceModel.js';
@@ -64,7 +66,47 @@ async function updateBoardTitle(req, res) {
     if (!workspace.participants.includes(userId)) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
+    // add activity
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    const activity = {
+      userId,
+      action: `${user.userName} сменил(а) название доски c ${board.title} на ${title}`,
+    };
+    board.activities.push(activity);
+    await board.save();
+    // update title
     const updatedBoard = await Board.findByIdAndUpdate(boardId, { title }, { new: true });
+    return res.status(200).json(updatedBoard);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function updateBoardBackground(req, res) {
+  try {
+    const { boardId, backgroundColor, backgroundImage } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    // add activity
+    const user = await User.findById(userId);
+    const board = await Board.findById(boardId);
+    const activity = {
+      userId,
+      action: `${user.userName} сменил(а) фон доски ${board.title}`,
+    };
+    board.activities.push(activity);
+    await board.save();
+    // update background
+    const updatedBoard = await Board.findByIdAndUpdate(
+      boardId,
+      { backgroundColor, backgroundImage },
+      { new: true },
+    );
     return res.status(200).json(updatedBoard);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -121,4 +163,56 @@ async function getBoardParticipants(req, res) {
   }
 }
 
-export { createBoard, addNewMarkOnBoard, getBoardById, updateBoardTitle, getBoardParticipants };
+async function addMembers(req, res) {
+  try {
+    const { boardId, membersId } = req.body;
+    const { userId } = req;
+    const board = await Board.findById(boardId);
+    const currentUser = await User.findById(userId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+
+    const promises = [];
+    membersId.forEach((id) => {
+      if (!board.participants.includes(id)) {
+        const user = User.findById(id);
+        promises.push(user);
+      }
+    });
+    const users = await Promise.all(promises);
+    if (users.length === 0) {
+      return res.status(400).json({ message: 'Этот(эти) пользователь(-ли) уже участник(и) доски' });
+    }
+
+    for (const user of users) {
+      board.participants.push(user._id);
+      workspace.participants.push(user._id);
+      user.workspaces.push(workspace._id);
+      await user.save();
+    }
+
+    const activity = {
+      userId,
+      action: `${currentUser.userName} добавил(а) участников на доску ${board.title}`,
+    };
+    board.activities.push(activity);
+    await board.save();
+    await workspace.save();
+    return res.status(200).json({ message: 'Участник(и) успешно добавлены' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+export {
+  createBoard,
+  addNewMarkOnBoard,
+  getBoardById,
+  updateBoardTitle,
+  updateBoardBackground,
+  getBoardParticipants,
+  addMembers,
+};

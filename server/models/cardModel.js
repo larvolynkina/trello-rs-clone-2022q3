@@ -90,7 +90,6 @@ const cardModel = new mongoose.Schema(
         title: {
           type: String,
           required: true,
-          default: 'Чек-лист',
         },
         checkItems: [
           {
