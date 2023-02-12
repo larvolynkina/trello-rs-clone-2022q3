@@ -2,6 +2,7 @@ import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
 import Card from '../models/cardModel.js';
+import Workspace from '../models/workspaceModel.js';
 import { errors } from '../helpers.js';
 
 async function createColumn(req, res) {
@@ -10,11 +11,10 @@ async function createColumn(req, res) {
     const { userId } = req;
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    // check if user is member of this board
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // create column
     const column = new Column({
@@ -39,7 +39,13 @@ async function createColumn(req, res) {
 async function getAllColumnsOnBoard(req, res) {
   try {
     const { boardId } = req.params;
+    const { userId } = req;
     const board = await Board.findById(boardId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
     const query = [
       { $match: { _id: { $in: board.columns } } },
       { $addFields: { __order: { $indexOfArray: [board.columns, '$_id'] } } },
@@ -72,11 +78,10 @@ async function deleteColumn(req, res) {
     const { userId } = req;
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    // check if user is member of this board
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     const column = await Column.findById(columnId);
     // delete columnId from board columns array
@@ -107,13 +112,12 @@ async function updateColumnTitle(req, res) {
   try {
     const { boardId, columnId, title } = req.body;
     const { userId } = req;
-    // check if user is member of this board
     const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // update column
     const column = await Column.findById(columnId);
@@ -135,13 +139,11 @@ async function updateCardOrder(req, res) {
   try {
     const { boardId, data } = req.body;
     const { userId } = req;
-    // check if user is member of this board
-    const user = await User.findById(userId);
     const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // update changed columns
     const promises = [];
@@ -162,13 +164,10 @@ async function updateColumnOrder(req, res) {
   try {
     const { boardId, data } = req.body;
     const { userId } = req;
-    // check if user is member of this board
-    const user = await User.findById(userId);
-    const board = await Board.findById(boardId);
-    if (!board.participants.includes(user._id)) {
-      return res.status(403).json({
-        message: errors.notABoardMember,
-      });
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     // update board columns array
     const updatedBoard = await Board.findByIdAndUpdate(boardId, { columns: data }, { new: true });

@@ -1,10 +1,15 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ServerDetails } from '../../../const/const';
 import { ICard, IColumn } from '../../../types/board';
+import { IUser } from '../../../types/card';
+
+type TGetBoardParticipantsQueryArgs = {
+  boardId: string;
+};
 
 export const boardApi = createApi({
   reducerPath: 'board',
-  tagTypes: ['Columns', 'ColumnsOrder', 'Cards'],
+  tagTypes: ['Columns', 'ColumnsOrder', 'Cards', 'BoardParticipants'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${ServerDetails.url}:${ServerDetails.port}`,
     prepareHeaders: (headers) => {
@@ -94,6 +99,12 @@ export const boardApi = createApi({
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
+    getBoardParticipants: build.query<IUser[], TGetBoardParticipantsQueryArgs>({
+      query: ({ boardId }) => ({
+        url: `boards/${boardId}/participants`,
+      }),
+      providesTags: ['BoardParticipants'],
+    }),
   }),
 });
 
@@ -108,4 +119,5 @@ export const {
   useUpdateCardOrderMutation,
   useDeleteColumnMutation,
   useUpdateBoardTitleMutation,
+  useGetBoardParticipantsQuery
 } = boardApi;
