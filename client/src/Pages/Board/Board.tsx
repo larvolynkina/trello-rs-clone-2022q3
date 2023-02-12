@@ -15,10 +15,10 @@ import {
   useUpdateColumnOrderMutation,
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
-  useUpdateBoardTitleMutation,
 } from '../../store/reducers/board/board.api';
 import CardMenu from './CardMenu';
 import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
+import HeaderBoard from './HeaderBoard';
 // import { RootState } from '../../store/rootReducer';
 
 function Board() {
@@ -26,13 +26,9 @@ function Board() {
   const boardId = location.pathname.split('/')[2];
   const { data: boardDetails } = useGetBoardByIDQuery(boardId);
   const { data: columnsData } = useGetColumnsQuery(boardId);
-  const [titleBoardText, setTitleBoardText] = useState('');
-  const [isUpdateTitleBoard, setIsUpdateTitleBoard] = useState(false);
-  // const { userData } = useAppSelector((state: RootState) => state.USER)
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
-  const [updateBoardTitle, { isError: errorUpdateBoardTitle }] = useUpdateBoardTitleMutation();
   const dispatch = useAppDispatch();
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
@@ -48,14 +44,10 @@ function Board() {
   const [textFromCard, setTextFromCard] = useState('');
   const [idOpenedColumn, setIdOpenedColumn] = useState({ boardId, columnId: '' });
   const boardBody = useRef<HTMLDivElement | null>(null);
-  const boardInputTitle = useRef<HTMLInputElement>(null);
+  
   const [addCardFromMenu, setAddCardFromMenu] = useState(false); 
 
-  useEffect(() => {
-    if (boardDetails) {
-      setTitleBoardText(boardDetails.title);
-    }
-  }, [boardDetails]);
+  
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -159,38 +151,7 @@ function Board() {
     e.stopPropagation();
     setIsOpenAddForm(true);
   };
-  const handleClickTitle = () => {
-    setIsUpdateTitleBoard(true);
-    if (boardInputTitle.current) {
-      boardInputTitle.current.focus();
-    }
-  };
-
-  const changeTitleBoard = () => {
-    async function asyncUpdateBoardTitle({
-      boardIdforUpdate,
-      titleforUpdate,
-    }: {
-      boardIdforUpdate: string;
-      titleforUpdate: string;
-    }) {
-      await updateBoardTitle({ boardId: boardIdforUpdate, title: titleforUpdate });
-    }
-    setIsUpdateTitleBoard(false);
-    if (titleBoardText.trim() !== '' && titleBoardText.trim() !== boardDetails.title) {
-      asyncUpdateBoardTitle({ boardIdforUpdate: boardDetails._id, titleforUpdate: titleBoardText });
-      if (errorUpdateBoardTitle) throw new Error('Ошибка обновления названия доски');
-    }
-  };
-  const handleKeyDownChangeTitleBoard = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      changeTitleBoard();
-      setIsUpdateTitleBoard(false);
-    }
-    if (e.key === 'Escape') {
-      setIsUpdateTitleBoard(false);
-    }
-  };
+  
   return (
     <main
       className="board"
@@ -201,39 +162,7 @@ function Board() {
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body" ref={boardBody}>
-        <div className="board__header">
-          <div className="board__title">
-            <h1
-              className="board__title-text"
-              onClick={handleClickTitle}
-              onKeyUp={handleClickTitle}
-              aria-hidden="true"
-            >
-              {titleBoardText}
-            </h1>
-            <input
-              ref={boardInputTitle}
-              type="text"
-              className={`board__title-input ${
-                isUpdateTitleBoard ? 'board__title-input--is-edit' : ''
-              }`}
-              value={titleBoardText}
-              onChange={(e) => setTitleBoardText(e.target.value)}
-              onBlur={() => changeTitleBoard()}
-              onKeyDown={handleKeyDownChangeTitleBoard}
-              onFocus={(e) => {
-                e.target.select();
-              }}
-            />
-          </div>
-          <div className="board__participants">Участники</div>
-          <button type="button" className="board__share">
-            Поделиться
-          </button>
-          <button type="button" className="board__menu">
-            ...
-          </button>
-        </div>
+        <HeaderBoard boardDetails={boardDetails}/>
 
         <ul className="board__columns">
           {columnsData &&
