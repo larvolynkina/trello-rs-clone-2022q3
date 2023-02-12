@@ -4,7 +4,14 @@ import { toast } from 'react-toastify';
 
 import { APIRoute, AuthorizationStatus, NameSpace } from '../const/const';
 import { dropToken, saveToken } from '../services/token';
-import { User, LoginData, SignUpData, NewUserName, ChangePasswordData } from '../types/userData';
+import {
+  User,
+  LoginData,
+  SignUpData,
+  NewUserName,
+  ChangePasswordData,
+  UserAvatarData,
+} from '../types/userData';
 import {
   loadUserData,
   removeUserData,
@@ -122,6 +129,25 @@ export const changeUserPasswordAction = createAppAsyncThunk(
       await api.patch<User>(`${APIRoute.users}/${userData?._id}`, passwordData);
       dispatch(setIsLoadingUserData(false));
       toast.success('Пароль успешно изменен!');
+    } catch (err) {
+      if (axios.isAxiosError<ErrorMessage>(err)) {
+        const message = err.response?.data.message || UNKNOWN_ERROR;
+        toast.error(message);
+      }
+      dispatch(setIsLoadingUserData(false));
+    }
+  },
+);
+
+export const updateUserAvatarAction = createAppAsyncThunk(
+  `${NameSpace.user}/changeUserPasswordAction`,
+  async (avatarData: UserAvatarData, { dispatch, extra: api }) => {
+    try {
+      dispatch(setIsLoadingUserData(true));
+      const { data } = await api.patch<User>(`${APIRoute.users}/avatar`, avatarData);
+      dispatch(loadUserData(data));
+      dispatch(setIsLoadingUserData(false));
+      toast.success('Аватар пользователя успешно обновлен.');
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
         const message = err.response?.data.message || UNKNOWN_ERROR;

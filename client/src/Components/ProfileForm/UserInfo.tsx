@@ -4,11 +4,24 @@ import { useDetectClickOutside } from 'react-detect-click-outside';
 
 import { useAppSelector } from '../../hooks/redux';
 import UserAvatar from '../UserAvatar';
+import Modal from '../Modal';
+import ColorChangeForm from '../ColorChangeForm';
 import './UserInfo.scss';
+
+enum CurrentModalForm {
+  NONE = 'none',
+  COLOR = 'color',
+  IMAGE = 'image',
+}
 
 function UserInfo() {
   const { userData } = useAppSelector((state) => state.USER);
+
+  if (!userData) return null;
+
   const [isMenuActive, setIsMenuActive] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentModal, setCurrentModal] = useState<CurrentModalForm>(CurrentModalForm.NONE);
 
   const ref = useDetectClickOutside({
     onTriggered: () => setIsMenuActive(false),
@@ -19,7 +32,12 @@ function UserInfo() {
     setIsMenuActive((prev) => !prev);
   };
 
-  if (!userData) return null;
+  const handleModalClose = () => setIsModalOpen(false);
+
+  const handleOpenColorFormClick = () => {
+    setCurrentModal(CurrentModalForm.COLOR);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="user-info">
@@ -45,9 +63,17 @@ function UserInfo() {
             })}
           >
             <li className="user-info__item">Загрузить картинку</li>
-            <li className="user-info__item">Сменить цвет аватара</li>
+            <li className="user-info__item" onClick={handleOpenColorFormClick} aria-hidden>
+              Сменить цвет аватара
+            </li>
           </ul>
         </div>
+
+        <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+          {currentModal === CurrentModalForm.COLOR && (
+            <ColorChangeForm onClose={handleModalClose} />
+          )}
+        </Modal>
       </div>
 
       <div className="user-info__contacts">

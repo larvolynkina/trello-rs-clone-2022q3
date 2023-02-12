@@ -38,3 +38,8 @@ export type ChangePasswordData = {
   currentPassword: string;
   newPassword: string;
 };
+
+export type UserAvatarData = {
+  avatarColor: string;
+  avatarImage: string;
+};
