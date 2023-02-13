@@ -7,6 +7,7 @@ export enum AuthorizationStatus {
 export enum NameSpace {
   user = 'USER',
   board = 'BOARD',
+  card = 'CARD',
 }
 
 export enum APIRoute {
@@ -34,12 +35,7 @@ export enum AddButtonsOnBoardText {
   saveCard = 'Добавить карточку',
 }
 
-export enum ServerDetails {
-  url = 'http://localhost',
-  port = '3001',
-}
-
-export const SERVER_URL = 'http://localhost:3001';
+export const SERVER_URL = 'https://trello-rs-clone-2022q3-production.up.railway.app';
 
 // временные константы
 // export const boardId = '63e498d32543db99498cc044';

@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from '../models/userModel.js';
+import Workspace from '../models/workspaceModel.js';
+import { errors } from '../helpers.js';
 
 async function getAllUsers(_req, res) {
   try {
@@ -26,6 +28,25 @@ async function getUserByID(req, res) {
   }
 }
 
+async function getUserByEmail(req, res) {
+  try {
+    const { email, boardId } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(400).json({ message: 'Пользователя с указанным email не существует' });
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 async function updateUserName(req, res) {
   try {
     const { newUserName } = req.body;
@@ -38,6 +59,22 @@ async function updateUserName(req, res) {
     // update user
     const user = await User.findByIdAndUpdate(userId, { userName: newUserName }, { new: true });
     return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function updateUserAvatar(req, res) {
+  try {
+    const { avatarColor, avatarImage } = req.body;
+    const { userId } = req;
+    // update user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { avatarColor, avatarImage },
+      { new: true },
+    );
+    return res.status(200).json(updatedUser);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -65,4 +102,11 @@ async function updateUserPassword(req, res) {
   }
 }
 
-export { getAllUsers, getUserByID, updateUserName, updateUserPassword };
+export {
+  getAllUsers,
+  getUserByID,
+  getUserByEmail,
+  updateUserName,
+  updateUserAvatar,
+  updateUserPassword,
+};

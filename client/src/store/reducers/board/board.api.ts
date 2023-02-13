@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ServerDetails } from '../../../const/const';
+import { SERVER_URL } from '../../../const/const';
 import { ICard, IColumn } from '../../../types/board';
 import { IUser } from '../../../types/card';
 
@@ -11,7 +11,7 @@ export const boardApi = createApi({
   reducerPath: 'board',
   tagTypes: ['Columns', 'ColumnsOrder', 'Cards', 'BoardParticipants'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${ServerDetails.url}:${ServerDetails.port}`,
+    baseUrl: SERVER_URL,
     prepareHeaders: (headers) => {
       const token =
         localStorage.getItem('trello-rs-clone-token') ||
