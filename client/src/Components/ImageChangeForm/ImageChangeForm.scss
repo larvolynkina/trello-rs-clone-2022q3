@@ -1,0 +1,56 @@
+@import '../../scss/base/mixins.scss';
+@import '../../scss/vars.scss';
+
+.image-change-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: rem(17);
+
+  &__title {
+    @include adaptiveValue('font-size', 20, 16);
+    font-weight: 500;
+    margin-bottom: rem(20);
+    text-align: center;
+  }
+
+  &__avatar {
+    width: rem(192);
+    height: rem(192);
+    font-size: rem(120);
+    font-weight: 500;
+  }
+
+  &__input {
+    opacity: 0;
+    height: 0;
+    width: 0;
+    line-height: 0;
+    overflow: hidden;
+  }
+
+  &__description {
+    max-width: rem(340);
+    font-size: rem(14);
+    color: #091e42;
+    text-align: justify;
+    margin-bottom: rem(20);
+
+    @media (max-width: $mobileSmall) {
+      max-width: rem(240);
+    }
+  }
+
+  &__controls {
+    width: 100%;
+    display: flex;
+    gap: rem(10);
+    justify-content: flex-end;
+  }
+
+  &__cancel-btn {
+    font-size: rem(14);
+    padding: rem(5) rem(10);
+    color: #42526e;
+  }
+}

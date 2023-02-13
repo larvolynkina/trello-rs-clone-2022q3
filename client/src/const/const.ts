@@ -14,6 +14,8 @@ export enum APIRoute {
   login = '/login',
   signup = '/signup',
   me = '/me',
+  users = '/users',
+  upload = '/upload',
 }
 
 export enum APPRoute {
@@ -37,6 +39,8 @@ export enum ServerDetails {
   url = 'http://localhost',
   port = '3001',
 }
+
+export const SERVER_URL = 'http://localhost:3001';
 
 // временные константы
 // export const boardId = '63e498d32543db99498cc044';

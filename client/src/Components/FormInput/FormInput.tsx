@@ -23,7 +23,7 @@ function FormInput<TFormValues extends Record<string, unknown>>({
   ...props
 }: FormInputProps<TFormValues>) {
   return (
-    <label htmlFor="email" className="auth-form__label">
+    <label htmlFor={name} className="auth-form__label">
       <input className="auth-form__input" {...register(name, validation)} {...props} />
       {errors?.[name] && <p className="auth-form__input-error">{errors?.[name]?.message}</p>}
     </label>

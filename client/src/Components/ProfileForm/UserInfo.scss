@@ -1,0 +1,122 @@
+@import '../../scss/base/mixins.scss';
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: rem(20);
+
+  &__hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    transition: all 0.3s ease 0s;
+    opacity: 0;
+    border-radius: 50%;
+
+    &--active {
+      background-color: #091e425c;
+      opacity: 1;
+    }
+
+    @media (any-hover: hover) {
+      &:hover {
+        background-color: #091e425c;
+        opacity: 1;
+      }
+    }
+  }
+
+  &__icon {
+    position: relative;
+    width: max-content;
+    border-radius: 50%;
+    flex-basis: rem(96);
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    width: rem(96);
+    height: rem(96);
+    font-size: rem(60);
+    font-weight: 500;
+  }
+
+  &__btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(38, 57, 90);
+
+    width: rem(32);
+    height: rem(32);
+
+    border-radius: rem(3);
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' role='presentation'%3E%3Cg fill='white' fill-rule='evenodd'%3E%3Cpath d='M2 6.994C2 5.893 2.898 5 3.99 5h16.02C21.108 5 22 5.895 22 6.994v12.012A1.997 1.997 0 0120.01 21H3.99A1.994 1.994 0 012 19.006V6.994zM12 17a4 4 0 100-8 4 4 0 000 8zm5-8c0 .556.448 1 1 1 .556 0 1-.448 1-1 0-.556-.448-1-1-1-.556 0-1 .448-1 1zM8 4c0-.552.453-1 .997-1h6.006c.55 0 .997.444.997 1v1H8V4z'%3E%3C/path%3E%3Ccircle cx='12' cy='13' r='2'%3E%3C/circle%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+  }
+
+  &__menu {
+    position: absolute;
+    border-radius: rem(3);
+
+    background-color: #fff;
+    top: 65%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: max-content;
+
+    display: flex;
+    flex-direction: column;
+    gap: rem(5);
+
+    box-shadow: 0 4px 8px -2px #091e4240, 0 0 3px #091e424f;
+
+    color: rgb(23, 43, 77);
+    font-size: rem(14);
+    display: none;
+
+    &--active {
+      display: block;
+    }
+  }
+
+  &__item {
+    padding: rem(12) rem(20);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+
+    @media (any-hover: hover) {
+      &:hover {
+        background-color: #f4f5f7;
+      }
+    }
+  }
+
+  &__contacts {
+    display: flex;
+    flex-direction: column;
+    gap: rem(5);
+  }
+
+  &__title {
+    @include adaptiveValue('font-size', 20, 16);
+    font-weight: 500;
+    margin-bottom: rem(5);
+  }
+
+  &__sub-title {
+    font-size: rem(14);
+    color: #6b778c;
+    margin-bottom: rem(3);
+  }
+
+  &__value {
+    font-size: rem(16);
+  }
+}
