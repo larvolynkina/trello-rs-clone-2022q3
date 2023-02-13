@@ -11,7 +11,7 @@ export const boardApi = createApi({
   reducerPath: 'board',
   tagTypes: ['Columns', 'ColumnsOrder', 'Cards', 'BoardParticipants'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${ServerDetails.url}:${ServerDetails.port}`,
+    baseUrl: `https://trello-rs-clone-2022q3-production.up.railway.app`,
     prepareHeaders: (headers) => {
       const token =
         localStorage.getItem('trello-rs-clone-token') ||

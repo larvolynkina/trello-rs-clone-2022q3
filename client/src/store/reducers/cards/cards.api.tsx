@@ -61,7 +61,7 @@ type TUpdateCheckListTitleQueryArgs = {
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:3001/cards',
+    baseUrl: 'https://trello-rs-clone-2022q3-production.up.railway.app/cards',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('trello-rs-clone-token') || '';
       headers.set('authorization', `Bearer ${token}`);

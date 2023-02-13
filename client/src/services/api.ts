@@ -5,7 +5,7 @@ import { AppStore } from '../store/rootReducer';
 import { requireAuthorization } from '../store/reducers/userState';
 import { AuthorizationStatus } from '../const/const';
 
-const SERVER_URL = 'http://localhost:3001/';
+const SERVER_URL = 'https://trello-rs-clone-2022q3-production.up.railway.app/';
 const REQUEST_TIMEOUT = 5000;
 
 enum HttpCode {

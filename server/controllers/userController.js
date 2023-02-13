@@ -37,7 +37,7 @@ async function getUserByEmail(req, res) {
     if (!workspace.participants.includes(userId)) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       return res.status(400).json({ message: 'Пользователя с указанным email не существует' });
     }
