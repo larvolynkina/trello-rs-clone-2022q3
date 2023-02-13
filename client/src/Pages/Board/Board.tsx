@@ -19,6 +19,7 @@ import {
 import CardMenu from './CardMenu';
 import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
 import HeaderBoard from './HeaderBoard';
+import SearchParticipantsForm from './SearchParticipantsForm';
 // import { RootState } from '../../store/rootReducer';
 
 function Board() {
@@ -44,10 +45,8 @@ function Board() {
   const [textFromCard, setTextFromCard] = useState('');
   const [idOpenedColumn, setIdOpenedColumn] = useState({ boardId, columnId: '' });
   const boardBody = useRef<HTMLDivElement | null>(null);
-  
-  const [addCardFromMenu, setAddCardFromMenu] = useState(false); 
-
-  
+  const [addCardFromMenu, setAddCardFromMenu] = useState(false);
+  const [isShowSearchForm, setIsShowSearchForm] = useState(false);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -151,7 +150,7 @@ function Board() {
     e.stopPropagation();
     setIsOpenAddForm(true);
   };
-  
+
   return (
     <main
       className="board"
@@ -162,7 +161,9 @@ function Board() {
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body" ref={boardBody}>
-        {boardDetails && <HeaderBoard boardDetails={boardDetails}/>}
+        {boardDetails && (
+          <HeaderBoard boardDetails={boardDetails} setIsShowSearchForm={setIsShowSearchForm} />
+        )}
 
         <ul className="board__columns">
           {columnsData &&
@@ -217,6 +218,12 @@ function Board() {
       </div>
       {isOpenCardMenu && (
         <CardMenu text={textFromCard} position={cardMenuPosition} closeMenu={setIsOpenCardMenu} />
+      )}
+      {isShowSearchForm && boardDetails && (
+        <SearchParticipantsForm
+          setIsShowSearchForm={setIsShowSearchForm}
+          boardId={boardDetails._id}
+        />
       )}
     </main>
   );

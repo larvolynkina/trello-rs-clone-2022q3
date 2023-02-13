@@ -154,6 +154,7 @@ function Column({
   };
   const handleDragColumn = () => {
     setDragColum(column);
+
   };
   const handleDragOverColumn = (e: DragEvent<HTMLLIElement>) => {
     e.preventDefault();

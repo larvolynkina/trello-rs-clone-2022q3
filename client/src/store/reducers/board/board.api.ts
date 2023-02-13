@@ -21,6 +21,13 @@ export const boardApi = createApi({
     },
   }),
   endpoints: (build) => ({
+    getUserByEmail: build.mutation<IUser, {email: string, boardId: string}>({
+      query: (body) => ({
+        url: '/users/email',
+        method: 'POST',
+        body,
+      }),
+    }),
     getBoardByID: build.query({
       query: (id: string) => ({
         url: `/boards/${id}`,
@@ -33,6 +40,14 @@ export const boardApi = createApi({
         method: 'PATCH',
         body,
       }),
+    }),
+    addMembersOnBoard: build.mutation({
+      query: (body: {boardId: string, membersId: string[]}) => ({
+        url: '/boards/add-members',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{type: 'BoardParticipants'}],
     }),
     getColumns: build.query<IColumn[], string>({
       query: (boardId: string) => ({
@@ -119,5 +134,7 @@ export const {
   useUpdateCardOrderMutation,
   useDeleteColumnMutation,
   useUpdateBoardTitleMutation,
-  useGetBoardParticipantsQuery
+  useGetBoardParticipantsQuery,
+  useGetUserByEmailMutation,
+  useAddMembersOnBoardMutation,
 } = boardApi;

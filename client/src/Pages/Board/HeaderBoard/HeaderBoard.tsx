@@ -11,16 +11,16 @@ import { IUser } from '../../../types/card';
 
 type HeaderBoardType = {
   boardDetails: IBoard;
+  setIsShowSearchForm: (b: boolean)  => void;
 };
 
-function HeaderBoard({ boardDetails }: HeaderBoardType) {
+function HeaderBoard({ boardDetails, setIsShowSearchForm }: HeaderBoardType) {
   const boardInputTitle = useRef<HTMLInputElement>(null);
   const { data: participantsData } = useGetBoardParticipantsQuery({ boardId: boardDetails._id });
   const [updateBoardTitle, { isError: errorUpdateBoardTitle }] = useUpdateBoardTitleMutation();
   const [titleBoardText, setTitleBoardText] = useState('');
   const [isUpdateTitleBoard, setIsUpdateTitleBoard] = useState(false);
   const [participants, setParticipants] = useState<IUser[] | []>([]);
-  const [isShowFormAdd, setIsShowFormAdd] = useState(false);
 
   useEffect(() => {
     if (boardDetails) {
@@ -66,13 +66,7 @@ function HeaderBoard({ boardDetails }: HeaderBoardType) {
       setIsUpdateTitleBoard(false);
     }
   };
-  const handleSavePrincipant = () => {
-    setIsShowFormAdd(false);
-  };
-
-  const handleCancelPrincipant = () => {
-    setIsShowFormAdd(false);
-  };
+  
 
   return (
     <div className="board__header">
@@ -105,27 +99,13 @@ function HeaderBoard({ boardDetails }: HeaderBoardType) {
           <UserAvatar participant={participant} key={participant._id} />
         ))}
       </div>
-      <button type="button" className="board__share" onClick={() => setIsShowFormAdd(true)}>
+      <button type="button" className="board__share" onClick={() => setIsShowSearchForm(true)}>
         Добавить участника
       </button>
       <button type="button" className="board__menu">
         ...
       </button>
-      {isShowFormAdd && (
-        <form className="add-principant">
-          <input type="email" className="add-principant__input" />
-          <button type="button" className="add-principant__add-btn" onClick={handleSavePrincipant}>
-            Добавить
-          </button>
-          <button
-            type="button"
-            className="add-principant__cancel-btn"
-            onClick={handleCancelPrincipant}
-          >
-            Отмена
-          </button>
-        </form>
-      )}
+      
     </div>
   );
 }
