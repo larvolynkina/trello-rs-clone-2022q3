@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ICard, IUser, IChecklist, ICheckItem } from '../../../types/card';
+import { SERVER_URL } from '../../../const/const';
 
 type TGetCardByIdQueryArgs = {
   boardId: string;
@@ -61,7 +62,7 @@ type TUpdateCheckListTitleQueryArgs = {
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://trello-rs-clone-2022q3-production.up.railway.app/cards',
+    baseUrl: `${SERVER_URL}/cards`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('trello-rs-clone-token') || '';
       headers.set('authorization', `Bearer ${token}`);
