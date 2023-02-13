@@ -11,17 +11,15 @@ export const boardApi = createApi({
   reducerPath: 'board',
   tagTypes: ['Columns', 'ColumnsOrder', 'Cards', 'BoardParticipants'],
   baseQuery: fetchBaseQuery({
-    baseUrl: `${ServerDetails.url}:${ServerDetails.port}`,
+    baseUrl: `${ServerDetails.url}`,
     prepareHeaders: (headers) => {
-      const token =
-        localStorage.getItem('trello-rs-clone-token') ||
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2U0OTIzNTI1NDNkYjk5NDk4Y2JkZjAiLCJpYXQiOjE2NzU5MjQwMjEsImV4cCI6MTY3ODUxNjAyMX0.V_l2y6FysdMPaXuUxeGXSFVV2Vi4XNwnyrfV9ne2TsQ';
+      const token = localStorage.getItem('trello-rs-clone-token');
       headers.set('authorization', `Bearer ${token}`);
       return headers;
     },
   }),
   endpoints: (build) => ({
-    getUserByEmail: build.mutation<IUser, {email: string, boardId: string}>({
+    getUserByEmail: build.mutation<IUser, { email: string; boardId: string }>({
       query: (body) => ({
         url: '/users/email',
         method: 'POST',
@@ -35,19 +33,19 @@ export const boardApi = createApi({
       providesTags: [{ type: 'ColumnsOrder', id: 'LIST' }],
     }),
     updateBoardTitle: build.mutation({
-      query: (body: {boardId: string, title: string}) => ({
+      query: (body: { boardId: string; title: string }) => ({
         url: '/boards',
         method: 'PATCH',
         body,
       }),
     }),
     addMembersOnBoard: build.mutation({
-      query: (body: {boardId: string, membersId: string[]}) => ({
+      query: (body: { boardId: string; membersId: string[] }) => ({
         url: '/boards/add-members',
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{type: 'BoardParticipants'}],
+      invalidatesTags: [{ type: 'BoardParticipants' }],
     }),
     getColumns: build.query<IColumn[], string>({
       query: (boardId: string) => ({
@@ -80,7 +78,7 @@ export const boardApi = createApi({
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     deleteColumn: build.mutation({
-      query: (ids: {boardId: string, columnId: string}) => ({
+      query: (ids: { boardId: string; columnId: string }) => ({
         url: `/columns/${ids.boardId}/${ids.columnId}`,
         method: 'DELETE',
       }),
@@ -104,10 +102,7 @@ export const boardApi = createApi({
       ],
     }),
     updateCardOrder: build.mutation({
-      query: (body: {
-        boardId: string;
-        data: { columnId: string; columnCards: string[] }[];
-      }) => ({
+      query: (body: { boardId: string; data: { columnId: string; columnCards: string[] }[] }) => ({
         url: '/columns/update-card-order',
         method: 'POST',
         body,

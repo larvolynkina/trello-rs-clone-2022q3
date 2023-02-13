@@ -33,7 +33,7 @@ export enum AddButtonsOnBoardText {
 }
 
 export enum ServerDetails {
-  url = 'http://localhost',
+  url = 'https://trello-rs-clone-2022q3-production.up.railway.app/',
   port = '3001',
 }
 
