@@ -13,7 +13,6 @@ import { useGetBoardParticipantsQuery } from '../../store/reducers/board/board.a
 import './Card.scss';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import {
-  setBoardParticipantsModalClose,
   setBoardParticipantsModalOpen,
 } from '../../store/reducers/cards/cardSlice';
 import CheckListModal from './CheckListModal';
@@ -31,31 +30,11 @@ function Card() {
   );
   const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
 
-  function closeBoardParticipantsModal() {
-    dispatch(setBoardParticipantsModalClose());
-  }
-
   function openBoardParticipantsModal() {
     setTimeout(() => {
       dispatch(setBoardParticipantsModalOpen());
     }, 0);
   }
-
-  document.addEventListener('click', (event) => {
-    if (boardParticipantsModalActive) {
-      const target = event.target as HTMLElement;
-      const targetParent = target.closest('div');
-      if (targetParent) {
-        if (
-          !targetParent.classList.contains('board-participants-modal') &&
-          !targetParent.classList.contains('board-participants-modal__list') &&
-          !targetParent.classList.contains('board-participants-modal__participant')
-        ) {
-          dispatch(setBoardParticipantsModalClose());
-        }
-      }
-    }
-  });
 
   return (
     <>
@@ -71,7 +50,7 @@ function Card() {
                 />
               )}
               <Description description={data.card.description} boardId={boardId} cardId={cardId} />
-              <CheckListFullList items={data.card.checklists}/>
+              <CheckListFullList items={data.card.checklists} />
             </div>
             <aside className="card__aside">
               <AsideList title="Добавить на карточку" buttons={asideAddButtons} />
@@ -85,7 +64,6 @@ function Card() {
           <BoardParticipantsModal
             boardParticipants={boardParticipants || []}
             cardParticipantsId={data?.card.participants || []}
-            onClick={() => closeBoardParticipantsModal()}
           />
         </div>
       )}

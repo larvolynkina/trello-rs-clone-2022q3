@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useAppDispatch } from '../../hooks/redux';
 import { useAddCheckListMutation } from '../../store/reducers/cards/cards.api';
 import { setCheckListModalClose } from '../../store/reducers/cards/cardSlice';
@@ -22,8 +23,10 @@ function CheckListModal() {
     setTitle('Чек-лист');
   }
 
+  const ref = useDetectClickOutside({ onTriggered: onClickCloseHandler });
+
   return (
-    <div className="card__checklist-modal">
+    <div className="card__checklist-modal" ref={ref}>
       <h3>Добавление списка задач</h3>
       <button
         className="card__modal-close"
