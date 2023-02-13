@@ -13,6 +13,10 @@ import {
   deleteCheckListFromCard,
   addCheckListItem,
   deleteCheckListItem,
+  addCheckListToCard,
+  deleteCheckListFromCard,
+  addCheckListItem,
+  deleteCheckListItem,
   toggleChecklistItemChecked,
   updateChecklistTitle,
 } from '../controllers/cardController.js';

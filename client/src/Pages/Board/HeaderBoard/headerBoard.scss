@@ -1,0 +1,82 @@
+@import '../../../scss/colors.scss';
+
+.board {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 10px 0;
+    position: relative;
+  }
+
+  &__title {
+    flex: 1 0 auto;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+  &__title-text {
+    width: fit-content;
+    padding: 5px 15px;
+    border-radius: 3px;
+    transition: all 0.3s;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__title-input {
+    width: fit-content;
+    position: absolute;
+    top: -1px;
+    opacity: 1;
+    padding: 5px 15px;
+    border-radius: 3px;
+    outline: none;
+    opacity: 0;
+    z-index: -1;
+
+    &--is-edit {
+      opacity: 1;
+      z-index: 1;
+    }
+  }
+
+  &__participants {
+    display: flex;
+    gap: 5px;
+  }
+
+  &__share {
+    background-color: $buttonShareAndOutlineColor;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 3px;
+    color: white;
+    transition: all 0.3s;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  &__menu {
+    width: 30px;
+    height: 30px;
+    padding: 0 0 10px 0;
+    font-weight: 700;
+    font-size: 20px;
+    transition: all 0.3s;
+    border-radius: 3px;
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+

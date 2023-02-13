@@ -1,0 +1,66 @@
+@import '../../../scss/colors.scss';
+
+.add-participants {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 1;
+  background-color: #0009;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &__form {
+    min-width: 250px;
+    min-height: 100px;
+    border-radius: 3px;
+    border: 1px solid $borderColumnMenuColor;
+    background-color: #fff;
+    padding: 25px;
+  }
+  &__input {
+    width: 75%;
+    margin: 10px 10px 10px 0;
+    height: 32px;
+    outline: none;
+    border: 1px solid $borderColumnMenuColor;
+    border-radius: 3px;
+    padding: 0 5px;
+  }
+
+  &__list {
+    margin: 0 0 10px 0;
+  }
+  &__item {
+    padding: 5px 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid $borderColumnMenuColor;
+  }
+  &__add-btn,
+  &__cancel-btn, 
+  &__search-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 3px;
+    background-color: $buttonShareAndOutlineColor;
+    color: white;
+    transition: all 0.3s;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+  &__add-btn {
+    margin: 0 10px 0 0;
+  }
+  &__cancel-btn {
+  }
+
+  &__search-btn {
+    width: 20%;
+  }
+}

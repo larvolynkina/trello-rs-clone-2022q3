@@ -35,6 +35,10 @@ export enum AddButtonsOnBoardText {
   saveCard = 'Добавить карточку',
 }
 
+export enum ServerDetails {
+  url = 'https://trello-rs-clone-2022q3-production.up.railway.app/',
+  port = '3001',
+}
 export const SERVER_URL = 'https://trello-rs-clone-2022q3-production.up.railway.app';
 
 // временные константы

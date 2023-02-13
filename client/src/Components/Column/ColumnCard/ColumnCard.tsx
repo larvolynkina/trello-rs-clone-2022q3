@@ -1,7 +1,7 @@
 import './columnCard.scss';
-import { DragEvent } from 'react';
+import { DragEvent, MouseEvent } from 'react';
 
-import { ICard } from '../../types/board';
+import { ICard } from '../../../types/board';
 
 type ColumnCardProps = {
   card: ICard;
@@ -10,6 +10,7 @@ type ColumnCardProps = {
   onDrop: (e: DragEvent<HTMLLIElement>, card: ICard) => void;
   onDragLeave: () => void;
   cardWithStyleID: string;
+  openCardMenu: (e: MouseEvent<HTMLElement>) => void;
 };
 
 function ColumnCard({
@@ -19,7 +20,13 @@ function ColumnCard({
   onDrop,
   cardWithStyleID,
   onDragLeave,
+  openCardMenu,
 }: ColumnCardProps) {
+
+  const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
+    openCardMenu(e);
+  };
+
   return (
     <li
       draggable
@@ -28,8 +35,12 @@ function ColumnCard({
       onDragOver={(e) => onDragOver(e, card)}
       onDrop={(e) => onDrop(e, card)}
       onDragLeave={() => onDragLeave()}
+      onContextMenu={(e) => handleContextMenu(e)}
     >
       {card.title}
+      <button type="button" className="column-card__pensil" onClick={(e) => handleContextMenu(e)}>
+        Открыть меню
+      </button>
     </li>
   );
 }

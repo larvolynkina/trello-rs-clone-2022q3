@@ -15,8 +15,8 @@ import {
   useUpdateTitleColumnMutation,
 } from '../../store/reducers/board/board.api';
 
-import ColumnCard from '../ColumnCard';
-import AddCardOrColumnForm from '../AddCardOrColumnForm';
+import ColumnCard from './ColumnCard';
+import AddCardOrColumnForm from './AddCardOrColumnForm';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
 import { getCardsOfColumn } from './utils';
@@ -29,10 +29,15 @@ type ColumnProps = {
   setDropCard: (card: ICard) => void;
   setDragColumnFromCard: (column: IColumn) => void;
   setDropColumnFromCard: (column: IColumn) => void;
-  openColumnMenu: (e: MouseEvent<HTMLButtonElement>, column: IColumn) => void;
+  openColumnMenu: (e: MouseEvent<HTMLButtonElement>) => void;
   dragColumn: IColumn | null;
   setDragColum: (column: IColumn | null) => void;
   setDropColum: (column: IColumn | null) => void;
+  openCardMenu: (e: MouseEvent<HTMLElement>) => void;
+  setIdOpenedColumn: ({boardId, columnId}: { boardId: string; columnId: string }) => void;
+  idOpenedColumn: {boardId: string, columnId: string};
+  addCardFromMenu: boolean;
+  setAddCardFromMenu: (b: boolean) => void;
 };
 function Column({
   boardId,
@@ -46,6 +51,11 @@ function Column({
   dragColumn,
   setDragColum,
   setDropColum,
+  openCardMenu,
+  setIdOpenedColumn,
+  addCardFromMenu,
+  idOpenedColumn,
+  setAddCardFromMenu,
 }: ColumnProps) {
   const { data: cardsData } = useGetCardsOnBoardQuery(boardId);
   const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
@@ -58,6 +68,12 @@ function Column({
   const inputRef = useRef<HTMLInputElement>(null);
   const [columnWithStyleID, setColumnWithStyleID] = useState<string>('');
 
+  useEffect(() => {
+    if (addCardFromMenu && idOpenedColumn.columnId === column._id) {
+      setIsOpenAddForm(true);
+    }
+    setAddCardFromMenu(false);
+  }, [addCardFromMenu]);
   useEffect(() => {
     if (cardsData) {
       setCards(getCardsOfColumn(column.cards, cardsData));
@@ -89,7 +105,6 @@ function Column({
     if (dragCard) {
       setCardWithStyleID('');
     }
-
     setDropCard(card);
   };
 
@@ -119,7 +134,7 @@ function Column({
   const saveCard = async (cardTitle: string) => {
     setIsOpenAddForm(false);
     if (cardTitle) {
-      await createCard({ boardId, columnId: column._id, title: cardTitle }).unwrap();
+      await createCard({ boardId, columnId: column._id, title: cardTitle.trim() }).unwrap();
       if (errorCreateCard) {
         throw new Error('Ошибка создания карточки');
       }
@@ -128,7 +143,7 @@ function Column({
   const updateTitleOnServerAndStore = async () => {
     setIsEditTitle(false);
     if (boardId && title)
-      await updateTitleColumn({ boardId, columnId: column._id, title }).unwrap();
+      await updateTitleColumn({ boardId, columnId: column._id, title: title.trim() }).unwrap();
     if (errorUpdateTitleColumn) {
       throw new Error('Ошибка изменения заголовка списка');
     }
@@ -139,6 +154,7 @@ function Column({
   };
   const handleDragColumn = () => {
     setDragColum(column);
+
   };
   const handleDragOverColumn = (e: DragEvent<HTMLLIElement>) => {
     e.preventDefault();
@@ -150,6 +166,10 @@ function Column({
   };
   const handleDragLeaveColumn = () => {
     setColumnWithStyleID('');
+  };
+  const handleOpenMenu = (e: MouseEvent<HTMLButtonElement>) => {
+    openColumnMenu(e);
+    setIdOpenedColumn({boardId, columnId: column._id});
   };
   return (
     <li
@@ -187,11 +207,7 @@ function Column({
           onKeyUp={(e) => handleTitleKeyUp(e)}
           onBlur={updateTitleOnServerAndStore}
         />
-        <button
-          className="column__actions"
-          type="button"
-          onClick={(e) => openColumnMenu(e, column)}
-        >
+        <button className="column__actions" type="button" onClick={handleOpenMenu}>
           ...
         </button>
       </div>
@@ -206,6 +222,7 @@ function Column({
               onDrop={handleDropCard}
               onDragLeave={handleDragLeaveCard}
               cardWithStyleID={cardWithStyleID}
+              openCardMenu={openCardMenu}
             />
           ))}
       </ul>

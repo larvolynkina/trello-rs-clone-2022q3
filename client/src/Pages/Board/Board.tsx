@@ -1,5 +1,5 @@
 import './board.scss';
-import { MouseEvent, useEffect, useState, KeyboardEvent } from 'react';
+import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/redux';
 import { updateColumns } from '../../store/reducers/board/boardState';
@@ -7,9 +7,8 @@ import { updateColumns } from '../../store/reducers/board/boardState';
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
 import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
-import AddCardOrColumnForm from '../../Components/AddCardOrColumnForm';
+import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
-import ColumnMenu from '../../Components/ColumnMenu/ColumnMenu';
 import {
   useGetColumnsQuery,
   useCreateColumnMutation,
@@ -17,6 +16,10 @@ import {
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
 } from '../../store/reducers/board/board.api';
+import CardMenu from './CardMenu';
+import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
+import HeaderBoard from './HeaderBoard';
+import SearchParticipantsForm from './SearchParticipantsForm';
 // import { RootState } from '../../store/rootReducer';
 
 function Board() {
@@ -24,7 +27,6 @@ function Board() {
   const boardId = location.pathname.split('/')[2];
   const { data: boardDetails } = useGetBoardByIDQuery(boardId);
   const { data: columnsData } = useGetColumnsQuery(boardId);
-  // const { userData } = useAppSelector((state: RootState) => state.USER)
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
@@ -37,7 +39,14 @@ function Board() {
   const [dropColumn, setDropColum] = useState<IColumn | null>(null);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
   const [isOpenColumnMenu, setIsOpenColumnMenu] = useState(false);
+  const [isOpenCardMenu, setIsOpenCardMenu] = useState(false);
   const [columnMenuPosition, setColumnMenuPosition] = useState<number>(0);
+  const [cardMenuPosition, setCardMenuPosition] = useState({ x: 0, y: 0 });
+  const [textFromCard, setTextFromCard] = useState('');
+  const [idOpenedColumn, setIdOpenedColumn] = useState({ boardId, columnId: '' });
+  const boardBody = useRef<HTMLDivElement | null>(null);
+  const [addCardFromMenu, setAddCardFromMenu] = useState(false);
+  const [isShowSearchForm, setIsShowSearchForm] = useState(false);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -81,11 +90,41 @@ function Board() {
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
     if (boardDetails._id && title) {
-      createColumn({ boardId: boardDetails._id, title }).unwrap();
+      createColumn({ boardId: boardDetails._id, title: title.trim() }).unwrap();
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
       }
     }
+  };
+
+  const handleOpenCardMenu = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    let x = 0;
+    let y = 0;
+    if (e.currentTarget.localName === 'li') {
+      x = e.currentTarget.offsetLeft;
+      if (boardBody.current?.scrollLeft) {
+        x -= boardBody.current.scrollLeft;
+      }
+      y = e.currentTarget.offsetTop;
+      if (e.currentTarget.firstChild?.textContent) {
+        setTextFromCard(e.currentTarget.firstChild.textContent);
+      }
+    } else if (e.currentTarget.parentElement) {
+      x = e.currentTarget.parentElement.offsetLeft;
+      if (boardBody.current?.scrollLeft) {
+        x -= boardBody.current.scrollLeft;
+      }
+      y = e.currentTarget.parentElement.offsetTop;
+      if (e.currentTarget.parentElement?.firstChild?.textContent) {
+        setTextFromCard(e.currentTarget.parentElement.firstChild.textContent);
+      }
+    }
+    document.body.style.overflow = 'hidden';
+    setCardMenuPosition({ x, y });
+    setIsOpenCardMenu(true);
+    setIsOpenColumnMenu(false);
   };
   const handleOpenColumnMenu = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -96,13 +135,22 @@ function Board() {
     setIsOpenColumnMenu(false);
   };
   const handleClickBoard = () => {
+    setIsOpenAddForm(false);
     setIsOpenColumnMenu(false);
+    setIsOpenAddForm(false);
+    setTextFromCard('');
+    document.body.style.overflow = '';
   };
   const handleKeyUpBoard = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
       setIsOpenColumnMenu(false);
     }
   };
+  const handleAddColumn = (e: MouseEvent) => {
+    e.stopPropagation();
+    setIsOpenAddForm(true);
+  };
+
   return (
     <main
       className="board"
@@ -112,17 +160,10 @@ function Board() {
     >
       <aside className="board__aside">Рабочее пространство</aside>
 
-      <div className="board__body">
-        <div className="board__header">
-          <h1 className="board__title">{boardDetails?.title}</h1>
-          <div className="board__participants">Участники</div>
-          <button type="button" className="board__share">
-            Поделиться
-          </button>
-          <button type="button" className="board__menu">
-            ...
-          </button>
-        </div>
+      <div className="board__body" ref={boardBody}>
+        {boardDetails && (
+          <HeaderBoard boardDetails={boardDetails} setIsShowSearchForm={setIsShowSearchForm} />
+        )}
 
         <ul className="board__columns">
           {columnsData &&
@@ -140,15 +181,16 @@ function Board() {
                 dragColumn={dragColumn}
                 setDragColum={setDragColum}
                 setDropColum={setDropColum}
+                openCardMenu={handleOpenCardMenu}
+                setIdOpenedColumn={setIdOpenedColumn}
+                idOpenedColumn={idOpenedColumn}
+                addCardFromMenu={addCardFromMenu}
+                setAddCardFromMenu={setAddCardFromMenu}
               />
             ))}
           <div className="board__last-column">
             {!isOpenAddForm && (
-              <button
-                type="button"
-                className="board__add-column"
-                onClick={() => setIsOpenAddForm(true)}
-              >
+              <button type="button" className="board__add-column" onClick={handleAddColumn}>
                 {columnsData && columnsData.length === 0
                   ? AddButtonsOnBoardText.addColumn
                   : AddButtonsOnBoardText.addOneMoreColumn}
@@ -166,10 +208,23 @@ function Board() {
         </ul>
         {isOpenColumnMenu && (
           <div className="board__column-menu" style={{ left: columnMenuPosition }}>
-            <ColumnMenu onClose={handleCloseColumnMenu} />
+            <ColumnMenu
+              onClose={handleCloseColumnMenu}
+              idOpenedColumn={idOpenedColumn}
+              setAddCardFromMenu={setAddCardFromMenu}
+            />
           </div>
         )}
       </div>
+      {isOpenCardMenu && (
+        <CardMenu text={textFromCard} position={cardMenuPosition} closeMenu={setIsOpenCardMenu} />
+      )}
+      {isShowSearchForm && boardDetails && (
+        <SearchParticipantsForm
+          setIsShowSearchForm={setIsShowSearchForm}
+          boardId={boardDetails._id}
+        />
+      )}
     </main>
   );
 }
