@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosInstance } from 'axios';
 import { toast } from 'react-toastify';
 
-import { APIRoute, AuthorizationStatus, NameSpace } from '../const/const';
+import { APIRoute, AuthorizationStatus, NameSpace, SERVER_URL } from '../const/const';
 import { dropToken, saveToken } from '../services/token';
 import {
   User,
@@ -139,11 +139,49 @@ export const changeUserPasswordAction = createAppAsyncThunk(
   },
 );
 
-export const updateUserAvatarAction = createAppAsyncThunk(
-  `${NameSpace.user}/changeUserPasswordAction`,
-  async (avatarData: UserAvatarData, { dispatch, extra: api }) => {
+export const changeAvatarColorAction = createAppAsyncThunk(
+  `${NameSpace.user}/changeAvatarColorAction`,
+  async (color: string, { dispatch, extra: api }) => {
+    try {
+      const avatarData: UserAvatarData = {
+        avatarColor: color,
+        avatarImage: '',
+      };
+
+      dispatch(setIsLoadingUserData(true));
+      const { data } = await api.patch<User>(`${APIRoute.users}/avatar`, avatarData);
+      dispatch(loadUserData(data));
+      dispatch(setIsLoadingUserData(false));
+      toast.success('Аватар пользователя успешно обновлен.');
+    } catch (err) {
+      if (axios.isAxiosError<ErrorMessage>(err)) {
+        const message = err.response?.data.message || UNKNOWN_ERROR;
+        toast.error(message);
+      }
+      dispatch(setIsLoadingUserData(false));
+    }
+  },
+);
+
+type UploadResponse = {
+  url: string;
+  name: string;
+};
+
+export const changeAvatarImageAction = createAppAsyncThunk(
+  `${NameSpace.user}/changeAvatarImageAction`,
+  async (file: File, { dispatch, extra: api }) => {
     try {
       dispatch(setIsLoadingUserData(true));
+
+      const formData: FormData = new FormData();
+      formData.append('file', file);
+
+      const { data: uploadData } = await api.post<UploadResponse>(APIRoute.upload, formData);
+      const avatarData: UserAvatarData = {
+        avatarColor: '',
+        avatarImage: `${SERVER_URL}${uploadData.url}`,
+      };
       const { data } = await api.patch<User>(`${APIRoute.users}/avatar`, avatarData);
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));

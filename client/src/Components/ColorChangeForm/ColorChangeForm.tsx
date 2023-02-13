@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { updateUserAvatarAction } from '../../store/serviceActions';
+import { changeAvatarColorAction } from '../../store/serviceActions';
 import UserAvatar from '../UserAvatar';
 import './ColorChangeForm.scss';
 
@@ -31,12 +31,7 @@ function ColorChangeForm({ onClose }: ColorChangeFormProps) {
 
   const handleFormSubmit: SubmitHandler<ColorsData> = (data, evt) => {
     evt?.preventDefault();
-    dispatch(
-      updateUserAvatarAction({
-        avatarColor: data.colors,
-        avatarImage: '',
-      }),
-    );
+    dispatch(changeAvatarColorAction(data.colors));
 
     onClose();
   };
@@ -49,6 +44,7 @@ function ColorChangeForm({ onClose }: ColorChangeFormProps) {
         <UserAvatar
           participant={{
             ...userData,
+            avatarImage: '',
             avatarColor: watch(groupName),
           }}
           className="user-info__avatar"
@@ -91,7 +87,11 @@ function ColorChangeForm({ onClose }: ColorChangeFormProps) {
         <button type="button" className="color-change-form__cancel-btn" onClick={onClose}>
           Отмена
         </button>
-        <button className="form-btn form-btn--small" type="submit">
+        <button
+          className="form-btn form-btn--small"
+          type="submit"
+          disabled={watch(groupName) === userData.avatarColor}
+        >
           Обновить
         </button>
       </div>

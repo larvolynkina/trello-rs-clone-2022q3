@@ -3,9 +3,8 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosE
 import { getToken } from './token';
 import { AppStore } from '../store/rootReducer';
 import { requireAuthorization } from '../store/reducers/userState';
-import { AuthorizationStatus } from '../const/const';
+import { AuthorizationStatus, SERVER_URL } from '../const/const';
 
-const SERVER_URL = 'http://localhost:3001/';
 const REQUEST_TIMEOUT = 5000;
 
 enum HttpCode {

@@ -7,6 +7,7 @@ import UserAvatar from '../UserAvatar';
 import Modal from '../Modal';
 import ColorChangeForm from '../ColorChangeForm';
 import './UserInfo.scss';
+import ImageChangeForm from '../ImageChangeForm';
 
 enum CurrentModalForm {
   NONE = 'none',
@@ -32,10 +33,18 @@ function UserInfo() {
     setIsMenuActive((prev) => !prev);
   };
 
-  const handleModalClose = () => setIsModalOpen(false);
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setCurrentModal(CurrentModalForm.NONE);
+  };
 
   const handleOpenColorFormClick = () => {
     setCurrentModal(CurrentModalForm.COLOR);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenImageFormClick = () => {
+    setCurrentModal(CurrentModalForm.IMAGE);
     setIsModalOpen(true);
   };
 
@@ -62,7 +71,9 @@ function UserInfo() {
               'user-info__menu--active': isMenuActive,
             })}
           >
-            <li className="user-info__item">Загрузить картинку</li>
+            <li className="user-info__item" onClick={handleOpenImageFormClick} aria-hidden>
+              Загрузить картинку
+            </li>
             <li className="user-info__item" onClick={handleOpenColorFormClick} aria-hidden>
               Сменить цвет аватара
             </li>
@@ -72,6 +83,9 @@ function UserInfo() {
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
           {currentModal === CurrentModalForm.COLOR && (
             <ColorChangeForm onClose={handleModalClose} />
+          )}
+          {currentModal === CurrentModalForm.IMAGE && (
+            <ImageChangeForm onClose={handleModalClose} />
           )}
         </Modal>
       </div>
