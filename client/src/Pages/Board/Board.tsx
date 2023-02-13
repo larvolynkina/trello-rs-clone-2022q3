@@ -20,6 +20,7 @@ import CardMenu from './CardMenu';
 import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
 import HeaderBoard from './HeaderBoard';
 import SearchParticipantsForm from './SearchParticipantsForm';
+import BoardMenu from './BoardMenu';
 // import { RootState } from '../../store/rootReducer';
 
 function Board() {
@@ -47,6 +48,7 @@ function Board() {
   const boardBody = useRef<HTMLDivElement | null>(null);
   const [addCardFromMenu, setAddCardFromMenu] = useState(false);
   const [isShowSearchForm, setIsShowSearchForm] = useState(false);
+  const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -162,7 +164,7 @@ function Board() {
 
       <div className="board__body" ref={boardBody}>
         {boardDetails && (
-          <HeaderBoard boardDetails={boardDetails} setIsShowSearchForm={setIsShowSearchForm} />
+          <HeaderBoard boardDetails={boardDetails} setIsShowSearchForm={setIsShowSearchForm} setIsShowBoardMenu={setIsShowBoardMenu}/>
         )}
 
         <ul className="board__columns">
@@ -224,6 +226,9 @@ function Board() {
           setIsShowSearchForm={setIsShowSearchForm}
           boardId={boardDetails._id}
         />
+      )}
+      {isShowBoardMenu && boardDetails && (
+        <BoardMenu setIsShowBoardMenu={setIsShowBoardMenu} boardDetails={boardDetails}/>
       )}
     </main>
   );

@@ -22,50 +22,7 @@
     position: relative;
   }
 
-  // &__header {
-  //   display: flex;
-  //   align-items: center;
-  //   gap: 10px;
-  //   margin: 0 0 10px 0;
-  //   position: relative;
-  // }
-
-  // &__title {
-  //   flex: 1 0 auto;
-  //   font-size: 1.25rem;
-  //   font-weight: 500;
-  // }
-
-  // &__title-text {
-  //   width: fit-content;
-  //   padding: 5px 15px;
-  //   border-radius: 3px;
-  //   transition: all 0.3s;
-  //   cursor: pointer;
-
-  //   &:hover {
-  //     background-color: rgba(0, 0, 0, 0.2);
-  //   }
-  // }
-
-  // &__title-input {
-  //   width: fit-content;
-  //   position: absolute;
-  //   top: -1px;
-  //   opacity: 1;
-  //   padding: 5px 15px;
-  //   border-radius: 3px;
-  //   outline: none;
-  //   opacity: 0;
-  //   z-index: -1;
-
-  //   &--is-edit {
-  //     opacity: 1;
-  //     z-index: 1;
-  //   }
-  // }
-
-  &__columns {
+    &__columns {
     display: flex;
     gap: 5px;
     align-items: flex-start;
