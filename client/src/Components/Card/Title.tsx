@@ -27,7 +27,7 @@ function Title({ title, boardId, cardId, column }: TitleProps) {
 
   return (
     <div className="card__title">
-      <span className="card__title-icon" />
+      <span className="card__icon card__icon--title" />
       <input
         ref={inputRef}
         className="card__title-input"

@@ -3,6 +3,7 @@ import User from '../models/userModel.js';
 import Workspace from '../models/workspaceModel.js';
 import { errors } from '../helpers.js';
 
+
 async function getAllUsers(_req, res) {
   try {
     const users = await User.find();
@@ -28,25 +29,6 @@ async function getUserByID(req, res) {
   }
 }
 
-async function getUserByEmail(req, res) {
-  try {
-    const { email, boardId } = req.body;
-    const { userId } = req;
-    // check if user is member of workspace
-    const workspace = await Workspace.findOne({ boards: boardId });
-    if (!workspace.participants.includes(userId)) {
-      return res.status(403).json({ message: errors.notAWorkspaceMember });
-    }
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Пользователя с указанным email не существует' });
-    }
-    return res.status(200).json(user);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-}
-
 async function updateUserName(req, res) {
   try {
     const { newUserName } = req.body;
@@ -63,7 +45,6 @@ async function updateUserName(req, res) {
     return res.status(500).json({ message: error.message });
   }
 }
-
 async function updateUserAvatar(req, res) {
   try {
     const { avatarColor, avatarImage } = req.body;
@@ -79,7 +60,6 @@ async function updateUserAvatar(req, res) {
     return res.status(500).json({ message: error.message });
   }
 }
-
 async function updateUserPassword(req, res) {
   try {
     const { userId } = req;

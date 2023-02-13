@@ -7,6 +7,7 @@ type ArrayElement<ArrayType extends readonly unknown[]> =
 export type CustomFormInputData<TData> = {
   id: number;
   name: keyof TData;
+  type: string;
   validation: RegisterOptions;
   placeholder: string;
 }[];

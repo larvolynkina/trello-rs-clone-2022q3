@@ -13,6 +13,12 @@ import {
   deleteCheckListFromCard,
   addCheckListItem,
   deleteCheckListItem,
+  addCheckListToCard,
+  deleteCheckListFromCard,
+  addCheckListItem,
+  deleteCheckListItem,
+  toggleChecklistItemChecked,
+  updateChecklistTitle,
 } from '../controllers/cardController.js';
 import verifyAuth from '../middlewares/auth.js';
 
@@ -31,5 +37,7 @@ router.post('/:boardId/:cardId/add-checklist', verifyAuth, addCheckListToCard);
 router.post('/:boardId/:cardId/delete-checklist', verifyAuth, deleteCheckListFromCard);
 router.post('/:boardId/:cardId/add-checklist-item', verifyAuth, addCheckListItem);
 router.post('/:boardId/:cardId/delete-checklist-item', verifyAuth, deleteCheckListItem);
+router.post('/:boardId/:cardId/toggle-checklist-item', verifyAuth, toggleChecklistItemChecked);
+router.post('/:boardId/:cardId/update-checklist-title', verifyAuth, updateChecklistTitle);
 
 export default router;
