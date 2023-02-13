@@ -1,0 +1,27 @@
+@import '../../scss/base/mixins.scss';
+
+.tabs {
+  display: flex;
+
+  border-bottom: rem(2) solid #dfe1e6;
+
+  .tabs__tab {
+    padding: rem(10) rem(20);
+    font-weight: 700;
+    color: #44546f;
+    transition: color 0.3s ease 0s;
+    cursor: pointer;
+
+    @media (any-hover: hover) {
+      &:hover {
+        color: #0c66e4;
+      }
+    }
+
+    &.tabs__tab--active {
+      color: #0c66e4;
+      border-bottom: rem(2) solid #0c66e4;
+      margin-bottom: rem(-2);
+    }
+  }
+}
