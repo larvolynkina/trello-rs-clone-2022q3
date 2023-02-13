@@ -361,7 +361,7 @@ async function addCheckListItem(req, res) {
 async function deleteCheckListItem(req, res) {
   try {
     const { boardId, cardId } = req.params;
-    const { id , checkListIndex } = req.body;
+    const { id, checkListIndex } = req.body;
     const { userId } = req;
     // check if user is member of workspace
     const workspace = await Workspace.findOne({ boards: boardId });
@@ -371,11 +371,57 @@ async function deleteCheckListItem(req, res) {
     const card = await Card.findById(cardId);
     const checkListItemId = id;
     const updatedCheckListsArray = [...card.checklists];
-    const updatedCheckItemsArray = updatedCheckListsArray[checkListIndex].checkItems.filter((item) => item._id.toString() !== checkListItemId);
+    const updatedCheckItemsArray = updatedCheckListsArray[checkListIndex].checkItems.filter(
+      (item) => item._id.toString() !== checkListItemId,
+    );
     updatedCheckListsArray[checkListIndex].checkItems = updatedCheckItemsArray;
     card.checklists = updatedCheckListsArray;
     await card.save();
-    return res.status(200).json({message: 'Элемент чек-листа успешно удален'});
+    return res.status(200).json({ message: 'Элемент чек-листа успешно удален' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function toggleChecklistItemChecked(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { id, checkListIndex } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    const updatedCheckListsArray = [...card.checklists];
+    const checkListItemIndex = updatedCheckListsArray[checkListIndex].checkItems.findIndex((item) => item._id.toString() === id)
+    updatedCheckListsArray[checkListIndex].checkItems[checkListItemIndex].checked =
+      !updatedCheckListsArray[checkListIndex].checkItems[checkListItemIndex].checked;
+    card.checklists = updatedCheckListsArray;
+    await card.save();
+    return res.status(200).json({ message: 'Статус элемента чеклиста успешно изменен' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function updateChecklistTitle(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { title, checkListIndex } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    const updatedCheckListsArray = [...card.checklists];
+    updatedCheckListsArray[checkListIndex].title = title;
+    card.checklists = updatedCheckListsArray;
+    await card.save();
+    return res.status(200).json({ message: 'Название чеклиста обновлено' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -395,4 +441,6 @@ export {
   deleteCheckListFromCard,
   addCheckListItem,
   deleteCheckListItem,
+  toggleChecklistItemChecked,
+  updateChecklistTitle,
 };

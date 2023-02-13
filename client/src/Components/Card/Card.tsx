@@ -17,7 +17,7 @@ import {
   setBoardParticipantsModalOpen,
 } from '../../store/reducers/cards/cardSlice';
 import CheckListModal from './CheckListModal';
-import CheckListList from './CheckListList';
+import CheckListFullList from './CheckListFullList';
 import { ParamTypes } from '../../types/card';
 
 function Card() {
@@ -71,7 +71,7 @@ function Card() {
                 />
               )}
               <Description description={data.card.description} boardId={boardId} cardId={cardId} />
-              <CheckListList items={data.card.checklists}/>
+              <CheckListFullList items={data.card.checklists}/>
             </div>
             <aside className="card__aside">
               <AsideList title="Добавить на карточку" buttons={asideAddButtons} />

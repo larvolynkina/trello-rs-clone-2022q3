@@ -17,13 +17,33 @@ function CheckListModal() {
     setTitle('Чек-лист');
   }
 
+  function onClickCloseHandler() {
+    dispatch(setCheckListModalClose());
+    setTitle('Чек-лист');
+  }
+
   return (
     <div className="card__checklist-modal">
       <h3>Добавление списка задач</h3>
+      <button
+        className="card__modal-close"
+        type="button"
+        aria-label="close modal"
+        onClick={onClickCloseHandler}
+      />
       <span className="board-participants-modal__line" />
       <p>Название</p>
-      <input type="text" value={title} onChange={(event) => setTitle(event.target.value)} />
-      <button onClick={onClickHandler} type="button">
+      <input
+        className="card__checklist-modal-input"
+        type="text"
+        value={title}
+        onChange={(event) => setTitle(event.target.value)}
+      />
+      <button
+        className="card__description-btn card__description-btn--save"
+        onClick={onClickHandler}
+        type="button"
+      >
         Добавить
       </button>
     </div>

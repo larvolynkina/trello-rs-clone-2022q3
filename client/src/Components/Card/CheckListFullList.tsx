@@ -1,13 +1,13 @@
 import { IChecklist } from '../../types/card';
 import CheckList from './CheckList';
 
-interface CheckListListProps {
+interface CheckListFullListProps {
   items: IChecklist[];
 }
 
-function CheckListList({ items }: CheckListListProps) {
+function CheckListFullList({ items }: CheckListFullListProps) {
   return (
-    <div>
+    <div >
       {items.map((item, index) => (
         <CheckList checklist={item} key={item._id} id={item._id} checkListIndex={index} />
       ))}
@@ -15,4 +15,4 @@ function CheckListList({ items }: CheckListListProps) {
   );
 }
 
-export default CheckListList;
+export default CheckListFullList;

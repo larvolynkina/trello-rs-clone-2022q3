@@ -51,6 +51,13 @@ type TDeleteCheckListItemQueryArgs = {
   checkListIndex: number;
 }
 
+type TUpdateCheckListTitleQueryArgs = {
+  boardId: string;
+  cardId: string;
+  title: string;
+  checkListIndex: number;
+}
+
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
   baseQuery: fetchBaseQuery({
@@ -131,6 +138,22 @@ export const cardsApi = createApi({
       }),
       invalidatesTags: ['Card'],
     }),
+    toggleCheckListItemChecked: builder.mutation<void, TDeleteCheckListItemQueryArgs>({
+      query: ({ boardId, cardId, id, checkListIndex }) => ({
+        url: `/${boardId}/${cardId}/toggle-checklist-item`,
+        method: 'POST',
+        body: { id , checkListIndex },
+      }),
+      invalidatesTags: ['Card'],
+    }),
+    updateCheckListTitle: builder.mutation<void, TUpdateCheckListTitleQueryArgs>({
+      query: ({ boardId, cardId, title, checkListIndex }) => ({
+        url: `/${boardId}/${cardId}/update-checklist-title`,
+        method: 'POST',
+        body: { title , checkListIndex },
+      }),
+      invalidatesTags: ['Card'],
+    }),
   }),
 });
 
@@ -144,4 +167,6 @@ export const {
   useDeleteCheckListMutation,
   useAddCheckListItemMutation,
   useDeleteCheckListItemMutation,
+  useToggleCheckListItemCheckedMutation,
+  useUpdateCheckListTitleMutation,
 } = cardsApi;
