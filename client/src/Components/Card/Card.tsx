@@ -12,18 +12,19 @@ import {
 import { useGetBoardParticipantsQuery } from '../../store/reducers/board/board.api';
 import './Card.scss';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
-import {
-  setBoardParticipantsModalOpen,
-} from '../../store/reducers/cards/cardSlice';
+import { setBoardParticipantsModalOpen } from '../../store/reducers/cards/cardSlice';
 import CheckListModal from './CheckListModal';
 import CheckListFullList from './CheckListFullList';
 import { ParamTypes } from '../../types/card';
+import Loader from '../Loader';
 
 function Card() {
   const { boardId, cardId } = useParams() as ParamTypes;
-  const { data } = useGetCardByIdQuery({ boardId, cardId });
-  const { data: cardParticipants } = useGetCardParticipantsQuery({ boardId, cardId });
-  const { data: boardParticipants } = useGetBoardParticipantsQuery({ boardId });
+  const { data, isLoading } = useGetCardByIdQuery({ boardId, cardId });
+  const { data: cardParticipants, isLoading: cardParticipantsLoading } =
+    useGetCardParticipantsQuery({ boardId, cardId });
+  const { data: boardParticipants, isLoading: boardParticipantsLoading } =
+    useGetBoardParticipantsQuery({ boardId });
   const dispatch = useAppDispatch();
   const boardParticipantsModalActive = useAppSelector(
     (state) => state.CARD.boardParticipantsModalActive,
@@ -38,6 +39,8 @@ function Card() {
 
   return (
     <>
+      {(cardParticipantsLoading || boardParticipantsLoading || isLoading) && <Loader />}
+
       {data && (
         <div className="card">
           <Title title={data.card.title} boardId={boardId} cardId={cardId} column={data.column} />
