@@ -52,3 +52,11 @@ export const BG_COLORS = [
   'rgb(0, 174, 204)',
   'rgb(131, 140, 145)',
 ];
+
+export const BG_IMAGES = [
+  '/assets/img/board/bg-img1.jpg',
+  '/assets/img/board/bg-img2.jpg',
+  '/assets/img/board/bg-img3.jpg',
+  '/assets/img/board/bg-img4.jpg',
+  '/assets/img/board/bg-img5.jpg',
+];

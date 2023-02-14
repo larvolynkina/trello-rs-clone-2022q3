@@ -2,19 +2,25 @@ import { useEffect, useState } from 'react';
 import { IBoard } from '../../../types/board';
 import './boardMenu.scss';
 
-import { BG_COLORS } from '../../../const/const';
+import { BG_COLORS, BG_IMAGES } from '../../../const/const';
 
 type BoardMenuProps = {
   setIsShowBoardMenu: (b: boolean) => void;
   boardDetails: IBoard;
-  setBgImageOrColor: (color: string) => void;
+  setBgStyle: ({
+    backgroundColor,
+    backgroundImage,
+  }: {
+    backgroundColor?: string;
+    backgroundImage?: string;
+  }) => void;
 };
 
 type TStateComponentView = {
   state: 'base' | 'changeBg' | 'bgImage' | 'bgColor' | 'marks';
 };
 
-function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgImageOrColor }: BoardMenuProps) {
+function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuProps) {
   // const [currentBg, setCurrentBg] = useState(
   //   boardDetails.backgroundImage || boardDetails.backgroundImage || '',
   // );
@@ -84,7 +90,19 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgImageOrColor }: Boar
   };
 
   const handleClickColor = (index: number) => {
-    setBgImageOrColor(BG_COLORS[index]);
+    const style = {
+      backgroundColor: BG_COLORS[index],
+      backgroundImage: 'none',
+    };
+    setBgStyle(style);
+  };
+
+  const handleClickImage = (image: string) => {
+    const style = {
+      backgroundImage: `url(${image})`,
+      backgroundColor: '',
+    };
+    setBgStyle(style);
   };
 
   return (
@@ -145,11 +163,26 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgImageOrColor }: Boar
         <ul className="change-bg__colors">
           {BG_COLORS.map((color, index) => (
             <button
+              key={Math.random()}
               type="button"
               className="change-bg__btn"
               onClick={() => handleClickColor(index)}
             >
               <li className="change-bg__item" style={{ backgroundColor: color }} />
+            </button>
+          ))}
+        </ul>
+      )}
+      {stateComponentView.state === 'bgImage' && (
+        <ul className="change-bg__images">
+          {BG_IMAGES.map((image) => (
+            <button
+              key={Math.random()}
+              type="button"
+              className="change-bg__btn"
+              onClick={() => handleClickImage(image)}
+            >
+              <li className="change-bg__item" style={{ backgroundImage: `url(${image})` }} />
             </button>
           ))}
         </ul>

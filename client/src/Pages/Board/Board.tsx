@@ -49,7 +49,7 @@ function Board() {
   const [addCardFromMenu, setAddCardFromMenu] = useState(false);
   const [isShowSearchForm, setIsShowSearchForm] = useState(false);
   const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
-  const [bgImageOrColor, setBgImageOrColor] = useState('');
+  const [bgStyle, setBgStyle] = useState({});
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -159,7 +159,7 @@ function Board() {
       className="board"
       onClick={handleClickBoard}
       onKeyUp={handleKeyUpBoard}
-      style={bgImageOrColor ? { background: bgImageOrColor } : {}}
+      style={bgStyle}
       aria-hidden="true"
     >
       <aside className="board__aside">Рабочее пространство</aside>
@@ -237,7 +237,7 @@ function Board() {
         <BoardMenu
           setIsShowBoardMenu={setIsShowBoardMenu}
           boardDetails={boardDetails}
-          setBgImageOrColor={setBgImageOrColor}
+          setBgStyle={setBgStyle}
         />
       )}
     </main>

@@ -160,7 +160,8 @@
   &__text {
   }
 
-  &__colors {
+  &__colors,
+  &__images {
     margin: 10px 0 0 0;
     display: flex;
     flex-wrap: wrap;
@@ -172,5 +173,7 @@
     width: 152px;
     margin: 0 4px;
     border-radius: 8px;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 }
