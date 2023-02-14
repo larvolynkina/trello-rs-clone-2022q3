@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../hooks/redux';
 import { updateColumns } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
-import { AddButtonsOnBoardText, BG_COLORS } from '../../const/const';
+import { AddButtonsOnBoardText } from '../../const/const';
 import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
@@ -21,7 +21,6 @@ import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
 import HeaderBoard from './HeaderBoard';
 import SearchParticipantsForm from './SearchParticipantsForm';
 import BoardMenu from './BoardMenu';
-// import { RootState } from '../../store/rootReducer';
 
 function Board() {
   const location = useLocation();
@@ -52,6 +51,15 @@ function Board() {
   const [bgStyle, setBgStyle] = useState({});
 
   useEffect(() => {
+    if (boardDetails?.backgroundImage?.length > 0) {
+      setBgStyle({backgroundImage: boardDetails.backgroundImage});
+    } else if (boardDetails?.backgroundColor?.length > 0) {
+      console.log('color: ', boardDetails.backgroundColor)
+
+      setBgStyle({backgroundImage: 'none', backgroundColor: boardDetails.backgroundColor});
+    }
+  }, [boardDetails]);
+  useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
       const { newColumns, resultColumn } = getTranspositionColumnCards({
         dragColumnFromCard,
@@ -70,7 +78,6 @@ function Board() {
       setDragColumnFromCard(null);
       setDropColumnFromCard(null);
       setDragCard(null);
-      // setDropCard(null);
     }
   }, [dropColumnFromCard, dropCard]);
 

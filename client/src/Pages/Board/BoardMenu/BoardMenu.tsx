@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { IBoard } from '../../../types/board';
 import './boardMenu.scss';
 
+import { useUpdateBoardBackgroundMutation } from '../../../store/reducers/board/board.api';
 import { BG_COLORS, BG_IMAGES } from '../../../const/const';
 
 type BoardMenuProps = {
@@ -24,7 +25,7 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
   // const [currentBg, setCurrentBg] = useState(
   //   boardDetails.backgroundImage || boardDetails.backgroundImage || '',
   // );
-
+  const [ updateBoardBackground ] = useUpdateBoardBackgroundMutation();
   const [stateComponentView, setStateComponentView] = useState<TStateComponentView>({
     state: 'base',
   });
@@ -95,6 +96,11 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       backgroundImage: 'none',
     };
     setBgStyle(style);
+    updateBoardBackground({
+      boardId: boardDetails._id, 
+      backgroundColor: style.backgroundColor, 
+      backgroundImage: '',
+    });
   };
 
   const handleClickImage = (image: string) => {
@@ -103,6 +109,11 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       backgroundColor: '',
     };
     setBgStyle(style);
+    updateBoardBackground({
+      boardId: boardDetails._id, 
+      backgroundColor: '', 
+      backgroundImage: style.backgroundImage,
+    });
   };
 
   return (
