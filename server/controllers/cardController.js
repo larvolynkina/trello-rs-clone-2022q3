@@ -437,4 +437,10 @@ export {
   getCardParticipants,
   addCardParticipant,
   deleteCardParticipant,
+  addCheckListToCard,
+  deleteCheckListFromCard,
+  addCheckListItem,
+  deleteCheckListItem,
+  toggleChecklistItemChecked,
+  updateChecklistTitle,
 };

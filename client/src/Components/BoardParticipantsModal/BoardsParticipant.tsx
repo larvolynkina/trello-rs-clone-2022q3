@@ -8,6 +8,8 @@ import {
 } from '../../store/reducers/cards/cards.api';
 import { IUser } from '../../types/card';
 import Avatar from '../UserAvatar/UserAvatar';
+import Loader from '../Loader';
+
 
 interface BoardsParticipantProps {
   participant: IUser;
@@ -22,8 +24,8 @@ type ParamTypes = {
 function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipantProps) {
   const { boardId, cardId } = useParams() as ParamTypes;
   const [active, setActive] = useState(false);
-  const [addCardParticipant] = useAddCardParticipantMutation();
-  const [deleteCardParticipant] = useDeleteCardParticipantMutation();
+  const [addCardParticipant, { isLoading: adding }] = useAddCardParticipantMutation();
+  const [deleteCardParticipant, { isLoading: deleting }] = useDeleteCardParticipantMutation();
 
   function onClickHandler() {
     if (!active) {
@@ -43,17 +45,20 @@ function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipan
   }, [cardParticipantsId]);
 
   return (
-    <div
-      className={
-        active
-          ? 'board-participants-modal__participant board-participants-modal__participant--active'
-          : 'board-participants-modal__participant'
-      }
-      onClick={onClickHandler}
-    >
-      <Avatar participant={participant} />
-      <div>{participant.userName}</div>
-    </div>
+    <>
+      {(adding || deleting) && <Loader />}
+      <div
+        className={
+          active
+            ? 'board-participants-modal__participant board-participants-modal__participant--active'
+            : 'board-participants-modal__participant'
+        }
+        onClick={onClickHandler}
+      >
+        <Avatar participant={participant} />
+        <div>{participant.userName}</div>
+      </div>
+    </>
   );
 }
 
