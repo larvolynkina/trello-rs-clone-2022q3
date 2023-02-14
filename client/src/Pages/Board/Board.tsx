@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../hooks/redux';
 import { updateColumns } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
-import { AddButtonsOnBoardText } from '../../const/const';
+import { AddButtonsOnBoardText, BG_COLORS } from '../../const/const';
 import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
@@ -49,6 +49,7 @@ function Board() {
   const [addCardFromMenu, setAddCardFromMenu] = useState(false);
   const [isShowSearchForm, setIsShowSearchForm] = useState(false);
   const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
+  const [bgImageOrColor, setBgImageOrColor] = useState('');
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -158,13 +159,18 @@ function Board() {
       className="board"
       onClick={handleClickBoard}
       onKeyUp={handleKeyUpBoard}
+      style={bgImageOrColor ? { background: bgImageOrColor } : {}}
       aria-hidden="true"
     >
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body" ref={boardBody}>
         {boardDetails && (
-          <HeaderBoard boardDetails={boardDetails} setIsShowSearchForm={setIsShowSearchForm} setIsShowBoardMenu={setIsShowBoardMenu}/>
+          <HeaderBoard
+            boardDetails={boardDetails}
+            setIsShowSearchForm={setIsShowSearchForm}
+            setIsShowBoardMenu={setIsShowBoardMenu}
+          />
         )}
 
         <ul className="board__columns">
@@ -228,7 +234,11 @@ function Board() {
         />
       )}
       {isShowBoardMenu && boardDetails && (
-        <BoardMenu setIsShowBoardMenu={setIsShowBoardMenu} boardDetails={boardDetails}/>
+        <BoardMenu
+          setIsShowBoardMenu={setIsShowBoardMenu}
+          boardDetails={boardDetails}
+          setBgImageOrColor={setBgImageOrColor}
+        />
       )}
     </main>
   );

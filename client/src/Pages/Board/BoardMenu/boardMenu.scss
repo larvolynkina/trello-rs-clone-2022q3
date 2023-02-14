@@ -22,9 +22,35 @@
     font-size: 16px;
     font-weight: 500;
   }
+  &__back {
+    position: absolute;
+    left: 15px;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  &__back-btn {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border: 2px solid $buttonAddCardTextColor;
+    transform: rotate(45deg);
+    border-top: none;
+    border-right: none;
+  }
+
   &__close-btn {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     position: absolute;
     right: 0px;
     top: 0;
@@ -57,6 +83,7 @@
     }
   }
   &__list {
+    margin: 0 0 10px 0;
     border-bottom: 1px solid #091e4221;
   }
 
@@ -71,7 +98,7 @@
     height: 20px;
     width: 20px;
     border-radius: 3px;
-    background-image: url('../../../../public/assets/bg-image.jpg');
+    background-image: url('../../../../public/assets/img/board/bg-default-image.jpg');
     background-size: contain;
   }
 
@@ -92,9 +119,58 @@
     border-radius: 3px;
 
     text-align: left;
-    
+
     &:hover {
       background-color: rgba(0, 0, 0, 0.1);
     }
+  }
+}
+
+.change-bg {
+  margin: 10px 0 0 0;
+  width: 100%;
+  height: 124px;
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+
+  &__list-item {
+    text-align: center;
+  }
+  &__btn {
+    transition: all 0.3s;
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+  &__foto,
+  &__color {
+    background-size: cover;
+    border-radius: 8px;
+    height: 96px;
+    width: 152px;
+    margin: 0 0 8px;
+  }
+  &__foto {
+    background-image: url('../../../../public/assets/img/board/change-bg-image.jpg');
+  }
+  &__color {
+    background-image: url('../../../../public/assets/img/board/change-bg-color.jpg');
+  }
+  &__text {
+  }
+
+  &__colors {
+    margin: 10px 0 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  &__item {
+    height: 96px;
+    width: 152px;
+    margin: 0 4px;
+    border-radius: 8px;
   }
 }
