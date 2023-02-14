@@ -4,6 +4,7 @@ import './boardMenu.scss';
 
 import { useUpdateBoardBackgroundMutation } from '../../../store/reducers/board/board.api';
 import { BG_COLORS, BG_IMAGES } from '../../../const/const';
+import Marks from '../../../Components/Marks';
 
 type BoardMenuProps = {
   setIsShowBoardMenu: (b: boolean) => void;
@@ -25,14 +26,13 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
   // const [currentBg, setCurrentBg] = useState(
   //   boardDetails.backgroundImage || boardDetails.backgroundImage || '',
   // );
-  const [ updateBoardBackground ] = useUpdateBoardBackgroundMutation();
+  const [updateBoardBackground] = useUpdateBoardBackgroundMutation();
   const [stateComponentView, setStateComponentView] = useState<TStateComponentView>({
     state: 'base',
   });
   const [titleHeader, setTitleHeader] = useState('Меню');
 
   useEffect(() => {
-    console.log(stateComponentView);
     switch (stateComponentView.state) {
       case 'base':
         setTitleHeader('Меню');
@@ -97,8 +97,8 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
     };
     setBgStyle(style);
     updateBoardBackground({
-      boardId: boardDetails._id, 
-      backgroundColor: style.backgroundColor, 
+      boardId: boardDetails._id,
+      backgroundColor: style.backgroundColor,
       backgroundImage: '',
     });
   };
@@ -110,8 +110,8 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
     };
     setBgStyle(style);
     updateBoardBackground({
-      boardId: boardDetails._id, 
-      backgroundColor: '', 
+      boardId: boardDetails._id,
+      backgroundColor: '',
       backgroundImage: style.backgroundImage,
     });
   };
@@ -197,6 +197,9 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
             </button>
           ))}
         </ul>
+      )}
+      {stateComponentView.state === 'marks' && boardDetails.marks && (
+        <Marks from="menu" boardId={boardDetails._id}/>
       )}
     </aside>
   );

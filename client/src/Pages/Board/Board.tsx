@@ -54,8 +54,6 @@ function Board() {
     if (boardDetails?.backgroundImage?.length > 0) {
       setBgStyle({backgroundImage: boardDetails.backgroundImage});
     } else if (boardDetails?.backgroundColor?.length > 0) {
-      console.log('color: ', boardDetails.backgroundColor)
-
       setBgStyle({backgroundImage: 'none', backgroundColor: boardDetails.backgroundColor});
     }
   }, [boardDetails]);

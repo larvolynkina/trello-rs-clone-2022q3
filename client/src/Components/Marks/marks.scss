@@ -1,0 +1,54 @@
+@import '../../scss/colors.scss';
+
+.marks {
+  &__header {
+    height: 48px;
+    border-bottom: 1px solid #091e4221;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  &__title {
+    
+  }
+
+  &__close-btn {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    right: 0px;
+    top: 0;
+    transition: all 0.3s;
+
+    &:hover {
+      opacity: 0.75;
+    }
+    
+  }
+
+  &__cross-btn {
+    display: block;
+    position: relative;
+    background-color: $buttonAddCardTextColor;
+
+    &::after,
+    &::before {
+      content: '';
+      width: 16px;
+      height: 2px;
+      border-radius: 5px;
+      background-color: inherit;
+      position: absolute;
+      top: 0;
+      left: 12px;
+    }
+    &::after {
+      transform: rotate(45deg);
+    }
+    &::before {
+      transform: rotate(135deg);
+    }
+  }
+}
