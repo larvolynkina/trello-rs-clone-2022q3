@@ -11,6 +11,7 @@ import ProtectedRoute from '../../Components/ProtectedRoute';
 import Redirect from '../../Components/Redirect';
 import Profile from '../../Pages/Profile';
 import Card from '../../Components/Card';
+import Workspaces from '../../Pages/Workspaces';
 
 function RootRouter() {
   return (
@@ -23,6 +24,7 @@ function RootRouter() {
         <Route path={APPRoute.login} element={<Redirect outlet={<Login />} />} />
         <Route path={APPRoute.signUp} element={<Redirect outlet={<SignUp />} />} />
         <Route path={APPRoute.card} element={<ProtectedRoute outlet={<Card />} />} />
+        <Route path={APPRoute.workspaces} element={<ProtectedRoute outlet={<Workspaces />} />} />
       </Routes>
       <Footer />
     </>

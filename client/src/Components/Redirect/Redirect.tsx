@@ -13,7 +13,7 @@ function Redirect({ outlet }: RedirectProps) {
 
   if (authorizationStatus !== AuthorizationStatus.Auth) return outlet;
 
-  const path = location.state?.from || APPRoute.board;
+  const path = location.state?.from || APPRoute.workspaces;
 
   return <Navigate to={{ pathname: path }} replace />;
 }
