@@ -9,7 +9,7 @@ import { ParamTypes } from '../../types/card';
 function CheckListModal() {
   const { boardId, cardId } = useParams() as ParamTypes;
   const [title, setTitle] = useState('Чек-лист');
-  const [addCheckList] = useAddCheckListMutation();
+  const [addCheckList ] = useAddCheckListMutation();
   const dispatch = useAppDispatch();
 
   function onClickHandler() {

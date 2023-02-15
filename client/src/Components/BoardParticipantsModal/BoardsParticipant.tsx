@@ -10,7 +10,6 @@ import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { addParticipant, deleteParticipant } from '../../store/reducers/cards/cardSlice';
 import { IUser } from '../../types/card';
 import Avatar from '../UserAvatar/UserAvatar';
-import Loader from '../Loader';
 
 interface BoardsParticipantProps {
   participant: IUser;
@@ -25,8 +24,8 @@ type ParamTypes = {
 function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipantProps) {
   const { boardId, cardId } = useParams() as ParamTypes;
   const [active, setActive] = useState(false);
-  const [addCardParticipant, { isLoading: adding }] = useAddCardParticipantMutation();
-  const [deleteCardParticipant, { isLoading: deleting }] = useDeleteCardParticipantMutation();
+  const [addCardParticipant] = useAddCardParticipantMutation();
+  const [deleteCardParticipant] = useDeleteCardParticipantMutation();
   const card = useAppSelector((state) => state.CARD.card);
   const dispatch = useAppDispatch();
 
@@ -55,20 +54,17 @@ function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipan
   }, []);
 
   return (
-    <>
-      {(adding || deleting) && <Loader />}
-      <div
-        className={
-          active
-            ? 'board-participants-modal__participant board-participants-modal__participant--active'
-            : 'board-participants-modal__participant'
-        }
-        onClick={onClickHandler}
-      >
-        <Avatar participant={participant} />
-        <div>{participant.userName}</div>
-      </div>
-    </>
+    <div
+      className={
+        active
+          ? 'board-participants-modal__participant board-participants-modal__participant--active'
+          : 'board-participants-modal__participant'
+      }
+      onClick={onClickHandler}
+    >
+      <Avatar participant={participant} />
+      <div>{participant.userName}</div>
+    </div>
   );
 }
 
