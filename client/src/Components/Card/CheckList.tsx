@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { IChecklist, ParamTypes } from '../../types/card';
 import {
   useDeleteCheckListMutation,
@@ -7,6 +8,9 @@ import {
   useUpdateCheckListTitleMutation,
 } from '../../store/reducers/cards/cards.api';
 import CheckListItem from './CheckListItem';
+import { deleteCheckListFromState } from '../../store/reducers/cards/cardSlice';
+import { useAppDispatch } from '../../hooks/redux';
+import Loader from '../Loader';
 
 interface CheckListProps {
   checklist: IChecklist;
@@ -16,7 +20,7 @@ interface CheckListProps {
 
 function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
   const [deleteCheckList] = useDeleteCheckListMutation();
-  const [addCheckListItem] = useAddCheckListItemMutation();
+  const [addCheckListItem, { isLoading }] = useAddCheckListItemMutation();
   const [updateCheckListTitle] = useUpdateCheckListTitleMutation();
   const { boardId, cardId } = useParams() as ParamTypes;
   const [adding, setAdding] = useState(false);
@@ -24,6 +28,7 @@ function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
   const [newItemTitle, setNewItemTitle] = useState('');
   const [checklistProgress, setCheckListProgress] = useState(0);
   const [progressLineWidth, setProgressLineWidth] = useState(0);
+  const dispatch = useAppDispatch();
 
   function addCheckListItemHandler() {
     addCheckListItem({ boardId, cardId, title: newItemTitle, id });
@@ -31,7 +36,17 @@ function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
     setAdding(false);
   }
 
+  function deleteCheckListItemHandler() {
+    dispatch(deleteCheckListFromState(id));
+    deleteCheckList({ boardId, cardId, title: checklist.title, id });
+  }
+
   function onChangeTitleInputHandler() {
+    if (!title) {
+      toast.error('Название чек-листа не должно быть пустой строкой');
+      setTitle(checklist.title);
+      return;
+    }
     if (checklist.title !== title) {
       updateCheckListTitle({ boardId, cardId, title, checkListIndex });
     }
@@ -60,11 +75,7 @@ function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
           onChange={(event) => setTitle(event.target.value)}
           onBlur={onChangeTitleInputHandler}
         />
-        <button
-          className="checklist__btn"
-          type="button"
-          onClick={() => deleteCheckList({ boardId, cardId, title: checklist.title, id })}
-        >
+        <button className="checklist__btn" type="button" onClick={deleteCheckListItemHandler}>
           Удалить
         </button>
       </div>
@@ -101,6 +112,7 @@ function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
           </div>
         </div>
       )}
+      {isLoading && <Loader />}
     </div>
   );
 }

@@ -422,10 +422,10 @@ async function deleteCheckListItem(req, res) {
   }
 }
 
-async function toggleChecklistItemChecked(req, res) {
+async function setChecklistItemChecked(req, res) {
   try {
     const { boardId, cardId } = req.params;
-    const { id, checkListIndex } = req.body;
+    const { id, checkListIndex, status } = req.body;
     const { userId } = req;
     // check if user is member of workspace
     const workspace = await Workspace.findOne({ boards: boardId });
@@ -437,8 +437,7 @@ async function toggleChecklistItemChecked(req, res) {
     const checkListItemIndex = updatedCheckListsArray[checkListIndex].checkItems.findIndex(
       (item) => item._id.toString() === id,
     );
-    updatedCheckListsArray[checkListIndex].checkItems[checkListItemIndex].checked =
-      !updatedCheckListsArray[checkListIndex].checkItems[checkListItemIndex].checked;
+    updatedCheckListsArray[checkListIndex].checkItems[checkListItemIndex].checked = status;
     card.checklists = updatedCheckListsArray;
     await card.save();
     return res.status(200).json({ message: 'Статус элемента чеклиста успешно изменен' });
@@ -482,6 +481,6 @@ export {
   deleteCheckListFromCard,
   addCheckListItem,
   deleteCheckListItem,
-  toggleChecklistItemChecked,
+  setChecklistItemChecked,
   updateChecklistTitle,
 };

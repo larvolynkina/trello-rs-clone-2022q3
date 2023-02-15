@@ -35,6 +35,32 @@ const cardSlice = createSlice({
         );
       }
     },
+    deleteCheckListFromState(state, action) {
+      if (state.card) {
+        state.card.checklists = state.card.checklists.filter(
+          (checklist) => checklist._id !== action.payload,
+        );
+      }
+    },
+    toggleCheckListItemCheckedInState(state, action) {
+      if (state.card) {
+        
+        const { id, checkListIndex } = action.payload;
+        const itemIndex = state.card.checklists[checkListIndex].checkItems.findIndex(
+          (item) => item._id === id,
+        );
+        state.card.checklists[checkListIndex].checkItems[itemIndex].checked =
+          !state.card.checklists[checkListIndex].checkItems[itemIndex].checked;
+      }
+    },
+    deleteCheckListItemFromState(state, action) {
+      if (state.card) {
+        const { id, checkListIndex } = action.payload;
+        state.card.checklists[checkListIndex].checkItems = [
+          ...state.card.checklists[checkListIndex].checkItems,
+        ].filter((item) => item._id !== id);
+      }
+    },
     setBoardParticipantsModalOpen(state) {
       state.boardParticipantsModalActive = true;
     },
@@ -66,6 +92,9 @@ export const {
   setAttachModalOpen,
   addParticipant,
   deleteParticipant,
+  deleteCheckListFromState,
+  toggleCheckListItemCheckedInState,
+  deleteCheckListItemFromState,
 } = cardSlice.actions;
 
 export default cardSlice.reducer;
