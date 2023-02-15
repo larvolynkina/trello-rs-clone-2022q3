@@ -1,8 +1,8 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks/redux';
-import { updateColumns } from '../../store/reducers/board/boardState';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { updateColumns, updateBoardDetails, createColumnInStore } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
@@ -25,12 +25,13 @@ import BoardMenu from './BoardMenu';
 function Board() {
   const location = useLocation();
   const boardId = location.pathname.split('/')[2];
-  const { data: boardDetails } = useGetBoardByIDQuery(boardId);
-  const { data: columnsData } = useGetColumnsQuery(boardId);
+  const { data: boardDetailsFromServer } = useGetBoardByIDQuery(boardId);
+  const { data: columnsDataFromServer } = useGetColumnsQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
   const dispatch = useAppDispatch();
+  const { boardData, columnsData } = useAppSelector((state) => state.BOARD);
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
@@ -51,12 +52,28 @@ function Board() {
   const [bgStyle, setBgStyle] = useState({});
 
   useEffect(() => {
-    if (boardDetails?.backgroundImage?.length > 0) {
-      setBgStyle({backgroundImage: boardDetails.backgroundImage});
-    } else if (boardDetails?.backgroundColor?.length > 0) {
-      setBgStyle({backgroundImage: 'none', backgroundColor: boardDetails.backgroundColor});
+    if (boardDetailsFromServer) {
+      dispatch(updateBoardDetails(boardDetailsFromServer));
     }
-  }, [boardDetails]);
+  }, [boardDetailsFromServer]);
+
+  useEffect(() => {
+    if (columnsDataFromServer) {
+      dispatch(updateColumns(columnsDataFromServer))
+    }
+  }, [columnsDataFromServer]);
+  
+  useEffect(() => {
+    if (boardData && boardData._id.length > 0) {
+      if (boardData.backgroundImage && boardData.backgroundImage.length > 0) {
+        setBgStyle({backgroundImage: boardData.backgroundImage});
+      } else if (boardData.backgroundColor && boardData.backgroundColor.length > 0) {
+        setBgStyle({backgroundImage: 'none', backgroundColor: boardData.backgroundColor});
+      }
+    }
+    console.log('change boardData')
+  }, [boardData]);
+
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
       const { newColumns, resultColumn } = getTranspositionColumnCards({
@@ -90,15 +107,15 @@ function Board() {
       const { newOrderColumn } = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
       updateOrderColumn(newOrderColumn);
     }
-
     setDragColum(null);
     setDropColum(null);
   }, [dropColumn]);
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
-    if (boardDetails._id && title) {
-      createColumn({ boardId: boardDetails._id, title: title.trim() }).unwrap();
+    // dispatch(createColumnInStore(''));
+    if (boardData._id && title) {
+      createColumn({ boardId: boardData._id, title: title.trim() }).unwrap();
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
       }
@@ -170,9 +187,9 @@ function Board() {
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body" ref={boardBody}>
-        {boardDetails && (
+        {boardData && boardData._id.length > 0 && (
           <HeaderBoard
-            boardDetails={boardDetails}
+            boardDetails={boardData}
             setIsShowSearchForm={setIsShowSearchForm}
             setIsShowBoardMenu={setIsShowBoardMenu}
           />
@@ -232,16 +249,16 @@ function Board() {
       {isOpenCardMenu && (
         <CardMenu text={textFromCard} position={cardMenuPosition} closeMenu={setIsOpenCardMenu} />
       )}
-      {isShowSearchForm && boardDetails && (
+      {isShowSearchForm && boardData && (
         <SearchParticipantsForm
           setIsShowSearchForm={setIsShowSearchForm}
-          boardId={boardDetails._id}
+          boardId={boardData._id}
         />
       )}
-      {isShowBoardMenu && boardDetails && (
+      {isShowBoardMenu && boardData && (
         <BoardMenu
           setIsShowBoardMenu={setIsShowBoardMenu}
-          boardDetails={boardDetails}
+          boardDetails={boardData}
           setBgStyle={setBgStyle}
         />
       )}
