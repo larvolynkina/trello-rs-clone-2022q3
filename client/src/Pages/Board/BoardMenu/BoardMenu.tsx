@@ -23,14 +23,24 @@ type TStateComponentView = {
 };
 
 function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuProps) {
-  // const [currentBg, setCurrentBg] = useState(
-  //   boardDetails.backgroundImage || boardDetails.backgroundImage || '',
-  // );
+  const [currentBg, setCurrentBg] = useState({});
   const [updateBoardBackground] = useUpdateBoardBackgroundMutation();
   const [stateComponentView, setStateComponentView] = useState<TStateComponentView>({
     state: 'base',
   });
   const [titleHeader, setTitleHeader] = useState('Меню');
+
+  useEffect(() => {
+    if (boardDetails.backgroundImage && boardDetails.backgroundImage.length > 0) {
+      setCurrentBg({
+        backgroundImage: boardDetails.backgroundImage,
+      });
+    } else if (boardDetails.backgroundColor && boardDetails.backgroundColor.length > 0) {
+      setCurrentBg({
+        backgroundColor: boardDetails.backgroundColor,
+      });
+    }
+  }, [boardDetails]);
 
   useEffect(() => {
     switch (stateComponentView.state) {
@@ -140,7 +150,7 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
           <ul className="board-menu__list">
             <li className="board-menu__item">
               <button type="button" className="board-menu__btn" onClick={handleClickBtnChangeBg}>
-                <div className="board-menu__icon-bg" />
+                <div className="board-menu__icon-bg" style={currentBg} />
                 Сменить фон
               </button>
             </li>
@@ -151,7 +161,11 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
               </button>
             </li>
           </ul>
-          <div className="board-menu__actions">Действия...</div>
+          <div className="board-menu__actions">
+            <p className="board-menu__actions-title">Действия</p>
+            {boardDetails.activities &&
+              boardDetails.activities.map((activ) => <p key={activ._id}>{activ.action}</p>)}
+          </div>
         </>
       )}
       {stateComponentView.state === 'changeBg' && (
@@ -199,7 +213,7 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
         </ul>
       )}
       {stateComponentView.state === 'marks' && boardDetails.marks && (
-        <Marks from="menu" boardId={boardDetails._id}/>
+        <Marks from="menu" boardId={boardDetails._id} />
       )}
     </aside>
   );
