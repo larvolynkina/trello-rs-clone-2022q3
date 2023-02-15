@@ -6,10 +6,11 @@ import {
   useAddCardParticipantMutation,
   useDeleteCardParticipantMutation,
 } from '../../store/reducers/cards/cards.api';
+import { useAppSelector, useAppDispatch } from '../../hooks/redux';
+import { addParticipant, deleteParticipant } from '../../store/reducers/cards/cardSlice';
 import { IUser } from '../../types/card';
 import Avatar from '../UserAvatar/UserAvatar';
 import Loader from '../Loader';
-
 
 interface BoardsParticipantProps {
   participant: IUser;
@@ -26,19 +27,24 @@ function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipan
   const [active, setActive] = useState(false);
   const [addCardParticipant, { isLoading: adding }] = useAddCardParticipantMutation();
   const [deleteCardParticipant, { isLoading: deleting }] = useDeleteCardParticipantMutation();
-
+  const card = useAppSelector((state) => state.CARD.card);
+  const dispatch = useAppDispatch();
 
   function onClickHandler() {
     if (!active) {
       setActive(true);
-      addCardParticipant({ boardId, cardId, participantId: participant._id });
+      if (card) {
+        dispatch(addParticipant(participant));
+        addCardParticipant({ boardId, cardId, participantId: participant._id });
+      }
     } else {
       setActive(false);
-      deleteCardParticipant({ boardId, cardId, participantId: participant._id });
+      if (card) {
+        dispatch(deleteParticipant(participant._id));
+        deleteCardParticipant({ boardId, cardId, participantId: participant._id });
+      }
     }
   }
-
-
 
   useEffect(() => {
     if (cardParticipantsId.length > 0) {

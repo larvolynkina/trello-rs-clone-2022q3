@@ -136,6 +136,26 @@ async function addNewMarkOnBoard(req, res) {
   }
 }
 
+async function updateMarkOnBoard(req, res) {
+  try {
+    const { boardId, color, text, index } = req.body;
+    const { userId } = req;
+    const board = await Board.findById(boardId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    // update mark
+    board.marks[index].color = color;
+    board.marks[index].text = text;
+    await board.save();
+    return res.status(200).json(board.marks);
+  } catch (error) {
+    return res.status(200).json({ message: 'Метка успешно обновлена' });
+  }
+}
+
 async function getBoardParticipants(req, res) {
   try {
     const { boardId } = req.params;
@@ -215,4 +235,5 @@ export {
   updateBoardBackground,
   getBoardParticipants,
   addMembers,
+  updateMarkOnBoard,
 };
