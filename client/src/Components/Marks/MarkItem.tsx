@@ -26,7 +26,7 @@ function MarkItem({ showCheckBox, showPensil, mark, setMarks, index, boardId }: 
         <p className="mark-item__text">{mark.text}</p>
       </button>
       {showPensil && (
-        <button type="button" className="mark-item__pensil">
+        <button type="button" className="mark-item__pensil" onClick={() => setIsOpenModal(true)}>
           Редактировать метку
         </button>
       )}
