@@ -6,6 +6,7 @@ const cardSlice = createSlice({
   initialState: {
     boardParticipantsModalActive: false,
     checkListModalActive: false,
+    attachModalActive: false,
   },
   reducers: {
     setBoardParticipantsModalOpen(state) {
@@ -20,6 +21,12 @@ const cardSlice = createSlice({
     setCheckListModalClose(state) {
       state.checkListModalActive = false;
     },
+    setAttachModalOpen(state) {
+      state.attachModalActive = true;
+    },
+    setAttachModalClose(state) {
+      state.attachModalActive = false;
+    },
   },
 });
 
@@ -28,6 +35,8 @@ export const {
   setBoardParticipantsModalOpen,
   setCheckListModalClose,
   setCheckListModalOpen,
+  setAttachModalClose,
+  setAttachModalOpen,
 } = cardSlice.actions;
 
 export default cardSlice.reducer;

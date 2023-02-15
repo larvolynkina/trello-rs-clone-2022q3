@@ -10,6 +10,7 @@
     border: 4px dashed #3588b9;
     border-radius: 100%;
     animation: loading 2s ease infinite;
+    z-index: 10;
 }
 
 @keyframes loading {

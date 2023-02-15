@@ -27,14 +27,18 @@ function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipan
   const [addCardParticipant, { isLoading: adding }] = useAddCardParticipantMutation();
   const [deleteCardParticipant, { isLoading: deleting }] = useDeleteCardParticipantMutation();
 
+
   function onClickHandler() {
     if (!active) {
+      setActive(true);
       addCardParticipant({ boardId, cardId, participantId: participant._id });
     } else {
-      deleteCardParticipant({ boardId, cardId, participantId: participant._id });
       setActive(false);
+      deleteCardParticipant({ boardId, cardId, participantId: participant._id });
     }
   }
+
+
 
   useEffect(() => {
     if (cardParticipantsId.length > 0) {
@@ -42,7 +46,7 @@ function BoardsParticipant({ participant, cardParticipantsId }: BoardsParticipan
         setActive(true);
       }
     }
-  }, [cardParticipantsId]);
+  }, []);
 
   return (
     <>

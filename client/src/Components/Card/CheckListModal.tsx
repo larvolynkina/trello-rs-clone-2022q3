@@ -26,7 +26,7 @@ function CheckListModal() {
   const ref = useDetectClickOutside({ onTriggered: onClickCloseHandler });
 
   return (
-    <div className="card__checklist-modal" ref={ref}>
+    <div className="card__modal" ref={ref}>
       <h3>Добавление списка задач</h3>
       <button
         className="card__modal-close"

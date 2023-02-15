@@ -1,6 +1,7 @@
 import clock from './icons/clock.svg';
 import person from './icons/person.svg';
 import check from './icons/check.svg';
+import attach from './icons/attach.svg';
 
 const asideAddButtons = [
   {
@@ -14,6 +15,10 @@ const asideAddButtons = [
   {
     text: 'Чек-лист',
     ico: check,
+  },
+  {
+    text: 'Вложения',
+    ico: attach,
   },
 ];
 

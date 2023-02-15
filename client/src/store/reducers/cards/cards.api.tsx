@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ICard, IUser, IChecklist, ICheckItem } from '../../../types/card';
+import { ICard, IChecklist, ICheckItem } from '../../../types/card';
 import { SERVER_URL } from '../../../const/const';
 
 type TGetCardByIdQueryArgs = {
@@ -17,11 +17,6 @@ type TUpdateCardTitleOrDescrQueryArgs = {
   cardId: string;
   title?: string;
   description?: string;
-};
-
-type TGetCardParticipantsQueryArgs = {
-  boardId: string;
-  cardId: string;
 };
 
 type TAddCardParticipantQueryArgs = {
@@ -50,14 +45,14 @@ type TDeleteCheckListItemQueryArgs = {
   cardId: string;
   id: string;
   checkListIndex: number;
-}
+};
 
 type TUpdateCheckListTitleQueryArgs = {
   boardId: string;
   cardId: string;
   title: string;
   checkListIndex: number;
-}
+};
 
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
@@ -69,7 +64,7 @@ export const cardsApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Card', 'CardParticipants'],
+  tagTypes: ['Card'],
   endpoints: (builder) => ({
     getCardById: builder.query<TGetCardByIdQueryResponse, TGetCardByIdQueryArgs>({
       query: ({ boardId, cardId }) => ({
@@ -85,27 +80,22 @@ export const cardsApi = createApi({
       }),
       invalidatesTags: ['Card'],
     }),
-    getCardParticipants: builder.query<IUser[], TGetCardParticipantsQueryArgs>({
-      query: ({ boardId, cardId }) => ({
-        url: `/${boardId}/${cardId}/participants`,
-      }),
-      providesTags: ['CardParticipants'],
-    }),
     addCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
       query: ({ boardId, cardId, participantId }) => ({
         url: `/${boardId}/${cardId}/add-participant`,
         method: 'POST',
         body: { participantId },
       }),
-      invalidatesTags: ['Card', 'CardParticipants'],
+      invalidatesTags: ['Card'],
     }),
+
     deleteCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
       query: ({ boardId, cardId, participantId }) => ({
         url: `/${boardId}/${cardId}/delete-participant`,
         method: 'POST',
         body: { participantId },
       }),
-      invalidatesTags: ['Card', 'CardParticipants'],
+      invalidatesTags: ['Card'],
     }),
     addCheckList: builder.mutation<IChecklist, TAddCheckListQueryArgs>({
       query: ({ boardId, cardId, title }) => ({
@@ -135,7 +125,7 @@ export const cardsApi = createApi({
       query: ({ boardId, cardId, id, checkListIndex }) => ({
         url: `/${boardId}/${cardId}/delete-checklist-item`,
         method: 'POST',
-        body: { id , checkListIndex },
+        body: { id, checkListIndex },
       }),
       invalidatesTags: ['Card'],
     }),
@@ -143,7 +133,7 @@ export const cardsApi = createApi({
       query: ({ boardId, cardId, id, checkListIndex }) => ({
         url: `/${boardId}/${cardId}/toggle-checklist-item`,
         method: 'POST',
-        body: { id , checkListIndex },
+        body: { id, checkListIndex },
       }),
       invalidatesTags: ['Card'],
     }),
@@ -151,7 +141,7 @@ export const cardsApi = createApi({
       query: ({ boardId, cardId, title, checkListIndex }) => ({
         url: `/${boardId}/${cardId}/update-checklist-title`,
         method: 'POST',
-        body: { title , checkListIndex },
+        body: { title, checkListIndex },
       }),
       invalidatesTags: ['Card'],
     }),
@@ -161,7 +151,7 @@ export const cardsApi = createApi({
 export const {
   useGetCardByIdQuery,
   useUpdateCardTitleOrDescrMutation,
-  useGetCardParticipantsQuery,
+  // useGetCardParticipantsQuery,
   useAddCardParticipantMutation,
   useDeleteCardParticipantMutation,
   useAddCheckListMutation,

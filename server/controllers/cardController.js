@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Card from '../models/cardModel.js';
 import Column from '../models/columnModel.js';
 import User from '../models/userModel.js';
@@ -53,9 +54,47 @@ async function getCardById(req, res) {
     if (!workspace.participants.includes(userId)) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
-    const card = await Card.findById(cardId);
-    const column = await Column.findOne({ cards: card._id });
-    return res.status(200).json({ card, column: column.title });
+
+    const query = [
+      { $match: { _id: mongoose.Types.ObjectId(cardId) } },
+      {
+        $lookup: {
+          from: 'users',
+          let: { participantsIds: '$participants' },
+          localField: 'participants',
+          foreignField: '_id',
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$participantsIds'] },
+              },
+            },
+            {
+              $addFields: {
+                sort: {
+                  $indexOfArray: ['$$participantsIds', '$_id'],
+                },
+              },
+            },
+            { $sort: { sort: 1 } },
+            { $addFields: { sort: '$$REMOVE' } },
+            {
+              $project: {
+                _id: 1,
+                userName: 1,
+                avatarColor: 1,
+                avatarImage: 1,
+              },
+            },
+          ],
+          as: 'participants',
+        },
+      },
+    ];
+
+    const card = await Card.aggregate(query);
+    const column = await Column.findOne({ cards: card[0]._id });
+    return res.status(200).json({ card: card[0], column: column.title });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -395,7 +434,9 @@ async function toggleChecklistItemChecked(req, res) {
     }
     const card = await Card.findById(cardId);
     const updatedCheckListsArray = [...card.checklists];
-    const checkListItemIndex = updatedCheckListsArray[checkListIndex].checkItems.findIndex((item) => item._id.toString() === id)
+    const checkListItemIndex = updatedCheckListsArray[checkListIndex].checkItems.findIndex(
+      (item) => item._id.toString() === id,
+    );
     updatedCheckListsArray[checkListIndex].checkItems[checkListItemIndex].checked =
       !updatedCheckListsArray[checkListIndex].checkItems[checkListItemIndex].checked;
     card.checklists = updatedCheckListsArray;
