@@ -32,9 +32,16 @@ function Marks({ from, boardId }: MarksProps) {
       {from === 'card' && <MarkHeader isShow={setIsOpenModal} />}
       <ul className="marks__list">
         {marks.length > 0 &&
-          marks.map((mark) => (
-            <li className="marks__item" key={Math.random()}>
-              <MarkItem showCheckBox={from === 'card'} showPensil mark={mark} />
+          marks.map((mark, index) => (
+            <li className="marks__item" key={mark._id}>
+              <MarkItem
+                showCheckBox={from === 'card'}
+                showPensil
+                mark={mark}
+                setMarks={setMarks}
+                index={index}
+                boardId={boardId}
+              />
             </li>
           ))}
       </ul>
@@ -48,11 +55,8 @@ function Marks({ from, boardId }: MarksProps) {
           setIsOpenModal={setIsOpenModal}
           setMarks={setMarks}
           boardId={boardId}
-        >
-          <button type="submit" className="marks__btn">
-            Создать
-          </button>
-        </MarkEditModal>
+          index={-1}
+        />
       )}
     </div>
   );

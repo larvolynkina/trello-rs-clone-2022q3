@@ -73,13 +73,16 @@
     color: white;
     border-radius: 3px;
     height: 32px;
-    width: 86px;
+    min-width: 86px;
     transition: all 0.3s;
 
     &:hover {
       opacity: 0.8;
     }
     
+    &--del {
+      background-color: #933b27;
+    }
   }
 }
 

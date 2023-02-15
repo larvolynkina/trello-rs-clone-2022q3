@@ -1,34 +1,43 @@
-import { useState, ReactElement, ChangeEvent, FormEvent, Dispatch, SetStateAction } from 'react';
+import { useState, ChangeEvent, FormEvent, Dispatch, SetStateAction } from 'react';
 import { IMark } from '../../types/card';
 import MarkHeader from './MarkHeader';
 import MarkItem from './MarkItem';
 
-import { useAddNewMarkOnBoardMutation } from '../../store/reducers/board/board.api';
+import {
+  useAddNewMarkOnBoardMutation,
+  useUpdateMarkOnBoardMutation,
+  useDeleteMarkFromBoardMutation,
+} from '../../store/reducers/board/board.api';
 import { MARK_COLORS } from '../../const/const';
 
 type MarkEditModalProps = {
   mark: IMark | null;
-  children: ReactElement | ReactElement[];
   typeAction: 'create' | 'edit';
   setIsOpenModal: (b: boolean) => void;
   setMarks: Dispatch<SetStateAction<IMark[]>>;
   boardId: string;
+  index: number;
 };
 
 function MarkEditModal({
   mark,
-  children,
   typeAction,
   setIsOpenModal,
   setMarks,
   boardId,
+  index,
 }: MarkEditModalProps) {
-  const [ addNewMarkOnBoard ] = useAddNewMarkOnBoardMutation();
-  const [text, setText] = useState('');
-  const [newMark, setNewMark] = useState({
-    color: '#c6c8ce',
-    text: '',
-    checked: false,
+  const [addNewMarkOnBoard] = useAddNewMarkOnBoardMutation();
+  const [updateMarkOnBoard] = useUpdateMarkOnBoardMutation();
+  const [deleteMarkFromBoard] = useDeleteMarkFromBoardMutation();
+  const [text, setText] = useState(mark?.text || '');
+  const [newMark, setNewMark] = useState(() => {
+    if (mark) return mark;
+    return {
+      color: '#c6c8ce',
+      text: '',
+      checked: false,
+    };
   });
 
   const handleClickColor = (color: string) => {
@@ -49,19 +58,50 @@ function MarkEditModal({
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (typeAction === 'create') {
-      addNewMarkOnBoard({boardId, text: newMark.text, color: newMark.color});
+      addNewMarkOnBoard({ boardId, text: newMark.text || '', color: newMark.color });
       setMarks((prev: IMark[]) => [...prev, newMark]);
       setIsOpenModal(false);
     } else if (typeAction === 'edit') {
-      console.log('edit');
+      const body = {
+        boardId,
+        color: newMark.color,
+        text: newMark.text || '',
+        index,
+      };
+      updateMarkOnBoard(body);
+      setMarks((prev: IMark[]) =>
+        prev.map((el) =>
+          el._id === mark?._id
+            ? { ...el, color: newMark.color, checked: newMark.checked, text: newMark.text }
+            : el,
+        ),
+      );
+      setIsOpenModal(false);
     }
   };
+  const handleDelete = () => {
+    const body = {
+      boardId,
+      markId: mark?._id || '',
+    };
+    deleteMarkFromBoard(body);
+    setMarks((prev: IMark[]) => prev.filter((el) => !(el._id === mark?._id)));
+    setIsOpenModal(false);
+  };
+
   return (
     <form className="mark-edit" onSubmit={handleFormSubmit} action="">
       <MarkHeader isShow={setIsOpenModal} />
       <div className="mark-edit__present">
         <div className="mark-edit__mark-item">
-          <MarkItem showCheckBox={false} showPensil={false} mark={mark || newMark} />
+          <MarkItem
+            showCheckBox={false}
+            showPensil={false}
+            mark={newMark}
+            setMarks={setMarks}
+            index={-1}
+            boardId=""
+          />
         </div>
       </div>
       <div className="mark-edit__body">
@@ -90,7 +130,23 @@ function MarkEditModal({
           ))}
         </div>
       </div>
-      <div className="mark-edit__btns">{children}</div>
+      <div className="mark-edit__btns">
+        {typeAction === 'create' && (
+          <button type="submit" className="marks__btn">
+            Создать
+          </button>
+        )}
+        {typeAction === 'edit' && (
+          <>
+            <button type="submit" className="marks__btn">
+              Сохранить
+            </button>
+            <button type="button" className="marks__btn marks__btn--del" onClick={handleDelete}>
+              Удалить
+            </button>
+          </>
+        )}
+      </div>
     </form>
   );
 }

@@ -129,6 +129,20 @@ export const boardApi = createApi({
         body,
       }),
     }),
+    updateMarkOnBoard: build.mutation({
+      query: (body: {boardId: string, color: string, text: string, index: number}) => ({
+        url: '/boards/update-mark',
+        method: 'POST',
+        body,
+      }),
+    }),
+    deleteMarkFromBoard: build.mutation({
+      query: (body: {boardId: string, markId: string}) => ({
+        url: '/boards/delete-mark',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
@@ -148,4 +162,6 @@ export const {
   useAddMembersOnBoardMutation,
   useUpdateBoardBackgroundMutation,
   useAddNewMarkOnBoardMutation,
+  useUpdateMarkOnBoardMutation,
+  useDeleteMarkFromBoardMutation,
 } = boardApi;
