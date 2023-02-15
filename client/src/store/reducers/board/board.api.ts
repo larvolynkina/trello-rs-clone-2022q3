@@ -122,7 +122,13 @@ export const boardApi = createApi({
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
-    
+    addNewMarkOnBoard: build.mutation({
+      query: (body: {boardId: string, text: string, color: string}) => ({
+        url: '/boards/add-mark',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
@@ -141,4 +147,5 @@ export const {
   useGetUserByEmailMutation,
   useAddMembersOnBoardMutation,
   useUpdateBoardBackgroundMutation,
+  useAddNewMarkOnBoardMutation,
 } = boardApi;

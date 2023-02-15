@@ -8,7 +8,7 @@
   height: 80vh;
   border: 1px solid #091e4221;
   background-color: #f4f5f7;
-  padding: 5px;
+  padding: 5px 10px;
 
   &__header {
     height: 48px;
@@ -149,7 +149,6 @@
     border-radius: 8px;
     height: 96px;
     width: 152px;
-    margin: 0 0 8px;
   }
   &__foto {
     background-image: url('../../../../public/assets/img/board/change-bg-image.jpg');
@@ -165,13 +164,13 @@
     margin: 10px 0 0 0;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: 5px;
   }
 
   &__item {
     height: 96px;
     width: 152px;
-    margin: 0 4px;
     border-radius: 8px;
     background-size: cover;
     background-repeat: no-repeat;

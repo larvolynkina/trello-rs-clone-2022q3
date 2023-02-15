@@ -1,19 +1,28 @@
-import { IMark } from "../../types/card";
+import { IMark } from '../../types/card';
 
 type MarkItemProps = {
   showCheckBox: boolean;
+  showPensil: boolean;
   mark: IMark;
-}
+};
 
-function MarkItem({showCheckBox, mark}: MarkItemProps) {
+function MarkItem({ showCheckBox, showPensil, mark }: MarkItemProps) {
   return (
     <div className="mark-item">
       {showCheckBox && <input type="checkbox" className="mark-item__checkbox" />}
-      <div className="mark-item__body">
-        <div className="mark-item__circle" />
+      <button
+        type="button"
+        className="mark-item__body"
+        style={{ backgroundColor: `${mark.color}50` }}
+      >
+        <div className="mark-item__circle" style={{ backgroundColor: mark.color }} />
         <p className="mark-item__text">{mark.text}</p>
-      </div>
-      
+      </button>
+      {showPensil && (
+        <button type="button" className="mark-item__pensil">
+          Редактировать метку
+        </button>
+      )}
     </div>
   );
 }
