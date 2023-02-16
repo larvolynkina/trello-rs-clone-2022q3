@@ -27,13 +27,17 @@ import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
 import HeaderBoard from './HeaderBoard';
 import SearchParticipantsForm from './SearchParticipantsForm';
 import BoardMenu from './BoardMenu';
+import Loader from '../../Components/Loader';
 
 function Board() {
   const location = useLocation();
   const boardId = location.pathname.split('/')[2];
-  const { data: boardDetailsFromServer } = useGetBoardByIDQuery(boardId);
-  const { data: columnsDataFromServer } = useGetColumnsQuery(boardId);
-  const { data: cardsDataFromServer } = useGetCardsOnBoardQuery(boardId);
+  const { data: boardDetailsFromServer, isLoading: boardDetailsLoading } =
+    useGetBoardByIDQuery(boardId);
+  const { data: columnsDataFromServer, isLoading: columnsDataLoading } =
+    useGetColumnsQuery(boardId);
+  const { data: cardsDataFromServer, isLoading: cardsDataLoading } =
+    useGetCardsOnBoardQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
@@ -57,13 +61,13 @@ function Board() {
   const [isShowSearchForm, setIsShowSearchForm] = useState(false);
   const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
   const [bgStyle, setBgStyle] = useState({});
+  const [doLoad, setDoLoad] = useState(false);
 
   useEffect(() => {
     if (boardDetailsFromServer) {
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
-    console.log('update board')
-
+    console.log('update board');
   }, [boardDetailsFromServer]);
 
   useEffect(() => {
@@ -129,21 +133,26 @@ function Board() {
   //   console.log('boardData: ', boardData);
   //   console.log('columnsData: ', columnsData);
   // }, [boardData, columnsData]);
-  
+
   const saveColumn = (title: string) => {
-    const fakeId = String(Math.random());
-    const newColumn: IColumn = {
-      _id: fakeId,
-      archived: false,
-      cards: [],
-      createdAt: '',
-      updatedAt: '',
-      title,
-    };
+    setDoLoad(true);
     setIsOpenAddForm(false);
-    dispatch(createColumnInStore({column: newColumn, boardId}));
     if (boardData._id && title) {
-      createColumn({ boardId: boardData._id, title: title.trim() }).unwrap();
+      createColumn({ boardId: boardData._id, title: title.trim() })
+        .unwrap()
+        .then(() => {
+          setDoLoad(false);
+          const fakeId = String(Math.random());
+          const newColumn: IColumn = {
+            _id: fakeId,
+            archived: false,
+            cards: [],
+            createdAt: '',
+            updatedAt: '',
+            title,
+          };
+          dispatch(createColumnInStore({ column: newColumn, boardId }));
+        });
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
       }
@@ -212,6 +221,8 @@ function Board() {
       style={bgStyle}
       aria-hidden="true"
     >
+      {(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && <Loader />}
+
       <aside className="board__aside">Рабочее пространство</aside>
 
       <div className="board__body" ref={boardBody}>
@@ -225,6 +236,7 @@ function Board() {
 
         <ul className="board__columns">
           {columnsData &&
+            !doLoad &&
             columnsData.map((column) => (
               <Column
                 key={column._id}
@@ -247,23 +259,25 @@ function Board() {
                 setAddCardFromMenu={setAddCardFromMenu}
               />
             ))}
-          <div className="board__last-column">
-            {!isOpenAddForm && (
-              <button type="button" className="board__add-column" onClick={handleAddColumn}>
-                {columnsData && columnsData.length === 0
-                  ? AddButtonsOnBoardText.addColumn
-                  : AddButtonsOnBoardText.addOneMoreColumn}
-              </button>
-            )}
-            {isOpenAddForm && (
-              <AddCardOrColumnForm
-                placeholderTextarea="Ввести заголовок списка"
-                textButton="Добавить список"
-                saveObject={saveColumn}
-                setIsOpenAddForm={setIsOpenAddForm}
-              />
-            )}
-          </div>
+          {!doLoad && (
+            <div className="board__last-column">
+              {!isOpenAddForm && (
+                <button type="button" className="board__add-column" onClick={handleAddColumn}>
+                  {columnsData && columnsData.length === 0
+                    ? AddButtonsOnBoardText.addColumn
+                    : AddButtonsOnBoardText.addOneMoreColumn}
+                </button>
+              )}
+              {isOpenAddForm && (
+                <AddCardOrColumnForm
+                  placeholderTextarea="Ввести заголовок списка"
+                  textButton="Добавить список"
+                  saveObject={saveColumn}
+                  setIsOpenAddForm={setIsOpenAddForm}
+                />
+              )}
+            </div>
+          )}
         </ul>
         {isOpenColumnMenu && (
           <div className="board__column-menu" style={{ left: columnMenuPosition }}>
