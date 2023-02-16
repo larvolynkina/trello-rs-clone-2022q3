@@ -1,6 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useDetectClickOutside } from 'react-detect-click-outside';
 
 import Title from './Title';
 import Description from './Description';
@@ -54,14 +53,14 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     searchParams.delete('card');
     setSearchParams(searchParams);
   };
-  const refClose = useDetectClickOutside({ onTriggered: closeCard });
 
   return (
     <>
       {(cardParticipantsLoading || boardParticipantsLoading || isLoading) && <Loader />}
 
       {data && (
-        <div className="card" ref={refClose}>
+        <div className="card" >
+          <button type="button" onClick={closeCard}>Закрыть карточку</button>
           <Title title={data.card.title} boardId={boardId} cardId={cardId} column={data.column} />
           <div className="card__wrapper">
             <div className="card__main">

@@ -1,6 +1,8 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+// import { useDetectClickOutside } from 'react-detect-click-outside';
+
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
   updateColumns,
@@ -224,6 +226,18 @@ function Board() {
     setIsOpenAddForm(true);
   };
 
+  // const closeCard = () => {
+  //   setOpenCard((prev) => ({ ...prev, isOpen: false }));
+  //   paramsURL.delete('card');
+  //   setParamsURL(paramsURL);
+  // };
+
+  // const handleKeyDown = () => {
+  //   if (paramsURL.get('somesthing')) {
+  //     throw new Error('somesthing');
+  //   }
+  // };
+
   return (
     <main
       className="board"
@@ -325,12 +339,13 @@ function Board() {
         </>
       )}
       {openCard.isOpen && (
-        <div className="board__card-modal">
-          <Card
-            boardId={boardId}
-            cardId={openCard.cardId}
-            setOpenCard={setOpenCard}
-          />
+        <div
+          className="board__card-modal"
+          // onClick={closeCard}
+          // onKeyDown={handleKeyDown}
+          // aria-hidden="true"
+        >
+          <Card boardId={boardId} cardId={openCard.cardId} setOpenCard={setOpenCard} />
         </div>
       )}
     </main>

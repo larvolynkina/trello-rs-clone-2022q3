@@ -33,7 +33,7 @@ function Marks({ from, boardId }: MarksProps) {
       <ul className="marks__list">
         {marks.length > 0 &&
           marks.map((mark, index) => (
-            <li className="marks__item" key={mark._id}>
+            <li className="marks__item" key={Math.random()}>
               <MarkItem
                 showCheckBox={from === 'card'}
                 showPensil
