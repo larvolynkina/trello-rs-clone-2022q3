@@ -6,6 +6,7 @@ import {
   updateColumns,
   updateBoardDetails,
   createColumnInStore,
+  updateCardInColumn,
 } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
@@ -19,6 +20,7 @@ import {
   useUpdateColumnOrderMutation,
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
+  useGetCardsOnBoardQuery,
 } from '../../store/reducers/board/board.api';
 import CardMenu from './CardMenu';
 import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
@@ -31,11 +33,12 @@ function Board() {
   const boardId = location.pathname.split('/')[2];
   const { data: boardDetailsFromServer } = useGetBoardByIDQuery(boardId);
   const { data: columnsDataFromServer } = useGetColumnsQuery(boardId);
+  const { data: cardsDataFromServer } = useGetCardsOnBoardQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
   const dispatch = useAppDispatch();
-  const { boardData, columnsData } = useAppSelector((state) => state.BOARD);
+  const { boardData, columnsData, cardsData } = useAppSelector((state) => state.BOARD);
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
@@ -59,6 +62,8 @@ function Board() {
     if (boardDetailsFromServer) {
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
+    console.log('update board')
+
   }, [boardDetailsFromServer]);
 
   useEffect(() => {
@@ -66,6 +71,12 @@ function Board() {
       dispatch(updateColumns(columnsDataFromServer));
     }
   }, [columnsDataFromServer]);
+
+  useEffect(() => {
+    if (cardsDataFromServer) {
+      dispatch(updateCardInColumn(cardsDataFromServer));
+    }
+  }, [cardsDataFromServer]);
 
   useEffect(() => {
     if (boardData && boardData._id.length > 0) {
@@ -219,6 +230,7 @@ function Board() {
                 key={column._id}
                 boardId={boardId}
                 column={column}
+                cardsData={cardsData}
                 setDragCard={setDragCard}
                 setDropCard={setDropCard}
                 setDragColumnFromCard={setDragColumnFromCard}
