@@ -11,12 +11,12 @@ import {
 
 import {
   useCreateCardMutation,
-  useGetCardsOnBoardQuery,
+  // useGetCardsOnBoardQuery,
   useUpdateTitleColumnMutation,
 } from '../../store/reducers/board/board.api';
 
-import { addCardInColumn } from '../../store/reducers/board/boardState';
-import { useAppDispatch } from '../../hooks/redux';
+// import { addCardInColumn } from '../../store/reducers/board/boardState';
+// import { useAppDispatch } from '../../hooks/redux';
 
 import ColumnCard from './ColumnCard';
 import AddCardOrColumnForm from './AddCardOrColumnForm';

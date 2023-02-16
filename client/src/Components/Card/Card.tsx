@@ -1,4 +1,7 @@
-import { useParams } from 'react-router-dom';
+import { Dispatch, SetStateAction } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useDetectClickOutside } from 'react-detect-click-outside';
+
 import Title from './Title';
 import Description from './Description';
 import Participants from './Participants';
@@ -15,11 +18,19 @@ import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { setBoardParticipantsModalOpen } from '../../store/reducers/cards/cardSlice';
 import CheckListModal from './CheckListModal';
 import CheckListFullList from './CheckListFullList';
-import { ParamTypes } from '../../types/card';
+// import { ParamTypes } from '../../types/card';
 import Loader from '../Loader';
 
-function Card() {
-  const { boardId, cardId } = useParams() as ParamTypes;
+type CardProps = {
+  boardId: string;
+  cardId: string;
+  setOpenCard: Dispatch<
+    SetStateAction<{ isOpen: boolean; canOpen: boolean; cardId: string }>
+  >;
+};
+
+function Card({ boardId, cardId, setOpenCard }: CardProps) {
+  // const { boardId, cardId } = useParams() as ParamTypes;
   const { data, isLoading } = useGetCardByIdQuery({ boardId, cardId });
   const { data: cardParticipants, isLoading: cardParticipantsLoading } =
     useGetCardParticipantsQuery({ boardId, cardId });
@@ -30,6 +41,7 @@ function Card() {
     (state) => state.CARD.boardParticipantsModalActive,
   );
   const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   function openBoardParticipantsModal() {
     setTimeout(() => {
@@ -37,12 +49,19 @@ function Card() {
     }, 0);
   }
 
+  function closeCard() {
+    setOpenCard(prev => ({...prev, isOpen: false}))
+    searchParams.delete('card');
+    setSearchParams(searchParams);
+  };
+  const refClose = useDetectClickOutside({ onTriggered: closeCard });
+
   return (
     <>
       {(cardParticipantsLoading || boardParticipantsLoading || isLoading) && <Loader />}
 
       {data && (
-        <div className="card">
+        <div className="card" ref={refClose}>
           <Title title={data.card.title} boardId={boardId} cardId={cardId} column={data.column} />
           <div className="card__wrapper">
             <div className="card__main">

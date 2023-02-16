@@ -1,6 +1,6 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
   updateColumns,
@@ -28,6 +28,7 @@ import HeaderBoard from './HeaderBoard';
 import SearchParticipantsForm from './SearchParticipantsForm';
 import BoardMenu from './BoardMenu';
 import Loader from '../../Components/Loader';
+import Card from '../../Components/Card';
 
 function Board() {
   const location = useLocation();
@@ -62,12 +63,27 @@ function Board() {
   const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
   const [bgStyle, setBgStyle] = useState({});
   const [doLoad, setDoLoad] = useState(false);
+  const [paramsURL] = useSearchParams();
+  const [openCard, setOpenCard] = useState({
+    isOpen: false,
+    canOpen: false,
+    cardId: '',
+  });
+
+  useEffect(() => {
+    const findCardId = paramsURL.get('card');
+    if (cardsData && findCardId) {
+      const foundCard = cardsData.find((card) => card._id === findCardId);
+      if (foundCard) {
+        setOpenCard((prev) => ({ ...prev, isOpen: true, cardId: foundCard._id }));
+      }
+    }
+  }, [paramsURL, cardsData]);
 
   useEffect(() => {
     if (boardDetailsFromServer) {
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
-    console.log('update board');
   }, [boardDetailsFromServer]);
 
   useEffect(() => {
@@ -128,11 +144,6 @@ function Board() {
     setDragColum(null);
     setDropColum(null);
   }, [dropColumn]);
-
-  // useEffect(() => {
-  //   console.log('boardData: ', boardData);
-  //   console.log('columnsData: ', columnsData);
-  // }, [boardData, columnsData]);
 
   const saveColumn = (title: string) => {
     setDoLoad(true);
@@ -223,7 +234,7 @@ function Board() {
     >
       {(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && <Loader />}
 
-      {! (boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && (
+      {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && (
         <>
           <aside className="board__aside">Рабочее пространство</aside>
 
@@ -312,6 +323,15 @@ function Board() {
             />
           )}
         </>
+      )}
+      {openCard.isOpen && (
+        <div className="board__card-modal">
+          <Card
+            boardId={boardId}
+            cardId={openCard.cardId}
+            setOpenCard={setOpenCard}
+          />
+        </div>
       )}
     </main>
   );
