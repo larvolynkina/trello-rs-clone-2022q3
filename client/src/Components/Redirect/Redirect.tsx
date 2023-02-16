@@ -15,7 +15,7 @@ function Redirect({ outlet }: RedirectProps) {
 
   const path = location.state?.from || APPRoute.board;
 
-  return <Navigate to={{ pathname: path }} replace />;
+  return <Navigate to={{ pathname: path.pathname, search: path.search }} replace />;
 }
 
 export default Redirect;

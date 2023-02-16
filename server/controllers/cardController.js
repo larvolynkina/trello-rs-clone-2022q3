@@ -331,7 +331,7 @@ async function addCheckListToCard(req, res) {
     board.activities.push(activity);
     await card.save();
     await board.save();
-    return res.status(200).json(checklist);
+    return res.status(200).json(card);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -391,7 +391,7 @@ async function addCheckListItem(req, res) {
     updatedCheckListArray[checkListIndex].checkItems.push(checkItem);
     card.checklists = updatedCheckListArray;
     await card.save();
-    return res.status(200).json(checkItem);
+    return res.status(200).json(card);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

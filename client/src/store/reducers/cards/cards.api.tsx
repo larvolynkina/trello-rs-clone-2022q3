@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { ICard, IChecklist, ICheckItem } from '../../../types/card';
+import { toast } from 'react-toastify';
+import { ICard } from '../../../types/card';
 import { SERVER_URL } from '../../../const/const';
+import { RootState } from '../../rootReducer';
 
 type TGetCardByIdQueryArgs = {
   boardId: string;
@@ -102,13 +104,33 @@ export const cardsApi = createApi({
         body: { participantId },
       }),
     }),
-    addCheckList: builder.mutation<IChecklist, TAddCheckListQueryArgs>({
+    addCheckList: builder.mutation<ICard, TAddCheckListQueryArgs>({
       query: ({ boardId, cardId, title }) => ({
         url: `/${boardId}/${cardId}/add-checklist`,
         method: 'POST',
         body: { title },
       }),
-      invalidatesTags: ['Card'],
+      async onQueryStarted({ boardId, cardId }, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data: updatedCard } = await queryFulfilled;
+          const state = getState() as RootState;
+          const obj = {
+            boardId,
+            cardId,
+          };
+          const url = `getCardById(${JSON.stringify(obj)})`;
+          const { column } = state.cardsApi.queries[url]?.data as Record<string, string>;
+          const card = { ...updatedCard };
+          card.participants = state.CARD.card?.participants || [];
+          dispatch(
+            cardsApi.util.updateQueryData('getCardById', { boardId, cardId }, (draft) => {
+              Object.assign(draft, { card, column });
+            }),
+          );
+        } catch {
+          toast.error('Что-то пошло не так...');
+        }
+      },
     }),
     deleteCheckList: builder.mutation<void, TDeleteCheckListQueryArgs>({
       query: ({ boardId, cardId, title, id }) => ({
@@ -117,13 +139,37 @@ export const cardsApi = createApi({
         body: { title, id },
       }),
     }),
-    addCheckListItem: builder.mutation<ICheckItem, TAddCheckListItemQueryArgs>({
+    addCheckListItem: builder.mutation<ICard, TAddCheckListItemQueryArgs>({
       query: ({ boardId, cardId, title, id }) => ({
         url: `/${boardId}/${cardId}/add-checklist-item`,
         method: 'POST',
         body: { title, id },
       }),
-      invalidatesTags: ['Card'],
+      async onQueryStarted({ boardId, cardId }, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data: updatedCard } = await queryFulfilled;
+          const state = getState() as RootState;
+          const obj = {
+            boardId,
+            cardId,
+          };
+          const url = `getCardById(${JSON.stringify(obj)})`;
+          const { column } = state.cardsApi.queries[url]?.data as Record<string, string>;
+          const card = { ...updatedCard };
+          card.participants = state.CARD.card?.participants || [];
+          dispatch(
+            cardsApi.util.updateQueryData(
+              'getCardById',
+              { boardId, cardId },
+              (draft: TGetCardByIdQueryResponse) => {
+                Object.assign(draft, { card, column });
+              },
+            ),
+          );
+        } catch {
+          toast.error('Что-то пошло не так...');
+        }
+      },
     }),
     deleteCheckListItem: builder.mutation<void, TDeleteCheckListItemQueryArgs>({
       query: ({ boardId, cardId, id, checkListIndex }) => ({
@@ -153,7 +199,6 @@ export const cardsApi = createApi({
 export const {
   useGetCardByIdQuery,
   useUpdateCardTitleOrDescrMutation,
-  // useGetCardParticipantsQuery,
   useAddCardParticipantMutation,
   useDeleteCardParticipantMutation,
   useAddCheckListMutation,

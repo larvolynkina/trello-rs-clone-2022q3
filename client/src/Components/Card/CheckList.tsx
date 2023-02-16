@@ -112,7 +112,7 @@ function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
           </div>
         </div>
       )}
-      {isLoading && <Loader />}
+      {isLoading && <Loader/>}
     </div>
   );
 }
