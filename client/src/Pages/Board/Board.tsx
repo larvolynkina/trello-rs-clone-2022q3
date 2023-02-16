@@ -1,8 +1,15 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks/redux';
-import { updateColumns } from '../../store/reducers/board/boardState';
+import { useLocation, useSearchParams } from 'react-router-dom';
+// import { useDetectClickOutside } from 'react-detect-click-outside';
+
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import {
+  updateColumns,
+  updateBoardDetails,
+  createColumnInStore,
+  updateCardInColumn,
+} from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
@@ -15,22 +22,30 @@ import {
   useUpdateColumnOrderMutation,
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
+  useGetCardsOnBoardQuery,
 } from '../../store/reducers/board/board.api';
 import CardMenu from './CardMenu';
 import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
 import HeaderBoard from './HeaderBoard';
 import SearchParticipantsForm from './SearchParticipantsForm';
-// import { RootState } from '../../store/rootReducer';
+import BoardMenu from './BoardMenu';
+import Loader from '../../Components/Loader';
+import Card from '../../Components/Card';
 
 function Board() {
   const location = useLocation();
   const boardId = location.pathname.split('/')[2];
-  const { data: boardDetails } = useGetBoardByIDQuery(boardId);
-  const { data: columnsData } = useGetColumnsQuery(boardId);
+  const { data: boardDetailsFromServer, isLoading: boardDetailsLoading } =
+    useGetBoardByIDQuery(boardId);
+  const { data: columnsDataFromServer, isLoading: columnsDataLoading } =
+    useGetColumnsQuery(boardId);
+  const { data: cardsDataFromServer, isLoading: cardsDataLoading } =
+    useGetCardsOnBoardQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
   const dispatch = useAppDispatch();
+  const { boardData, columnsData, cardsData } = useAppSelector((state) => state.BOARD);
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
@@ -47,6 +62,53 @@ function Board() {
   const boardBody = useRef<HTMLDivElement | null>(null);
   const [addCardFromMenu, setAddCardFromMenu] = useState(false);
   const [isShowSearchForm, setIsShowSearchForm] = useState(false);
+  const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
+  const [bgStyle, setBgStyle] = useState({});
+  const [doLoad, setDoLoad] = useState(false);
+  const [paramsURL] = useSearchParams();
+  const [openCard, setOpenCard] = useState({
+    isOpen: false,
+    canOpen: false,
+    cardId: '',
+  });
+
+  useEffect(() => {
+    const findCardId = paramsURL.get('card');
+    if (cardsData && findCardId) {
+      const foundCard = cardsData.find((card) => card._id === findCardId);
+      if (foundCard) {
+        setOpenCard((prev) => ({ ...prev, isOpen: true, cardId: foundCard._id }));
+      }
+    }
+  }, [paramsURL, cardsData]);
+
+  useEffect(() => {
+    if (boardDetailsFromServer) {
+      dispatch(updateBoardDetails(boardDetailsFromServer));
+    }
+  }, [boardDetailsFromServer]);
+
+  useEffect(() => {
+    if (columnsDataFromServer) {
+      dispatch(updateColumns(columnsDataFromServer));
+    }
+  }, [columnsDataFromServer]);
+
+  useEffect(() => {
+    if (cardsDataFromServer) {
+      dispatch(updateCardInColumn(cardsDataFromServer));
+    }
+  }, [cardsDataFromServer]);
+
+  useEffect(() => {
+    if (boardData && boardData._id.length > 0) {
+      if (boardData.backgroundImage && boardData.backgroundImage.length > 0) {
+        setBgStyle({ backgroundImage: boardData.backgroundImage });
+      } else if (boardData.backgroundColor && boardData.backgroundColor.length > 0) {
+        setBgStyle({ backgroundImage: 'none', backgroundColor: boardData.backgroundColor });
+      }
+    }
+  }, [boardData.backgroundImage, boardData.backgroundColor]);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -67,7 +129,6 @@ function Board() {
       setDragColumnFromCard(null);
       setDropColumnFromCard(null);
       setDragCard(null);
-      // setDropCard(null);
     }
   }, [dropColumnFromCard, dropCard]);
 
@@ -82,15 +143,29 @@ function Board() {
       const { newOrderColumn } = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
       updateOrderColumn(newOrderColumn);
     }
-
     setDragColum(null);
     setDropColum(null);
   }, [dropColumn]);
 
   const saveColumn = (title: string) => {
+    setDoLoad(true);
     setIsOpenAddForm(false);
-    if (boardDetails._id && title) {
-      createColumn({ boardId: boardDetails._id, title: title.trim() }).unwrap();
+    if (boardData._id && title) {
+      createColumn({ boardId: boardData._id, title: title.trim() })
+        .unwrap()
+        .then(() => {
+          setDoLoad(false);
+          const fakeId = String(Math.random());
+          const newColumn: IColumn = {
+            _id: fakeId,
+            archived: false,
+            cards: [],
+            createdAt: '',
+            updatedAt: '',
+            title,
+          };
+          dispatch(createColumnInStore({ column: newColumn, boardId }));
+        });
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
       }
@@ -151,79 +226,127 @@ function Board() {
     setIsOpenAddForm(true);
   };
 
+  // const closeCard = () => {
+  //   setOpenCard((prev) => ({ ...prev, isOpen: false }));
+  //   paramsURL.delete('card');
+  //   setParamsURL(paramsURL);
+  // };
+
+  // const handleKeyDown = () => {
+  //   if (paramsURL.get('somesthing')) {
+  //     throw new Error('somesthing');
+  //   }
+  // };
+
   return (
     <main
       className="board"
       onClick={handleClickBoard}
       onKeyUp={handleKeyUpBoard}
+      style={bgStyle}
       aria-hidden="true"
     >
-      <aside className="board__aside">Рабочее пространство</aside>
+      {(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && <Loader />}
 
-      <div className="board__body" ref={boardBody}>
-        {boardDetails && (
-          <HeaderBoard boardDetails={boardDetails} setIsShowSearchForm={setIsShowSearchForm} />
-        )}
+      {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && (
+        <>
+          <aside className="board__aside">Рабочее пространство</aside>
 
-        <ul className="board__columns">
-          {columnsData &&
-            columnsData.map((column) => (
-              <Column
-                key={column._id}
-                boardId={boardId}
-                column={column}
-                setDragCard={setDragCard}
-                setDropCard={setDropCard}
-                setDragColumnFromCard={setDragColumnFromCard}
-                dragCard={dragCard}
-                setDropColumnFromCard={setDropColumnFromCard}
-                openColumnMenu={handleOpenColumnMenu}
-                dragColumn={dragColumn}
-                setDragColum={setDragColum}
-                setDropColum={setDropColum}
-                openCardMenu={handleOpenCardMenu}
-                setIdOpenedColumn={setIdOpenedColumn}
-                idOpenedColumn={idOpenedColumn}
-                addCardFromMenu={addCardFromMenu}
-                setAddCardFromMenu={setAddCardFromMenu}
+          <div className="board__body" ref={boardBody}>
+            {boardData && boardData._id.length > 0 && (
+              <HeaderBoard
+                boardDetails={boardData}
+                setIsShowSearchForm={setIsShowSearchForm}
+                setIsShowBoardMenu={setIsShowBoardMenu}
               />
-            ))}
-          <div className="board__last-column">
-            {!isOpenAddForm && (
-              <button type="button" className="board__add-column" onClick={handleAddColumn}>
-                {columnsData && columnsData.length === 0
-                  ? AddButtonsOnBoardText.addColumn
-                  : AddButtonsOnBoardText.addOneMoreColumn}
-              </button>
             )}
-            {isOpenAddForm && (
-              <AddCardOrColumnForm
-                placeholderTextarea="Ввести заголовок списка"
-                textButton="Добавить список"
-                saveObject={saveColumn}
-                setIsOpenAddForm={setIsOpenAddForm}
-              />
+
+            <ul className="board__columns">
+              {columnsData &&
+                !doLoad &&
+                columnsData.map((column) => (
+                  <Column
+                    key={column._id}
+                    boardId={boardId}
+                    column={column}
+                    cardsData={cardsData}
+                    setDragCard={setDragCard}
+                    setDropCard={setDropCard}
+                    setDragColumnFromCard={setDragColumnFromCard}
+                    dragCard={dragCard}
+                    setDropColumnFromCard={setDropColumnFromCard}
+                    openColumnMenu={handleOpenColumnMenu}
+                    dragColumn={dragColumn}
+                    setDragColum={setDragColum}
+                    setDropColum={setDropColum}
+                    openCardMenu={handleOpenCardMenu}
+                    setIdOpenedColumn={setIdOpenedColumn}
+                    idOpenedColumn={idOpenedColumn}
+                    addCardFromMenu={addCardFromMenu}
+                    setAddCardFromMenu={setAddCardFromMenu}
+                  />
+                ))}
+              {!doLoad && (
+                <div className="board__last-column">
+                  {!isOpenAddForm && (
+                    <button type="button" className="board__add-column" onClick={handleAddColumn}>
+                      {columnsData && columnsData.length === 0
+                        ? AddButtonsOnBoardText.addColumn
+                        : AddButtonsOnBoardText.addOneMoreColumn}
+                    </button>
+                  )}
+                  {isOpenAddForm && (
+                    <AddCardOrColumnForm
+                      placeholderTextarea="Ввести заголовок списка"
+                      textButton="Добавить список"
+                      saveObject={saveColumn}
+                      setIsOpenAddForm={setIsOpenAddForm}
+                    />
+                  )}
+                </div>
+              )}
+            </ul>
+            {isOpenColumnMenu && (
+              <div className="board__column-menu" style={{ left: columnMenuPosition }}>
+                <ColumnMenu
+                  onClose={handleCloseColumnMenu}
+                  idOpenedColumn={idOpenedColumn}
+                  setAddCardFromMenu={setAddCardFromMenu}
+                />
+              </div>
             )}
           </div>
-        </ul>
-        {isOpenColumnMenu && (
-          <div className="board__column-menu" style={{ left: columnMenuPosition }}>
-            <ColumnMenu
-              onClose={handleCloseColumnMenu}
-              idOpenedColumn={idOpenedColumn}
-              setAddCardFromMenu={setAddCardFromMenu}
+          {isOpenCardMenu && (
+            <CardMenu
+              text={textFromCard}
+              position={cardMenuPosition}
+              closeMenu={setIsOpenCardMenu}
             />
-          </div>
-        )}
-      </div>
-      {isOpenCardMenu && (
-        <CardMenu text={textFromCard} position={cardMenuPosition} closeMenu={setIsOpenCardMenu} />
+          )}
+          {isShowSearchForm && boardData && (
+            <SearchParticipantsForm
+              setIsShowSearchForm={setIsShowSearchForm}
+              boardId={boardData._id}
+            />
+          )}
+          {isShowBoardMenu && boardData && (
+            <BoardMenu
+              setIsShowBoardMenu={setIsShowBoardMenu}
+              boardDetails={boardData}
+              setBgStyle={setBgStyle}
+            />
+          )}
+        </>
       )}
-      {isShowSearchForm && boardDetails && (
-        <SearchParticipantsForm
-          setIsShowSearchForm={setIsShowSearchForm}
-          boardId={boardDetails._id}
-        />
+      {openCard.isOpen && (
+        <div
+          className="board__card-modal"
+          // onClick={closeCard}
+          // onKeyDown={handleKeyDown}
+          // aria-hidden="true"
+        >
+          <Card boardId={boardId} cardId={openCard.cardId} setOpenCard={setOpenCard} />
+        </div>
       )}
     </main>
   );
