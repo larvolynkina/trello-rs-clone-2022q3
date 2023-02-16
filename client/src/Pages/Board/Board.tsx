@@ -223,84 +223,95 @@ function Board() {
     >
       {(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && <Loader />}
 
-      <aside className="board__aside">Рабочее пространство</aside>
+      {! (boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && (
+        <>
+          <aside className="board__aside">Рабочее пространство</aside>
 
-      <div className="board__body" ref={boardBody}>
-        {boardData && boardData._id.length > 0 && (
-          <HeaderBoard
-            boardDetails={boardData}
-            setIsShowSearchForm={setIsShowSearchForm}
-            setIsShowBoardMenu={setIsShowBoardMenu}
-          />
-        )}
-
-        <ul className="board__columns">
-          {columnsData &&
-            !doLoad &&
-            columnsData.map((column) => (
-              <Column
-                key={column._id}
-                boardId={boardId}
-                column={column}
-                cardsData={cardsData}
-                setDragCard={setDragCard}
-                setDropCard={setDropCard}
-                setDragColumnFromCard={setDragColumnFromCard}
-                dragCard={dragCard}
-                setDropColumnFromCard={setDropColumnFromCard}
-                openColumnMenu={handleOpenColumnMenu}
-                dragColumn={dragColumn}
-                setDragColum={setDragColum}
-                setDropColum={setDropColum}
-                openCardMenu={handleOpenCardMenu}
-                setIdOpenedColumn={setIdOpenedColumn}
-                idOpenedColumn={idOpenedColumn}
-                addCardFromMenu={addCardFromMenu}
-                setAddCardFromMenu={setAddCardFromMenu}
+          <div className="board__body" ref={boardBody}>
+            {boardData && boardData._id.length > 0 && (
+              <HeaderBoard
+                boardDetails={boardData}
+                setIsShowSearchForm={setIsShowSearchForm}
+                setIsShowBoardMenu={setIsShowBoardMenu}
               />
-            ))}
-          {!doLoad && (
-            <div className="board__last-column">
-              {!isOpenAddForm && (
-                <button type="button" className="board__add-column" onClick={handleAddColumn}>
-                  {columnsData && columnsData.length === 0
-                    ? AddButtonsOnBoardText.addColumn
-                    : AddButtonsOnBoardText.addOneMoreColumn}
-                </button>
+            )}
+
+            <ul className="board__columns">
+              {columnsData &&
+                !doLoad &&
+                columnsData.map((column) => (
+                  <Column
+                    key={column._id}
+                    boardId={boardId}
+                    column={column}
+                    cardsData={cardsData}
+                    setDragCard={setDragCard}
+                    setDropCard={setDropCard}
+                    setDragColumnFromCard={setDragColumnFromCard}
+                    dragCard={dragCard}
+                    setDropColumnFromCard={setDropColumnFromCard}
+                    openColumnMenu={handleOpenColumnMenu}
+                    dragColumn={dragColumn}
+                    setDragColum={setDragColum}
+                    setDropColum={setDropColum}
+                    openCardMenu={handleOpenCardMenu}
+                    setIdOpenedColumn={setIdOpenedColumn}
+                    idOpenedColumn={idOpenedColumn}
+                    addCardFromMenu={addCardFromMenu}
+                    setAddCardFromMenu={setAddCardFromMenu}
+                  />
+                ))}
+              {!doLoad && (
+                <div className="board__last-column">
+                  {!isOpenAddForm && (
+                    <button type="button" className="board__add-column" onClick={handleAddColumn}>
+                      {columnsData && columnsData.length === 0
+                        ? AddButtonsOnBoardText.addColumn
+                        : AddButtonsOnBoardText.addOneMoreColumn}
+                    </button>
+                  )}
+                  {isOpenAddForm && (
+                    <AddCardOrColumnForm
+                      placeholderTextarea="Ввести заголовок списка"
+                      textButton="Добавить список"
+                      saveObject={saveColumn}
+                      setIsOpenAddForm={setIsOpenAddForm}
+                    />
+                  )}
+                </div>
               )}
-              {isOpenAddForm && (
-                <AddCardOrColumnForm
-                  placeholderTextarea="Ввести заголовок списка"
-                  textButton="Добавить список"
-                  saveObject={saveColumn}
-                  setIsOpenAddForm={setIsOpenAddForm}
+            </ul>
+            {isOpenColumnMenu && (
+              <div className="board__column-menu" style={{ left: columnMenuPosition }}>
+                <ColumnMenu
+                  onClose={handleCloseColumnMenu}
+                  idOpenedColumn={idOpenedColumn}
+                  setAddCardFromMenu={setAddCardFromMenu}
                 />
-              )}
-            </div>
-          )}
-        </ul>
-        {isOpenColumnMenu && (
-          <div className="board__column-menu" style={{ left: columnMenuPosition }}>
-            <ColumnMenu
-              onClose={handleCloseColumnMenu}
-              idOpenedColumn={idOpenedColumn}
-              setAddCardFromMenu={setAddCardFromMenu}
-            />
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      {isOpenCardMenu && (
-        <CardMenu text={textFromCard} position={cardMenuPosition} closeMenu={setIsOpenCardMenu} />
-      )}
-      {isShowSearchForm && boardData && (
-        <SearchParticipantsForm setIsShowSearchForm={setIsShowSearchForm} boardId={boardData._id} />
-      )}
-      {isShowBoardMenu && boardData && (
-        <BoardMenu
-          setIsShowBoardMenu={setIsShowBoardMenu}
-          boardDetails={boardData}
-          setBgStyle={setBgStyle}
-        />
+          {isOpenCardMenu && (
+            <CardMenu
+              text={textFromCard}
+              position={cardMenuPosition}
+              closeMenu={setIsOpenCardMenu}
+            />
+          )}
+          {isShowSearchForm && boardData && (
+            <SearchParticipantsForm
+              setIsShowSearchForm={setIsShowSearchForm}
+              boardId={boardData._id}
+            />
+          )}
+          {isShowBoardMenu && boardData && (
+            <BoardMenu
+              setIsShowBoardMenu={setIsShowBoardMenu}
+              boardDetails={boardData}
+              setBgStyle={setBgStyle}
+            />
+          )}
+        </>
       )}
     </main>
   );
