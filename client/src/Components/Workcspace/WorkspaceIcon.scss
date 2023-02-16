@@ -1,0 +1,14 @@
+@import '../../scss/base/mixins.scss';
+
+.workspace-icon {
+  width: rem(32);
+  height: rem(32);
+  border-radius: rem(3);
+  font-size: rem(20);
+  font-weight: 700;
+  color: #ffffff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

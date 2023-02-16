@@ -1,4 +1,9 @@
-import { IBoard } from './board';
+export interface IWsBoard {
+  _id: string;
+  title: string;
+  backgroundColor: string;
+  backgroundImage: string;
+}
 
 export interface IWorkspace {
   _id: string;
@@ -10,7 +15,7 @@ export interface IWorkspace {
   avatarImage: string;
   private: boolean;
   participants: string[];
-  boards: IBoard[];
+  boards: IWsBoard[];
   createdAt: string;
   updatedAt: string;
 }
