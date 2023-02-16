@@ -25,10 +25,16 @@ export const boardStateSlice = createSlice({
         throw new Error(`Column № ${action.payload.id} not found`);
       }
     },
+    deleteColumnFromStore(state, action: PayloadAction<{ columnId: string }>) {
+      state.columnsData = state.columnsData.filter(
+        (column) => column._id !== action.payload.columnId,
+      );
+      state.boardData.columns = state.boardData.columns?.filter((columnId) => columnId !== action.payload.columnId)
+    },
     updateColumns(state, action: PayloadAction<IColumn[]>) {
       state.columnsData = action.payload;
     },
-    createColumnInStore(state, action: PayloadAction<{column: IColumn, boardId: string}>) {
+    createColumnInStore(state, action: PayloadAction<{ column: IColumn; boardId: string }>) {
       state.columnsData.push(action.payload.column);
       state.boardData.columns?.push(action.payload.boardId);
     },
@@ -54,6 +60,7 @@ export const {
   addCardInColumn,
   updateCardInColumn,
   updateBoardDetails,
+  deleteColumnFromStore,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;

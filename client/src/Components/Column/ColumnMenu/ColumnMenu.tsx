@@ -1,5 +1,7 @@
 import './columnMenu.scss';
 import { useDeleteColumnMutation } from '../../../store/reducers/board/board.api';
+import { deleteColumnFromStore } from '../../../store/reducers/board/boardState';
+import { useAppDispatch } from '../../../hooks/redux';
 
 type ColumnMenuProps = {
   onClose: () => void;
@@ -8,6 +10,7 @@ type ColumnMenuProps = {
 };
 function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuProps) {
   const [deleteColumn, { isError: errorDeleteColumn }] = useDeleteColumnMutation();
+  const dispatch = useAppDispatch();
 
   async function asyncDelColumn(idObj: { boardId: string; columnId: string }) {
     await deleteColumn(idObj);
@@ -15,6 +18,7 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
   }
 
   const handleDeleteColumn = () => {
+    dispatch(deleteColumnFromStore({columnId: idOpenedColumn.columnId}))
     asyncDelColumn(idOpenedColumn);
   };
   const handleAddCard = () => {
