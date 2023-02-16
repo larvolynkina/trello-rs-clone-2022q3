@@ -28,6 +28,10 @@ export const boardStateSlice = createSlice({
     updateColumns(state, action: PayloadAction<IColumn[]>) {
       state.columnsData = action.payload;
     },
+    createColumnInStore(state, action: PayloadAction<{column: IColumn, boardId: string}>) {
+      state.columnsData.push(action.payload.column);
+      state.boardData.columns?.push(action.payload.boardId);
+    },
     updateCardInColumn(state, action: PayloadAction<ICard[]>) {
       state.cardsData = action.payload;
     },
@@ -45,6 +49,7 @@ export const boardStateSlice = createSlice({
 
 export const {
   changeTitleColumn,
+  createColumnInStore,
   updateColumns,
   addCardInColumn,
   updateCardInColumn,

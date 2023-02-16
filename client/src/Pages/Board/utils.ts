@@ -39,14 +39,14 @@ export function getTranspositionColumnCards({
       const newCards = [...column.cards.slice()];
       newCards.splice(dragIndex, 1);
       newCards.splice(dropIndex, 0, dragCard._id);
-      firstResultColumn.columnId = column._id;
+      firstResultColumn.columnId = column._id || '';
       firstResultColumn.columnCards.push(...newCards);
       return { ...column, cards: newCards } as IColumn;
     }
     if (column._id === dragColumnFromCard._id) {
       const dragIndex = column.cards.indexOf(dragCard._id);
       const newCards = [...column.cards.slice(0, dragIndex), ...column.cards.slice(dragIndex + 1)];
-      firstResultColumn.columnId = column._id;
+      firstResultColumn.columnId = column._id || '';
       firstResultColumn.columnCards.push(...newCards);
       return { ...column, cards: newCards } as IColumn;
     }
@@ -57,7 +57,7 @@ export function getTranspositionColumnCards({
         dragCard._id,
         ...column.cards.slice(dropIndex),
       ];
-      secondResultColumn.columnId = column._id;
+      secondResultColumn.columnId = column._id || '';
       secondResultColumn.columnCards.push(...newCards);
       return { ...column, cards: newCards } as IColumn;
     }
@@ -81,15 +81,20 @@ export function getTranspositionColumns({
   dragColumn,
   dropColumn,
   columnsData,
-}: getTranspositionColumnsProps): {newOrderColumn: string[]} {
+}: getTranspositionColumnsProps): { newOrderColumn: string[] } {
   const columns = columnsData.map((column) => column._id);
   const dragIndex = columns.indexOf(dragColumn._id);
   const dropIndex = columns.indexOf(dropColumn._id);
   columns.splice(dragIndex, 1);
   const destIndex = dropIndex > dragIndex ? dropIndex : dropIndex + 1;
   columns.splice(destIndex, 0, dragColumn._id);
-  return {newOrderColumn: columns};
+  // if (columns[0] !== undefined) {
+  //   return { newOrderColumn: columns };
+  // } else {
+    return { newOrderColumn: [''] };  
+  // }
 }
+
 
 // export function getColumnsByIds(ids: string[], columns: IColumn[]): IColumn[] | [] {
 //   if (ids.length > 0 && columns.length > 0) {

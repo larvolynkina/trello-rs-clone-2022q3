@@ -11,9 +11,12 @@ import {
 
 import {
   useCreateCardMutation,
-  useGetCardsOnBoardQuery,
+  // useGetCardsOnBoardQuery,
   useUpdateTitleColumnMutation,
 } from '../../store/reducers/board/board.api';
+
+// import { addCardInColumn } from '../../store/reducers/board/boardState';
+// import { useAppDispatch } from '../../hooks/redux';
 
 import ColumnCard from './ColumnCard';
 import AddCardOrColumnForm from './AddCardOrColumnForm';
@@ -24,6 +27,7 @@ import { getCardsOfColumn } from './utils';
 type ColumnProps = {
   boardId: string;
   column: IColumn;
+  cardsData: ICard[];
   dragCard: ICard | null;
   setDragCard: (card: ICard) => void;
   setDropCard: (card: ICard) => void;
@@ -42,6 +46,7 @@ type ColumnProps = {
 function Column({
   boardId,
   column,
+  cardsData,
   dragCard,
   setDragCard,
   setDropCard,
@@ -57,7 +62,6 @@ function Column({
   idOpenedColumn,
   setAddCardFromMenu,
 }: ColumnProps) {
-  const { data: cardsData } = useGetCardsOnBoardQuery(boardId);
   const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
   const [updateTitleColumn, { isError: errorUpdateTitleColumn }] = useUpdateTitleColumnMutation();
   const [title, setTitle] = useState(column.title);
@@ -133,6 +137,7 @@ function Column({
 
   const saveCard = async (cardTitle: string) => {
     setIsOpenAddForm(false);
+
     if (cardTitle) {
       await createCard({ boardId, columnId: column._id, title: cardTitle.trim() }).unwrap();
       if (errorCreateCard) {

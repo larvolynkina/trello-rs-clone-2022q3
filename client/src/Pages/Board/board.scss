@@ -2,7 +2,7 @@
 
 .board {
   display: flex;
-  background: url('../../../public/assets/bg-image.jpg');
+  background-color: white;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -22,50 +22,7 @@
     position: relative;
   }
 
-  // &__header {
-  //   display: flex;
-  //   align-items: center;
-  //   gap: 10px;
-  //   margin: 0 0 10px 0;
-  //   position: relative;
-  // }
-
-  // &__title {
-  //   flex: 1 0 auto;
-  //   font-size: 1.25rem;
-  //   font-weight: 500;
-  // }
-
-  // &__title-text {
-  //   width: fit-content;
-  //   padding: 5px 15px;
-  //   border-radius: 3px;
-  //   transition: all 0.3s;
-  //   cursor: pointer;
-
-  //   &:hover {
-  //     background-color: rgba(0, 0, 0, 0.2);
-  //   }
-  // }
-
-  // &__title-input {
-  //   width: fit-content;
-  //   position: absolute;
-  //   top: -1px;
-  //   opacity: 1;
-  //   padding: 5px 15px;
-  //   border-radius: 3px;
-  //   outline: none;
-  //   opacity: 0;
-  //   z-index: -1;
-
-  //   &--is-edit {
-  //     opacity: 1;
-  //     z-index: 1;
-  //   }
-  // }
-
-  &__columns {
+    &__columns {
     display: flex;
     gap: 5px;
     align-items: flex-start;
@@ -91,5 +48,17 @@
   
   &__card-menu {
     position: absolute;
+  }
+  &__card-modal {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #0009;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 70px 0 0 0;
   }
 }
