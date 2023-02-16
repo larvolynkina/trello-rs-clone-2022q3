@@ -13,7 +13,7 @@ function ProtectedRoute({ outlet }: ProtectedRouteProps) {
 
   if (authorizationStatus === AuthorizationStatus.Auth) return outlet;
 
-  return <Navigate to={{ pathname: APPRoute.login }} state={{ from: location }} />;
+  return  <Navigate to={{ pathname: APPRoute.login }} state={{ from: location }} />;
 }
 
 export default ProtectedRoute;

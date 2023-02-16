@@ -1,6 +1,6 @@
 import './columnCard.scss';
 import { DragEvent, MouseEvent } from 'react';
-
+import { useSearchParams  } from 'react-router-dom';
 import { ICard } from '../../../types/board';
 
 type ColumnCardProps = {
@@ -22,11 +22,14 @@ function ColumnCard({
   onDragLeave,
   openCardMenu,
 }: ColumnCardProps) {
-
+  const [, setSearchParams] = useSearchParams();
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
     openCardMenu(e);
   };
 
+  const handleOpenCard = () => {
+    setSearchParams({'card': card._id});
+  };
   return (
     <li
       draggable
@@ -36,6 +39,9 @@ function ColumnCard({
       onDrop={(e) => onDrop(e, card)}
       onDragLeave={() => onDragLeave()}
       onContextMenu={(e) => handleContextMenu(e)}
+      onClick={handleOpenCard}
+      onKeyUp={handleOpenCard}
+      aria-hidden="true"
     >
       {card.title}
       <button type="button" className="column-card__pensil" onClick={(e) => handleContextMenu(e)}>

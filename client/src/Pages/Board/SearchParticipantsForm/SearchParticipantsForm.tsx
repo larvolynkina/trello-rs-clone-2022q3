@@ -27,8 +27,10 @@ function SearchParticipantsForm({ setIsShowSearchForm, boardId }: SearchParticip
     addMembersOnBoard({ boardId, membersId }).then((res) => {
       if ('error' in res && 'status' in res.error) {
         if (res.error.status === 400) {
-          toast.error('Этот(эти) пользователь(-ли) уже участник(и) доски');
-        }
+          toast.error('Этот(эти) пользователь(-ли) уже участник(и) доски' , {autoClose: 1000});
+        } 
+      } else {
+        toast.success('Участник(и) добавлен(ы)', {autoClose: 1000})
       }
     });
     setParts([]);
@@ -47,14 +49,14 @@ function SearchParticipantsForm({ setIsShowSearchForm, boardId }: SearchParticip
       if ('data' in res) {
         const part = res.data;
         if (parts.find((el) => el._id === part._id)) {
-          toast.error('Пользователь уже добавлен в список');
+          toast.error('Пользователь уже добавлен в список', {autoClose: 1000});
         } else {
           setParts([...parts, res.data]);
         }
         setInputText('');
       } else if ('error' in res && 'status' in res.error) {
         if (res.error.status === 400) {
-          toast.error('Пользователя с указанным email не существует');
+          toast.error('Пользователя с указанным email не существует', {autoClose: 1000});
         }
       }
     });

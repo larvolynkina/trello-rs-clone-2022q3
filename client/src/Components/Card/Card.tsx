@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
 import Title from './Title';
 import Description from './Description';
 import Participants from './Participants';
@@ -13,17 +14,26 @@ import { setBoardParticipantsModalOpen, setCard } from '../../store/reducers/car
 import CheckListModal from './CheckListModal';
 import CheckListFullList from './CheckListFullList';
 import AttachModal from './AttachModal';
-import { ParamTypes } from '../../types/card';
+// import { ParamTypes } from '../../types/card';
 import Loader from '../Loader';
 
-function Card() {
-  const { boardId, cardId } = useParams() as ParamTypes;
+type CardProps = {
+  boardId: string;
+  cardId: string;
+  setOpenCard: Dispatch<
+    SetStateAction<{ isOpen: boolean; canOpen: boolean; cardId: string }>
+  >;
+};
+
+function Card({ boardId, cardId, setOpenCard }: CardProps) {
+  // const { boardId, cardId } = useParams() as ParamTypes;
   const { data, isLoading } = useGetCardByIdQuery({ boardId, cardId });
   const dispatch = useAppDispatch();
   const boardParticipantsModalActive = useAppSelector(
     (state) => state.CARD.boardParticipantsModalActive,
   );
   const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
+  const [searchParams, setSearchParams] = useSearchParams();
   const attachModalActive = useAppSelector((state) => state.CARD.attachModalActive);
   const card = useAppSelector((state) => state.CARD.card);
 
@@ -32,6 +42,12 @@ function Card() {
       dispatch(setBoardParticipantsModalOpen());
     }, 0);
   }
+
+  function closeCard() {
+    setOpenCard(prev => ({...prev, isOpen: false}))
+    searchParams.delete('card');
+    setSearchParams(searchParams);
+  };
 
   useEffect(() => {
     if (data) {
@@ -43,7 +59,8 @@ function Card() {
     <>
       {isLoading && <Loader />}
       {data && card && (
-        <div className="card">
+        <div className="card" >
+          <button type="button" onClick={closeCard}>Закрыть карточку</button>
           <Title title={card.title} boardId={boardId} cardId={cardId} column={data.column} />
           <div className="card__wrapper">
             <div className="card__main">

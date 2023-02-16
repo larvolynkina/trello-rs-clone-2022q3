@@ -47,6 +47,19 @@ export const boardApi = createApi({
       }),
       invalidatesTags: [{ type: 'BoardParticipants' }],
     }),
+    getBoardParticipants: build.query<IUser[], TGetBoardParticipantsQueryArgs>({
+      query: ({ boardId }) => ({
+        url: `boards/${boardId}/participants`,
+      }),
+      providesTags: ['BoardParticipants'],
+    }),
+    updateBoardBackground: build.mutation({
+      query: (body: {boardId: string; backgroundColor: string; backgroundImage: string}) => ({
+        url: '/boards/background',
+        method: 'PATCH',
+        body,
+      }),
+    }),
     getColumns: build.query<IColumn[], string>({
       query: (boardId: string) => ({
         url: `/columns/${boardId}`,
@@ -109,11 +122,26 @@ export const boardApi = createApi({
       }),
       invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
-    getBoardParticipants: build.query<IUser[], TGetBoardParticipantsQueryArgs>({
-      query: ({ boardId }) => ({
-        url: `boards/${boardId}/participants`,
+    addNewMarkOnBoard: build.mutation({
+      query: (body: {boardId: string, text: string, color: string}) => ({
+        url: '/boards/add-mark',
+        method: 'POST',
+        body,
       }),
-      providesTags: ['BoardParticipants'],
+    }),
+    updateMarkOnBoard: build.mutation({
+      query: (body: {boardId: string, color: string, text: string, index: number}) => ({
+        url: '/boards/update-mark',
+        method: 'POST',
+        body,
+      }),
+    }),
+    deleteMarkFromBoard: build.mutation({
+      query: (body: {boardId: string, markId: string}) => ({
+        url: '/boards/delete-mark',
+        method: 'POST',
+        body,
+      }),
     }),
   }),
 });
@@ -132,4 +160,8 @@ export const {
   useGetBoardParticipantsQuery,
   useGetUserByEmailMutation,
   useAddMembersOnBoardMutation,
+  useUpdateBoardBackgroundMutation,
+  useAddNewMarkOnBoardMutation,
+  useUpdateMarkOnBoardMutation,
+  useDeleteMarkFromBoardMutation,
 } = boardApi;

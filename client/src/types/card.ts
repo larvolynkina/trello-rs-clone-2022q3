@@ -15,6 +15,7 @@ export interface IMark {
   color: string;
   text?: string;
   checked: boolean;
+  _id?: string;
 }
 
 export interface ICheckItem {

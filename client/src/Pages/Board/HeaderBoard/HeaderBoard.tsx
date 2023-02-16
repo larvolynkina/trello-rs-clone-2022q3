@@ -11,10 +11,11 @@ import { IUser } from '../../../types/card';
 
 type HeaderBoardType = {
   boardDetails: IBoard;
-  setIsShowSearchForm: (b: boolean)  => void;
+  setIsShowSearchForm: (b: boolean) => void;
+  setIsShowBoardMenu: (b: boolean) => void;
 };
 
-function HeaderBoard({ boardDetails, setIsShowSearchForm }: HeaderBoardType) {
+function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: HeaderBoardType) {
   const boardInputTitle = useRef<HTMLInputElement>(null);
   const { data: participantsData } = useGetBoardParticipantsQuery({ boardId: boardDetails._id });
   const [updateBoardTitle, { isError: errorUpdateBoardTitle }] = useUpdateBoardTitleMutation();
@@ -66,7 +67,6 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm }: HeaderBoardType) {
       setIsUpdateTitleBoard(false);
     }
   };
-  
 
   return (
     <div className="board__header">
@@ -102,10 +102,9 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm }: HeaderBoardType) {
       <button type="button" className="board__share" onClick={() => setIsShowSearchForm(true)}>
         Добавить участника
       </button>
-      <button type="button" className="board__menu">
+      <button type="button" className="board__menu" onClick={() => setIsShowBoardMenu(true)}>
         ...
       </button>
-      
     </div>
   );
 }
