@@ -1,6 +1,8 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
 // import { useDetectClickOutside } from 'react-detect-click-outside';
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -64,7 +66,6 @@ function Board() {
   const [isShowSearchForm, setIsShowSearchForm] = useState(false);
   const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
   const [bgStyle, setBgStyle] = useState({});
-  const [doLoad, setDoLoad] = useState(false);
   const [paramsURL] = useSearchParams();
   const [openCard, setOpenCard] = useState({
     isOpen: false,
@@ -148,13 +149,12 @@ function Board() {
   }, [dropColumn]);
 
   const saveColumn = (title: string) => {
-    setDoLoad(true);
     setIsOpenAddForm(false);
+    toast.loading('Добавляем колонку...')
     if (boardData._id && title) {
       createColumn({ boardId: boardData._id, title: title.trim() })
         .unwrap()
         .then(() => {
-          setDoLoad(false);
           const fakeId = String(Math.random());
           const newColumn: IColumn = {
             _id: fakeId,
@@ -165,6 +165,7 @@ function Board() {
             title,
           };
           dispatch(createColumnInStore({ column: newColumn, boardId }));
+          toast.dismiss();
         });
       if (errorCreateColumn) {
         throw new Error('Ошибка создания колонки');
@@ -246,9 +247,9 @@ function Board() {
       style={bgStyle}
       aria-hidden="true"
     >
-      {(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && <Loader />}
+      {(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && <Loader />}
 
-      {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading || doLoad) && (
+      {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && (
         <>
           <aside className="board__aside">Рабочее пространство</aside>
 
@@ -263,7 +264,6 @@ function Board() {
 
             <ul className="board__columns">
               {columnsData &&
-                !doLoad &&
                 columnsData.map((column) => (
                   <Column
                     key={column._id}
@@ -286,7 +286,7 @@ function Board() {
                     setAddCardFromMenu={setAddCardFromMenu}
                   />
                 ))}
-              {!doLoad && (
+              {!boardDetailsLoading && !columnsDataLoading && (
                 <div className="board__last-column">
                   {!isOpenAddForm && (
                     <button type="button" className="board__add-column" onClick={handleAddColumn}>

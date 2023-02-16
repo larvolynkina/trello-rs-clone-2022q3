@@ -8,6 +8,7 @@ import {
   MouseEvent,
   useRef,
 } from 'react';
+import { toast } from 'react-toastify';
 
 import {
   useCreateCardMutation,
@@ -16,7 +17,8 @@ import {
 } from '../../store/reducers/board/board.api';
 
 // import { addCardInColumn } from '../../store/reducers/board/boardState';
-// import { useAppDispatch } from '../../hooks/redux';
+import { useAppDispatch } from '../../hooks/redux';
+import { addCardInColumn } from '../../store/reducers/board/boardState';
 
 import ColumnCard from './ColumnCard';
 import AddCardOrColumnForm from './AddCardOrColumnForm';
@@ -38,8 +40,8 @@ type ColumnProps = {
   setDragColum: (column: IColumn | null) => void;
   setDropColum: (column: IColumn | null) => void;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
-  setIdOpenedColumn: ({boardId, columnId}: { boardId: string; columnId: string }) => void;
-  idOpenedColumn: {boardId: string, columnId: string};
+  setIdOpenedColumn: ({ boardId, columnId }: { boardId: string; columnId: string }) => void;
+  idOpenedColumn: { boardId: string; columnId: string };
   addCardFromMenu: boolean;
   setAddCardFromMenu: (b: boolean) => void;
 };
@@ -62,7 +64,8 @@ function Column({
   idOpenedColumn,
   setAddCardFromMenu,
 }: ColumnProps) {
-  const [createCard, { isError: errorCreateCard }] = useCreateCardMutation();
+  const [createCard, { isError: errorCreateCard, isLoading: loadingCreateCard }] =
+    useCreateCardMutation();
   const [updateTitleColumn, { isError: errorUpdateTitleColumn }] = useUpdateTitleColumnMutation();
   const [title, setTitle] = useState(column.title);
   const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
@@ -71,6 +74,7 @@ function Column({
   const [isEditTitle, setIsEditTitle] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [columnWithStyleID, setColumnWithStyleID] = useState<string>('');
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (addCardFromMenu && idOpenedColumn.columnId === column._id) {
@@ -83,6 +87,14 @@ function Column({
       setCards(getCardsOfColumn(column.cards, cardsData));
     }
   }, [cardsData, column]);
+
+  useEffect(() => {
+    if (loadingCreateCard) {
+      toast.loading('Добавляем карточку...');
+    } else {
+      toast.dismiss();
+    }
+  }, [loadingCreateCard]);
 
   const handleDragStartCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
     e.stopPropagation();
@@ -139,7 +151,11 @@ function Column({
     setIsOpenAddForm(false);
 
     if (cardTitle) {
-      await createCard({ boardId, columnId: column._id, title: cardTitle.trim() }).unwrap();
+      await createCard({ boardId, columnId: column._id, title: cardTitle.trim() })
+        .unwrap()
+        .then((res) => {
+          dispatch(addCardInColumn({ card: res, id: column._id }));
+        });
       if (errorCreateCard) {
         throw new Error('Ошибка создания карточки');
       }
@@ -159,7 +175,6 @@ function Column({
   };
   const handleDragColumn = () => {
     setDragColum(column);
-
   };
   const handleDragOverColumn = (e: DragEvent<HTMLLIElement>) => {
     e.preventDefault();
@@ -174,7 +189,7 @@ function Column({
   };
   const handleOpenMenu = (e: MouseEvent<HTMLButtonElement>) => {
     openColumnMenu(e);
-    setIdOpenedColumn({boardId, columnId: column._id});
+    setIdOpenedColumn({ boardId, columnId: column._id });
   };
   return (
     <li
@@ -240,7 +255,7 @@ function Column({
           setIsOpenAddForm={setIsOpenAddForm}
         />
       )}
-      {!isOpenAddForm && (
+      {!isOpenAddForm && !loadingCreateCard && (
         <div className="column__footer">
           <button className="column__add-card" type="button" onClick={() => setIsOpenAddForm(true)}>
             {AddButtonsOnBoardText.addCard}

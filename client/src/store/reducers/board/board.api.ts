@@ -72,7 +72,7 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     updateTitleColumn: build.mutation({
       query: (body: { boardId: string; columnId: string; title: string }) => ({
@@ -95,7 +95,7 @@ export const boardApi = createApi({
         url: `/columns/${ids.boardId}/${ids.columnId}`,
         method: 'DELETE',
       }),
-      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     getCardsOnBoard: build.query<ICard[], string>({
       query: (boardId: string) => ({
@@ -109,10 +109,10 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [
-        { type: 'Columns', id: 'LIST' },
-        { type: 'Cards', id: 'LIST' },
-      ],
+      // invalidatesTags: [
+      //   { type: 'Columns', id: 'LIST' },
+        // { type: 'Cards', id: 'LIST' },
+      // ],
     }),
     updateCardOrder: build.mutation({
       query: (body: { boardId: string; data: { columnId: string; columnCards: string[] }[] }) => ({
