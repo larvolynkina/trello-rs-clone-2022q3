@@ -2,7 +2,11 @@ import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { updateColumns, updateBoardDetails, createColumnInStore } from '../../store/reducers/board/boardState';
+import {
+  updateColumns,
+  updateBoardDetails,
+  createColumnInStore,
+} from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
@@ -59,20 +63,19 @@ function Board() {
 
   useEffect(() => {
     if (columnsDataFromServer) {
-      dispatch(updateColumns(columnsDataFromServer))
+      dispatch(updateColumns(columnsDataFromServer));
     }
   }, [columnsDataFromServer]);
-  
+
   useEffect(() => {
     if (boardData && boardData._id.length > 0) {
       if (boardData.backgroundImage && boardData.backgroundImage.length > 0) {
-        setBgStyle({backgroundImage: boardData.backgroundImage});
+        setBgStyle({ backgroundImage: boardData.backgroundImage });
       } else if (boardData.backgroundColor && boardData.backgroundColor.length > 0) {
-        setBgStyle({backgroundImage: 'none', backgroundColor: boardData.backgroundColor});
+        setBgStyle({ backgroundImage: 'none', backgroundColor: boardData.backgroundColor });
       }
     }
-    console.log('change boardData')
-  }, [boardData]);
+  }, [boardData.backgroundImage, boardData.backgroundColor]);
 
   useEffect(() => {
     if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
@@ -111,9 +114,23 @@ function Board() {
     setDropColum(null);
   }, [dropColumn]);
 
+  // useEffect(() => {
+  //   console.log('boardData: ', boardData);
+  //   console.log('columnsData: ', columnsData);
+  // }, [boardData, columnsData]);
+  
   const saveColumn = (title: string) => {
+    const fakeId = String(Math.random());
+    const newColumn: IColumn = {
+      _id: fakeId,
+      archived: false,
+      cards: [],
+      createdAt: '',
+      updatedAt: '',
+      title,
+    };
     setIsOpenAddForm(false);
-    // dispatch(createColumnInStore(''));
+    dispatch(createColumnInStore({column: newColumn, boardId}));
     if (boardData._id && title) {
       createColumn({ boardId: boardData._id, title: title.trim() }).unwrap();
       if (errorCreateColumn) {
@@ -250,10 +267,7 @@ function Board() {
         <CardMenu text={textFromCard} position={cardMenuPosition} closeMenu={setIsOpenCardMenu} />
       )}
       {isShowSearchForm && boardData && (
-        <SearchParticipantsForm
-          setIsShowSearchForm={setIsShowSearchForm}
-          boardId={boardData._id}
-        />
+        <SearchParticipantsForm setIsShowSearchForm={setIsShowSearchForm} boardId={boardData._id} />
       )}
       {isShowBoardMenu && boardData && (
         <BoardMenu
