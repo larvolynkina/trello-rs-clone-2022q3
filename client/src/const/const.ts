@@ -28,8 +28,8 @@ export enum APPRoute {
 }
 
 export enum AddButtonsOnBoardText {
-  addColumn = '+ Добавить список',
-  saveColumn = 'Добавить список',
+  addColumn = '+ Добавить колонку',
+  saveColumn = 'Добавить колонку',
   addOneMoreColumn = '+ Добавить ещё одну колонку',
   addCard = '+ Добавить карточку',
   saveCard = 'Добавить карточку',

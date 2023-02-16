@@ -154,17 +154,8 @@ function Board() {
     if (boardData._id && title) {
       createColumn({ boardId: boardData._id, title: title.trim() })
         .unwrap()
-        .then(() => {
-          const fakeId = String(Math.random());
-          const newColumn: IColumn = {
-            _id: fakeId,
-            archived: false,
-            cards: [],
-            createdAt: '',
-            updatedAt: '',
-            title,
-          };
-          dispatch(createColumnInStore({ column: newColumn, boardId }));
+        .then((res) => {
+          dispatch(createColumnInStore({ column: res, boardId }));
           toast.dismiss();
         });
       if (errorCreateColumn) {
