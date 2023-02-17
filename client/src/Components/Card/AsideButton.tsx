@@ -5,6 +5,8 @@ import {
   setBoardParticipantsModalOpen,
   setCheckListModalClose,
   setCheckListModalOpen,
+  setAttachModalClose,
+  setAttachModalOpen,
 } from '../../store/reducers/cards/cardSlice';
 
 interface AsideButtonProps {
@@ -18,6 +20,7 @@ function AsideButton({ text, ico }: AsideButtonProps) {
     (state) => state.CARD.boardParticipantsModalActive,
   );
   const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
+  const attachModalActive = useAppSelector((state) => state.CARD.attachModalActive);
 
   function onClickHandler() {
     if (text === 'Участники') {
@@ -35,6 +38,15 @@ function AsideButton({ text, ico }: AsideButtonProps) {
       } else {
         setTimeout(() => {
           dispatch(setCheckListModalOpen());
+        }, 0);
+      }
+    }
+    if (text === 'Вложения') {
+      if (attachModalActive) {
+        dispatch(setAttachModalClose());
+      } else {
+        setTimeout(() => {
+          dispatch(setAttachModalOpen());
         }, 0);
       }
     }

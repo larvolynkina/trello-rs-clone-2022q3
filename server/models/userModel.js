@@ -5,7 +5,6 @@ const userModel = new mongoose.Schema(
     userName: {
       type: String,
       required: true,
-      unique: true,
     },
     email: {
       type: String,
@@ -18,7 +17,6 @@ const userModel = new mongoose.Schema(
     },
     avatarColor: {
       type: String,
-      required: true,
     },
     avatarImage: {
       type: String,

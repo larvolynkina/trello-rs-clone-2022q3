@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import Title from './Title';
@@ -7,40 +7,31 @@ import Participants from './Participants';
 import BoardParticipantsModal from '../BoardParticipantsModal';
 import AsideList from './AsideList';
 import { asideAddButtons, asideActionButtons } from './helpers';
-import {
-  useGetCardByIdQuery,
-  useGetCardParticipantsQuery,
-} from '../../store/reducers/cards/cards.api';
-import { useGetBoardParticipantsQuery } from '../../store/reducers/board/board.api';
+import { useGetCardByIdQuery } from '../../store/reducers/cards/cards.api';
 import './Card.scss';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
-import { setBoardParticipantsModalOpen } from '../../store/reducers/cards/cardSlice';
+import { setBoardParticipantsModalOpen, setCard } from '../../store/reducers/cards/cardSlice';
 import CheckListModal from './CheckListModal';
 import CheckListFullList from './CheckListFullList';
-// import { ParamTypes } from '../../types/card';
+import AttachModal from './AttachModal';
 import Loader from '../Loader';
 
 type CardProps = {
   boardId: string;
   cardId: string;
-  setOpenCard: Dispatch<
-    SetStateAction<{ isOpen: boolean; canOpen: boolean; cardId: string }>
-  >;
+  setOpenCard: Dispatch<SetStateAction<{ isOpen: boolean; canOpen: boolean; cardId: string }>>;
 };
 
 function Card({ boardId, cardId, setOpenCard }: CardProps) {
-  // const { boardId, cardId } = useParams() as ParamTypes;
   const { data, isLoading } = useGetCardByIdQuery({ boardId, cardId });
-  const { data: cardParticipants, isLoading: cardParticipantsLoading } =
-    useGetCardParticipantsQuery({ boardId, cardId });
-  const { data: boardParticipants, isLoading: boardParticipantsLoading } =
-    useGetBoardParticipantsQuery({ boardId });
   const dispatch = useAppDispatch();
   const boardParticipantsModalActive = useAppSelector(
     (state) => state.CARD.boardParticipantsModalActive,
   );
   const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
   const [searchParams, setSearchParams] = useSearchParams();
+  const attachModalActive = useAppSelector((state) => state.CARD.attachModalActive);
+  const card = useAppSelector((state) => state.CARD.card);
 
   function openBoardParticipantsModal() {
     setTimeout(() => {
@@ -49,29 +40,34 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
   }
 
   function closeCard() {
-    setOpenCard(prev => ({...prev, isOpen: false}))
+    setOpenCard((prev) => ({ ...prev, isOpen: false }));
     searchParams.delete('card');
     setSearchParams(searchParams);
-  };
+  }
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setCard(data.card));
+    }
+  }, [data]);
 
   return (
     <>
-      {(cardParticipantsLoading || boardParticipantsLoading || isLoading) && <Loader />}
-
-      {data && (
-        <div className="card" >
-          <button type="button" onClick={closeCard}>Закрыть карточку</button>
-          <Title title={data.card.title} boardId={boardId} cardId={cardId} column={data.column} />
+      {isLoading && <Loader />}
+      {data && card && (
+        <div className="card">
+          <button type="button" onClick={closeCard}>
+            Закрыть карточку
+          </button>
+          <Title title={card.title} boardId={boardId} cardId={cardId} column={data.column} />
           <div className="card__wrapper">
             <div className="card__main">
-              {cardParticipants && cardParticipants.length > 0 && (
-                <Participants
-                  participants={cardParticipants}
-                  onClick={() => openBoardParticipantsModal()}
-                />
-              )}
-              <Description description={data.card.description} boardId={boardId} cardId={cardId} />
-              <CheckListFullList items={data.card.checklists} />
+              <Participants
+                onClick={() => openBoardParticipantsModal()}
+                cardParticipants={card.participants}
+              />
+              <Description description={card.description} boardId={boardId} cardId={cardId} />
+              <CheckListFullList items={card.checklists} boardId={boardId} cardId={cardId} />
             </div>
             <aside className="card__aside">
               <AsideList title="Добавить на карточку" buttons={asideAddButtons} />
@@ -83,12 +79,14 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
       {boardParticipantsModalActive && (
         <div className="card__board-participants-modal">
           <BoardParticipantsModal
-            boardParticipants={boardParticipants || []}
-            cardParticipantsId={data?.card.participants || []}
+            boardId={boardId}
+            cardId={cardId}
+            cardParticipants={card?.participants || []}
           />
         </div>
       )}
-      {checkListModalActive && <CheckListModal />}
+      {checkListModalActive && <CheckListModal boardId={boardId} cardId={cardId} />}
+      {attachModalActive && <AttachModal />}
     </>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { toast } from 'react-toastify';
 import { useUpdateCardTitleOrDescrMutation } from '../../store/reducers/cards/cards.api';
 
 interface TitleProps {
@@ -14,6 +15,11 @@ function Title({ title, boardId, cardId, column }: TitleProps) {
   const [updateCardTitle] = useUpdateCardTitleOrDescrMutation();
 
   function onBlurHandler() {
+    if (!text) {
+      toast.error('Имя карточки не должно быть пустой строкой');
+      setText(title);
+      return;
+    }
     if (text !== title) {
       updateCardTitle({ boardId, cardId, title: text });
     }

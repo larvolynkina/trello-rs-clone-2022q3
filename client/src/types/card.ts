@@ -35,25 +35,6 @@ export interface IAttachment {
   url: string;
   date: Date;
 }
-
-export interface ICard {
-  date: IDate;
-  _id: string;
-  title: string;
-  description: string;
-  archived: boolean;
-  participants: string[];
-  marks: IMark[];
-  coverColor: string;
-  coverImg: string;
-  coverSize: string;
-  activities: IActivity[];
-  attachments: IAttachment[];
-  checklists: IChecklist[];
-  createdAt: Date;
-  updatedAt: Date;
-  __v: number;
-}
 export interface IUser {
   _id: string;
   userName: string;
@@ -65,8 +46,21 @@ export interface IUser {
   updatedAt: Date;
   __v: string;
 }
-
-export type ParamTypes = {
-  boardId: string;
-  cardId: string;
-};
+export interface ICard {
+  date: IDate;
+  _id: string;
+  title: string;
+  description: string;
+  archived: boolean;
+  participants: IUser[];
+  marks: IMark[];
+  coverColor: string;
+  coverImg: string;
+  coverSize: string;
+  activities: IActivity[];
+  attachments: IAttachment[];
+  checklists: IChecklist[];
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
