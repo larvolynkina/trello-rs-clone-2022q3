@@ -9,6 +9,7 @@ import {
   updateBoardDetails,
   createColumnInStore,
   updateCardInColumn,
+  updateOpenMenuCardArgs,
 } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
@@ -45,7 +46,7 @@ function Board() {
   const [updateColumnOrder] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
   const dispatch = useAppDispatch();
-  const { boardData, columnsData, cardsData } = useAppSelector((state) => state.BOARD);
+  const { boardData, columnsData, cardsData, openMenuCardArgs } = useAppSelector((state) => state.BOARD);
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
@@ -216,6 +217,11 @@ function Board() {
     setIsOpenAddForm(true);
   };
 
+  const handleContextBoard = ()  => {
+    const title = openMenuCardArgs.title || '';
+    dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, boardId, title}));
+  };
+
   // const closeCard = () => {
   //   setOpenCard((prev) => ({ ...prev, isOpen: false }));
   //   paramsURL.delete('card');
@@ -233,6 +239,7 @@ function Board() {
       className="board"
       onClick={handleClickBoard}
       onKeyUp={handleKeyUpBoard}
+      onContextMenu={handleContextBoard}
       style={bgStyle}
       aria-hidden="true"
     >

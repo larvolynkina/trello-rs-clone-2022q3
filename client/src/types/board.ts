@@ -63,4 +63,9 @@ export interface IBoardState {
   participantsData: IUser[];
   columnsData: IColumn[];
   cardsData: ICard[];
+  openMenuCardArgs: {
+    boardId: string;
+    cardId: string;
+    title?: string;
+  };
 }

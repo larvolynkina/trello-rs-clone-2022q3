@@ -1,6 +1,8 @@
 import './columnCard.scss';
 import { DragEvent, MouseEvent } from 'react';
 import { useSearchParams  } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { updateOpenMenuCardArgs } from '../../../store/reducers/board/boardState';
 import { ICard } from '../../../types/board';
 
 type ColumnCardProps = {
@@ -22,9 +24,16 @@ function ColumnCard({
   onDragLeave,
   openCardMenu,
 }: ColumnCardProps) {
+  const dispatch = useAppDispatch();
+  const { openMenuCardArgs } = useAppSelector((state) => state.BOARD);
   const [, setSearchParams] = useSearchParams();
+
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
     openCardMenu(e);
+    if (card._id) {
+      const title = openMenuCardArgs.title || '';
+      dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, cardId: card._id, title}))
+    }
   };
 
   const handleOpenCard = () => {

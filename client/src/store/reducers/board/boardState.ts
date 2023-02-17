@@ -10,6 +10,10 @@ const initialState: IBoardState = {
   participantsData: [],
   columnsData: [],
   cardsData: [],
+  openMenuCardArgs: {
+    boardId: '',
+    cardId: '',
+  },
 };
 
 export const boardStateSlice = createSlice({
@@ -37,7 +41,9 @@ export const boardStateSlice = createSlice({
       state.columnsData = state.columnsData.filter(
         (column) => column._id !== action.payload.columnId,
       );
-      state.boardData.columns = state.boardData.columns?.filter((columnId) => columnId !== action.payload.columnId)
+      state.boardData.columns = state.boardData.columns?.filter(
+        (columnId) => columnId !== action.payload.columnId,
+      );
     },
     updateColumnsInStore(state, action: PayloadAction<IColumn[]>) {
       state.columnsData = action.payload;
@@ -58,6 +64,13 @@ export const boardStateSlice = createSlice({
       }
       state.cardsData = [...state.cardsData, action.payload.card];
     },
+    // updateCardTitleInStore(state, action: PayloadAction) {},
+    updateOpenMenuCardArgs(
+      state,
+      action: PayloadAction<{ boardId: string; cardId: string; title: string }>,
+    ) {
+      state.openMenuCardArgs = action.payload;
+    },
   },
 });
 
@@ -71,6 +84,7 @@ export const {
   deleteColumnFromStore,
   updateParticipantsInStore,
   addParticipantsInStore,
+  updateOpenMenuCardArgs,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;

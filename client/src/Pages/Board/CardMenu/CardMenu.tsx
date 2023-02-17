@@ -1,5 +1,8 @@
 import './cardMenu.scss';
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
+import { useUpdateCardTitleOrDescrMutation } from '../../../store/reducers/cards/cards.api';
+import { updateOpenMenuCardArgs, updateCardInColumn } from '../../../store/reducers/board/boardState';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 
 type CardMenuProps = {
   text: string;
@@ -8,6 +11,9 @@ type CardMenuProps = {
 };
 
 export default function CardMenu({ text, position, closeMenu }: CardMenuProps) {
+  const dispatch = useAppDispatch();
+  const { openMenuCardArgs, cardsData } = useAppSelector((state) => state.BOARD)
+  const [updateCardTitleOrDescr] = useUpdateCardTitleOrDescrMutation();
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [valueArea, setValueArea] = useState(text);
   const inputText = useRef<HTMLTextAreaElement | null>(null);
@@ -33,6 +39,16 @@ export default function CardMenu({ text, position, closeMenu }: CardMenuProps) {
 
   const handleClickSave = (e: MouseEvent) => {
     e.stopPropagation();
+    if (valueArea && text !== valueArea.trim()) {
+      dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, title: valueArea}));
+      dispatch(updateCardInColumn(cardsData.map((card) => {
+        if (card._id === openMenuCardArgs.cardId) {
+          return {...card, title: valueArea}
+        }
+        return card
+      })))
+    }
+    closeMenu(false);
   };
 
   const handleMouseDownMenuBody = () => {
