@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import { APPRoute, AuthorizationStatus } from '../../const/const';
 import { useAppSelector } from '../../hooks/redux';
+import Loader from '../Loader';
 
 type ProtectedRouteProps = {
   outlet: JSX.Element;
@@ -9,6 +10,15 @@ type ProtectedRouteProps = {
 
 function ProtectedRoute({ outlet }: ProtectedRouteProps) {
   const { authorizationStatus } = useAppSelector((state) => state.USER);
+
+  if (authorizationStatus === AuthorizationStatus.Unknown) {
+    return (
+      <main className="authorization-page">
+        <Loader />
+      </main>
+    );
+  }
+
   const location = useLocation();
 
   if (authorizationStatus === AuthorizationStatus.Auth) return outlet;
