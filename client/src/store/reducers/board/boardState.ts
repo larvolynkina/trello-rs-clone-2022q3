@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IColumn, IBoardState, ICard, IBoard } from '../../../types/board';
+import { IUser } from '../../../types/card';
 
 const initialState: IBoardState = {
   boardData: {
     _id: '',
     title: '',
   },
+  participantsData: [],
   columnsData: [],
   cardsData: [],
 };
@@ -16,6 +18,12 @@ export const boardStateSlice = createSlice({
   reducers: {
     updateBoardDetails(state, action: PayloadAction<IBoard>) {
       state.boardData = action.payload;
+    },
+    updateParticipantsInStore(state, action: PayloadAction<IUser[]>) {
+      state.participantsData = action.payload;
+    },
+    addParticipantsInStore(state, action: PayloadAction<IUser[]>) {
+      state.participantsData.push(...action.payload);
     },
     changeTitleColumnInStore(state, action: PayloadAction<{ id: string; title: string }>) {
       const columnForChange = state.columnsData.find((column) => column._id === action.payload.id);
@@ -61,6 +69,8 @@ export const {
   updateCardInColumn,
   updateBoardDetails,
   deleteColumnFromStore,
+  updateParticipantsInStore,
+  addParticipantsInStore,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;

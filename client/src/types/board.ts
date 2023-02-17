@@ -1,3 +1,5 @@
+import { IUser } from "./card";
+
 export interface IMarks {
   _id: string;
   color: string;
@@ -58,6 +60,7 @@ export interface ICard {
 
 export interface IBoardState {
   boardData: IBoard;
+  participantsData: IUser[];
   columnsData: IColumn[];
   cardsData: ICard[];
 }

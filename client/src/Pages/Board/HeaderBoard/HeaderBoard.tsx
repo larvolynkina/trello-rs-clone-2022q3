@@ -2,12 +2,13 @@ import './headerBoard.scss';
 
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import {
-  useUpdateBoardTitleMutation,
   useGetBoardParticipantsQuery,
+  useUpdateBoardTitleMutation,
 } from '../../../store/reducers/board/board.api';
+import { useAppSelector, useAppDispatch } from '../../../hooks/redux';
+import { updateParticipantsInStore } from '../../../store/reducers/board/boardState';
 import { IBoard } from '../../../types/board';
 import UserAvatar from '../../../Components/UserAvatar';
-import { IUser } from '../../../types/card';
 
 type HeaderBoardType = {
   boardDetails: IBoard;
@@ -17,11 +18,15 @@ type HeaderBoardType = {
 
 function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: HeaderBoardType) {
   const boardInputTitle = useRef<HTMLInputElement>(null);
-  const { data: participantsData } = useGetBoardParticipantsQuery({ boardId: boardDetails._id });
   const [updateBoardTitle, { isError: errorUpdateBoardTitle }] = useUpdateBoardTitleMutation();
+  const { data: participantsDataFromServer } = useGetBoardParticipantsQuery({
+    boardId: boardDetails._id,
+  });
+  const { participantsData } = useAppSelector((state) => state.BOARD);
+  const dispatch = useAppDispatch();
+
   const [titleBoardText, setTitleBoardText] = useState('');
   const [isUpdateTitleBoard, setIsUpdateTitleBoard] = useState(false);
-  const [participants, setParticipants] = useState<IUser[] | []>([]);
 
   useEffect(() => {
     if (boardDetails) {
@@ -30,10 +35,10 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
   }, [boardDetails]);
 
   useEffect(() => {
-    if (participantsData) {
-      setParticipants(participantsData);
+    if (participantsDataFromServer) {
+      dispatch(updateParticipantsInStore(participantsDataFromServer));
     }
-  }, [participantsData]);
+  }, [participantsDataFromServer]);
 
   const handleClickTitle = () => {
     setIsUpdateTitleBoard(true);
@@ -95,7 +100,7 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
         />
       </div>
       <div className="board__participants">
-        {participants.map((participant) => (
+        {participantsData.map((participant) => (
           <UserAvatar participant={participant} key={participant._id} />
         ))}
       </div>

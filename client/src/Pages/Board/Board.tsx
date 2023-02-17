@@ -3,8 +3,6 @@ import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-// import { useDetectClickOutside } from 'react-detect-click-outside';
-
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
   updateColumnsInStore,
@@ -144,16 +142,6 @@ function Board() {
       updateColumnOrder({ boardId, data: newColumnsOrderId }).unwrap();
     }
 
-    // async function updateOrderColumn(newOrderColumn: string[]) {
-    //   await updateColumnOrder({ boardId, data: newOrderColumn }).unwrap();
-    //   if (errorUpdateColumnOrder) {
-    //     throw new Error('Ошибка изменения порядка списков');
-    //   }
-    // }
-    // if (dragColumn && dropColumn && columnsData) {
-    //   const { newOrderColumn } = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
-    //   updateOrderColumn(newOrderColumn);
-    // }
     setDragColum(null);
     setDropColum(null);
   }, [dropColumn]);

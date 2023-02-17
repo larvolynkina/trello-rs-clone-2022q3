@@ -120,7 +120,7 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     addNewMarkOnBoard: build.mutation({
       query: (body: {boardId: string, text: string, color: string}) => ({
