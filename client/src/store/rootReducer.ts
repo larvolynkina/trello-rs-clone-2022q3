@@ -5,6 +5,7 @@ import createAPI from '../services/api';
 import { userState } from './reducers/userState';
 import { boardState } from './reducers/board/boardState';
 import { boardApi } from './reducers/board/board.api';
+import { workspaceApi } from './reducers/workspace/workspace.api';
 import cardsSlice from './reducers/cards/cardSlice';
 
 export const rootReducer = combineReducers({
@@ -13,6 +14,7 @@ export const rootReducer = combineReducers({
   [NameSpace.board]: boardState,
   [boardApi.reducerPath]: boardApi.reducer,
   [cardsApi.reducerPath]: cardsApi.reducer,
+  [workspaceApi.reducerPath]: workspaceApi.reducer,
 });
 
 const setupStore = () =>
@@ -24,9 +26,7 @@ const setupStore = () =>
         thunk: {
           extraArgument: createAPI(),
         },
-      })
-        .concat(cardsApi.middleware)
-        .concat(boardApi.middleware),
+      }).concat(cardsApi.middleware, boardApi.middleware, workspaceApi.middleware),
   });
 
 const store = setupStore();
