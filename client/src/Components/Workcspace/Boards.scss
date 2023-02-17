@@ -1,0 +1,50 @@
+@import '../../scss/base/mixins.scss';
+
+.boards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(rem(180), 1fr));
+  gap: rem(12);
+
+  &__board {
+    position: relative;
+    height: rem(96);
+    background-color: #97a0af;
+    background-position: 50%;
+    background-size: cover;
+    color: #fff;
+    padding: rem(8);
+    border-radius: rem(3);
+    overflow: hidden;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+
+    &--button {
+      background-color: #091e420a;
+      color: #172b4d;
+      font-weight: 400;
+      font-size: rem(14);
+
+      @media (any-hover: hover) {
+        &:hover {
+          background-color: #091e4214;
+        }
+      }
+    }
+
+    &-fade {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transition: all 0.3s ease 0s;
+
+      @media (any-hover: hover) {
+        &:hover {
+          background-color: #00000025;
+        }
+      }
+    }
+  }
+}
