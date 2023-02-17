@@ -1,12 +1,12 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import Workspace from '../../Components/Workcspace';
-import { APPRoute } from '../../const/const';
+// import { APPRoute } from '../../const/const';
 import {
   useGetAllWorkspacesQuery,
-  useCreateWorkspaceMutation,
-  useCreateBoardMutation,
-  useDeleteWorkspaceMutation,
-  useUpdateWorkspaceMutation,
+  // useCreateWorkspaceMutation,
+  // useCreateBoardMutation,
+  // useDeleteWorkspaceMutation,
+  // useUpdateWorkspaceMutation,
 } from '../../store/reducers/workspace/workspace.api';
 import './Workspaces.scss';
 
@@ -22,7 +22,7 @@ function Workspaces() {
       <div className="workspaces__container">
         <h1 className="workspaces__title">Ваши рабочие пространства</h1>
         {data.map((ws) => (
-          <Workspace data={ws} />
+          <Workspace key={ws._id} data={ws} />
         ))}
       </div>
     </main>

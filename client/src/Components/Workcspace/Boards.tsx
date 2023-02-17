@@ -16,7 +16,7 @@ function Boards({ data, workspaceId }: BoardsProps) {
 
   const handleCreateBoard = async () => {
     try {
-      const res = await createBoard({
+      await createBoard({
         workspaceId,
         title: 'Test board',
       }).unwrap();
@@ -28,8 +28,16 @@ function Boards({ data, workspaceId }: BoardsProps) {
 
   return (
     <div className="boards">
-      {data.map(({ _id: id, title }) => (
-        <Link to={`${APPRoute.board.replace(':boardId', id)}`} className="boards__board">
+      {data.map(({ _id: id, title, backgroundColor, backgroundImage }) => (
+        <Link
+          key={id}
+          to={`${APPRoute.board.replace(':boardId', id)}`}
+          className="boards__board"
+          style={{
+            backgroundColor,
+            backgroundImage,
+          }}
+        >
           <div className="boards__board-fade" />
           {title}
         </Link>
