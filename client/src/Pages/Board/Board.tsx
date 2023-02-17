@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
-  updateColumns,
+  updateColumnsInStore,
   updateBoardDetails,
   createColumnInStore,
   updateCardInColumn,
@@ -15,7 +15,7 @@ import {
 
 import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
-import { getTranspositionColumnCards, getTranspositionColumns } from './utils';
+import { getNewColumnsOrder, getTranspositionColumnCards } from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
 import {
@@ -44,7 +44,7 @@ function Board() {
   const { data: cardsDataFromServer, isLoading: cardsDataLoading } =
     useGetCardsOnBoardQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
-  const [updateColumnOrder, { isError: errorUpdateColumnOrder }] = useUpdateColumnOrderMutation();
+  const [updateColumnOrder] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
   const dispatch = useAppDispatch();
   const { boardData, columnsData, cardsData } = useAppSelector((state) => state.BOARD);
@@ -91,7 +91,7 @@ function Board() {
 
   useEffect(() => {
     if (columnsDataFromServer) {
-      dispatch(updateColumns(columnsDataFromServer));
+      dispatch(updateColumnsInStore(columnsDataFromServer));
     }
   }, [columnsDataFromServer]);
 
@@ -121,7 +121,7 @@ function Board() {
         columnsData,
       });
       if (resultColumn) {
-        dispatch(updateColumns(newColumns));
+        dispatch(updateColumnsInStore(newColumns));
         updateCardOrder({ boardId, data: resultColumn });
         if (errorUpdateCardOrder) {
           throw new Error('Ошибка изменения порядка карточек');
@@ -134,23 +134,33 @@ function Board() {
   }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
-    async function updateOrderColumn(newOrderColumn: string[]) {
-      await updateColumnOrder({ boardId, data: newOrderColumn }).unwrap();
-      if (errorUpdateColumnOrder) {
-        throw new Error('Ошибка изменения порядка списков');
-      }
+    if (dropColumn?._id === dragColumn?._id) {
+      return;
     }
-    if (dragColumn && dropColumn && columnsData) {
-      const { newOrderColumn } = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
-      updateOrderColumn(newOrderColumn);
+    if (dropColumn && dragColumn && columnsData) {
+      const newColumnsOrder = getNewColumnsOrder({ dragColumn, dropColumn, columnsData });
+      dispatch(updateColumnsInStore(newColumnsOrder));
+      const newColumnsOrderId = newColumnsOrder.map((column) => column._id);
+      updateColumnOrder({ boardId, data: newColumnsOrderId }).unwrap();
     }
+
+    // async function updateOrderColumn(newOrderColumn: string[]) {
+    //   await updateColumnOrder({ boardId, data: newOrderColumn }).unwrap();
+    //   if (errorUpdateColumnOrder) {
+    //     throw new Error('Ошибка изменения порядка списков');
+    //   }
+    // }
+    // if (dragColumn && dropColumn && columnsData) {
+    //   const { newOrderColumn } = getTranspositionColumns({ dragColumn, dropColumn, columnsData });
+    //   updateOrderColumn(newOrderColumn);
+    // }
     setDragColum(null);
     setDropColum(null);
   }, [dropColumn]);
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
-    toast.loading('Добавляем колонку...')
+    toast.loading('Добавляем колонку...');
     if (boardData._id && title) {
       createColumn({ boardId: boardData._id, title: title.trim() })
         .unwrap()

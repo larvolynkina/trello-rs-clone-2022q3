@@ -18,7 +18,7 @@ import {
 
 // import { addCardInColumn } from '../../store/reducers/board/boardState';
 import { useAppDispatch } from '../../hooks/redux';
-import { addCardInColumn } from '../../store/reducers/board/boardState';
+import { addCardInColumn, changeTitleColumnInStore } from '../../store/reducers/board/boardState';
 
 import ColumnCard from './ColumnCard';
 import AddCardOrColumnForm from './AddCardOrColumnForm';
@@ -162,11 +162,12 @@ function Column({
     }
   };
   const updateTitleOnServerAndStore = async () => {
+    dispatch(changeTitleColumnInStore({id: column._id, title: title.trim()}));
     setIsEditTitle(false);
     if (boardId && title)
       await updateTitleColumn({ boardId, columnId: column._id, title: title.trim() }).unwrap();
     if (errorUpdateTitleColumn) {
-      throw new Error('Ошибка изменения заголовка списка');
+      throw new Error('Ошибка изменения заголовка');
     }
   };
   const handleClickTitleWrapper = () => {

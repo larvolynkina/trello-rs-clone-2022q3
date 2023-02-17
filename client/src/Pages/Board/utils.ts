@@ -71,30 +71,35 @@ export function getTranspositionColumnCards({
   return { newColumns, resultColumn };
 }
 
-type getTranspositionColumnsProps = {
+type getNewColumnsOrderProps = {
   dragColumn: IColumn;
   dropColumn: IColumn;
   columnsData: IColumn[];
 };
 
-export function getTranspositionColumns({
-  dragColumn,
-  dropColumn,
-  columnsData,
-}: getTranspositionColumnsProps): { newOrderColumn: string[] } {
-  const columns = columnsData.map((column) => column._id);
-  const dragIndex = columns.indexOf(dragColumn._id);
-  const dropIndex = columns.indexOf(dropColumn._id);
-  columns.splice(dragIndex, 1);
-  const destIndex = dropIndex > dragIndex ? dropIndex : dropIndex + 1;
-  columns.splice(destIndex, 0, dragColumn._id);
-  // if (columns[0] !== undefined) {
-  //   return { newOrderColumn: columns };
-  // } else {
-    return { newOrderColumn: [''] };  
-  // }
+export function getNewColumnsOrder({ dragColumn, dropColumn, columnsData }: getNewColumnsOrderProps): IColumn[] {
+  const dragIndex = columnsData.indexOf(dragColumn);
+  const dropIndex = columnsData.indexOf(dropColumn);
+  if (dragIndex < dropIndex) {
+    const newColumnOrder = [
+      ...columnsData.slice(0, dragIndex),
+      ...columnsData.slice(dragIndex + 1, dropIndex + 1),
+      columnsData[dragIndex],
+      ...columnsData.slice(dropIndex + 1),
+    ];
+    return newColumnOrder;
+  }
+  if (dragIndex > dropIndex) {
+    const newColumnOrder = [
+      ...columnsData.slice(0, dropIndex),
+      columnsData[dragIndex],
+      ...columnsData.slice(dropIndex, dragIndex),
+      ...columnsData.slice(dragIndex + 1),
+    ];
+    return newColumnOrder;
+  }
+  return [];
 }
-
 
 // export function getColumnsByIds(ids: string[], columns: IColumn[]): IColumn[] | [] {
 //   if (ids.length > 0 && columns.length > 0) {

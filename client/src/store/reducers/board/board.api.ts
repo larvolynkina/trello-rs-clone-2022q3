@@ -88,7 +88,7 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     deleteColumn: build.mutation({
       query: (ids: { boardId: string; columnId: string }) => ({

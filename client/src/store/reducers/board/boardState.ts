@@ -17,7 +17,7 @@ export const boardStateSlice = createSlice({
     updateBoardDetails(state, action: PayloadAction<IBoard>) {
       state.boardData = action.payload;
     },
-    changeTitleColumn(state, action: PayloadAction<{ id: string; title: string }>) {
+    changeTitleColumnInStore(state, action: PayloadAction<{ id: string; title: string }>) {
       const columnForChange = state.columnsData.find((column) => column._id === action.payload.id);
       if (columnForChange) {
         columnForChange.title = action.payload.title;
@@ -31,7 +31,7 @@ export const boardStateSlice = createSlice({
       );
       state.boardData.columns = state.boardData.columns?.filter((columnId) => columnId !== action.payload.columnId)
     },
-    updateColumns(state, action: PayloadAction<IColumn[]>) {
+    updateColumnsInStore(state, action: PayloadAction<IColumn[]>) {
       state.columnsData = action.payload;
     },
     createColumnInStore(state, action: PayloadAction<{ column: IColumn; boardId: string }>) {
@@ -54,9 +54,9 @@ export const boardStateSlice = createSlice({
 });
 
 export const {
-  changeTitleColumn,
+  changeTitleColumnInStore,
   createColumnInStore,
-  updateColumns,
+  updateColumnsInStore,
   addCardInColumn,
   updateCardInColumn,
   updateBoardDetails,
