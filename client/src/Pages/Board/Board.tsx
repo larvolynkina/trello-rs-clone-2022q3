@@ -96,7 +96,7 @@ function Board() {
       dispatch(updateColumnsInStore(columnsDataFromServer));
     }
   }, [columnsDataFromServer]);
-
+ 
   useEffect(() => {
     if (cardsDataFromServer) {
       dispatch(updateCardInColumn(cardsDataFromServer));

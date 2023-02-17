@@ -53,7 +53,6 @@ export default function CardMenu({ text, position, closeMenu, saveCardTitle }: C
 
   const handleClickOpenCard = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    console.log(openMenuCardArgs.cardId);
     setSearchParams({'card': openMenuCardArgs.cardId});
     closeMenu(false);
   }
