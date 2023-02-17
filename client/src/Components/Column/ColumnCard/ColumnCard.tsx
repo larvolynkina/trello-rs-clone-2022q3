@@ -31,8 +31,7 @@ function ColumnCard({
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
     openCardMenu(e);
     if (card._id) {
-      const title = openMenuCardArgs.title || '';
-      dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, cardId: card._id, title}))
+      dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, cardId: card._id}))
     }
   };
 

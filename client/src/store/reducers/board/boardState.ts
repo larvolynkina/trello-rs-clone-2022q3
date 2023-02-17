@@ -13,6 +13,7 @@ const initialState: IBoardState = {
   openMenuCardArgs: {
     boardId: '',
     cardId: '',
+    title: '',
   },
 };
 

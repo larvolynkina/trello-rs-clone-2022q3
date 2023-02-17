@@ -27,7 +27,7 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
   return (
     <ul className="column-menu">
       <div className="column-menu__header">
-        <p className="column-menu__label">Действия со списком</p>
+        <p className="column-menu__label">Действия с колонкой</p>
         <button type="button" className="column-menu__close" onClick={() => onClose()}>
           <span className="column-menu__cross-btn" />
         </button>
@@ -36,17 +36,12 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
         <li className="column-menu__item">
           <button type="button" onClick={handleAddCard}>Добавить карточку...</button>
         </li>
-        <li className="column-menu__item">Копировать список...</li>
-        <li className="column-menu__item">Переместить список...</li>
-      </ul>
-      <ul className="column-menu__group">
-        <li className="column-menu__item">Переместить все карточки списка...</li>
-        <li className="column-menu__item">Архивировать все карточки списка...</li>
+        <li className="column-menu__item">Копировать колонку...</li>
       </ul>
       <ul className="column-menu__group">
         <li className="column-menu__item column-menu__item--del">
           <button className="column-menu__button" type="button" onClick={handleDeleteColumn}>
-            Удалить список
+            Удалить колонку
           </button>
         </li>
       </ul>

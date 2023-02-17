@@ -1,21 +1,23 @@
 import './cardMenu.scss';
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
-import { useUpdateCardTitleOrDescrMutation } from '../../../store/reducers/cards/cards.api';
-import { updateOpenMenuCardArgs, updateCardInColumn } from '../../../store/reducers/board/boardState';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { useSearchParams } from 'react-router-dom';
+import { useAppSelector } from '../../../hooks/redux';
+
 
 type CardMenuProps = {
   text: string;
   position: { x: number; y: number };
   closeMenu: (b: boolean) => void;
+  saveCardTitle: (title: string) => void;
 };
 
-export default function CardMenu({ text, position, closeMenu }: CardMenuProps) {
-  const dispatch = useAppDispatch();
-  const { openMenuCardArgs, cardsData } = useAppSelector((state) => state.BOARD)
-  const [updateCardTitleOrDescr] = useUpdateCardTitleOrDescrMutation();
+export default function CardMenu({ text, position, closeMenu, saveCardTitle }: CardMenuProps) {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [valueArea, setValueArea] = useState(text);
+  const [, setSearchParams] = useSearchParams();
+  const { openMenuCardArgs } = useAppSelector(
+    (state) => state.BOARD,
+  );
   const inputText = useRef<HTMLTextAreaElement | null>(null);
   const x = position.x + 260;
   const y = position.y + 40;
@@ -40,13 +42,7 @@ export default function CardMenu({ text, position, closeMenu }: CardMenuProps) {
   const handleClickSave = (e: MouseEvent) => {
     e.stopPropagation();
     if (valueArea && text !== valueArea.trim()) {
-      dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, title: valueArea}));
-      dispatch(updateCardInColumn(cardsData.map((card) => {
-        if (card._id === openMenuCardArgs.cardId) {
-          return {...card, title: valueArea}
-        }
-        return card
-      })))
+      saveCardTitle(valueArea.trim());
     }
     closeMenu(false);
   };
@@ -54,6 +50,13 @@ export default function CardMenu({ text, position, closeMenu }: CardMenuProps) {
   const handleMouseDownMenuBody = () => {
     setIsMouseDown(true);
   };
+
+  const handleClickOpenCard = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    console.log(openMenuCardArgs.cardId);
+    setSearchParams({'card': openMenuCardArgs.cardId});
+    closeMenu(false);
+  }
 
   return (
     <div
@@ -81,58 +84,17 @@ export default function CardMenu({ text, position, closeMenu }: CardMenuProps) {
           <button
             type="button"
             className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
+            onClick={handleClickOpenCard}
           >
             Открыть карточку
           </button>
+          
           <button
             type="button"
             className="card-context-menu__func-btn"
             onClick={(e) => e.stopPropagation()}
           >
-            Изменить метки
-          </button>
-          <button
-            type="button"
-            className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Изменить участников
-          </button>
-          <button
-            type="button"
-            className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Сменить обложку
-          </button>
-          <button
-            type="button"
-            className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Переместить
-          </button>
-          <button
-            type="button"
-            className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Копировать
-          </button>
-          <button
-            type="button"
-            className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Изменить даты
-          </button>
-          <button
-            type="button"
-            className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Архивировать
+            Удалить
           </button>
         </div>
       </div>

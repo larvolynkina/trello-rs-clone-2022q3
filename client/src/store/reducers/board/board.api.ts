@@ -122,6 +122,13 @@ export const boardApi = createApi({
       }),
       // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
+    updateCardTitleOnServer: build.mutation({
+      query: (body: {boardId: string, cardId: string, title: string}) => ({
+        url: '/cards',
+        method: 'PATCH',
+        body,
+      }),
+    }),
     addNewMarkOnBoard: build.mutation({
       query: (body: {boardId: string, text: string, color: string}) => ({
         url: '/boards/add-mark',
@@ -164,4 +171,5 @@ export const {
   useAddNewMarkOnBoardMutation,
   useUpdateMarkOnBoardMutation,
   useDeleteMarkFromBoardMutation,
+  useUpdateCardTitleOnServerMutation,
 } = boardApi;

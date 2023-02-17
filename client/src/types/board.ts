@@ -66,6 +66,6 @@ export interface IBoardState {
   openMenuCardArgs: {
     boardId: string;
     cardId: string;
-    title?: string;
+    title: string;
   };
 }

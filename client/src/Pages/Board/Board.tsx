@@ -9,7 +9,6 @@ import {
   updateBoardDetails,
   createColumnInStore,
   updateCardInColumn,
-  updateOpenMenuCardArgs,
 } from '../../store/reducers/board/boardState';
 
 import { IColumn, ICard } from '../../types/board';
@@ -24,6 +23,7 @@ import {
   useUpdateCardOrderMutation,
   useGetBoardByIDQuery,
   useGetCardsOnBoardQuery,
+  useUpdateCardTitleOnServerMutation,
 } from '../../store/reducers/board/board.api';
 import CardMenu from './CardMenu';
 import ColumnMenu from '../../Components/Column/ColumnMenu/ColumnMenu';
@@ -45,8 +45,11 @@ function Board() {
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder] = useUpdateColumnOrderMutation();
   const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
+  const [updateCardTitleOnServer] = useUpdateCardTitleOnServerMutation();
   const dispatch = useAppDispatch();
-  const { boardData, columnsData, cardsData, openMenuCardArgs } = useAppSelector((state) => state.BOARD);
+  const { boardData, columnsData, cardsData, openMenuCardArgs } = useAppSelector(
+    (state) => state.BOARD,
+  );
   const [dragCard, setDragCard] = useState<ICard | null>(null);
   const [dropCard, setDropCard] = useState<ICard | null>(null);
   const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
@@ -165,7 +168,6 @@ function Board() {
 
   const handleOpenCardMenu = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    e.stopPropagation();
     let x = 0;
     let y = 0;
     if (e.currentTarget.localName === 'li') {
@@ -217,9 +219,18 @@ function Board() {
     setIsOpenAddForm(true);
   };
 
-  const handleContextBoard = ()  => {
-    const title = openMenuCardArgs.title || '';
-    dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, boardId, title}));
+  const saveCardTitle = (title: string) => {
+    dispatch(
+      updateCardInColumn(
+        cardsData.map((card) => {
+          if (card._id === openMenuCardArgs.cardId) {
+            return { ...card, title };
+          }
+          return card;
+        }),
+      ),
+    );
+    updateCardTitleOnServer({ ...openMenuCardArgs, boardId, title });
   };
 
   // const closeCard = () => {
@@ -239,7 +250,6 @@ function Board() {
       className="board"
       onClick={handleClickBoard}
       onKeyUp={handleKeyUpBoard}
-      onContextMenu={handleContextBoard}
       style={bgStyle}
       aria-hidden="true"
     >
@@ -317,6 +327,7 @@ function Board() {
               text={textFromCard}
               position={cardMenuPosition}
               closeMenu={setIsOpenCardMenu}
+              saveCardTitle={saveCardTitle}
             />
           )}
           {isShowSearchForm && boardData && (
