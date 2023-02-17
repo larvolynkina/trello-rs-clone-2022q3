@@ -8,7 +8,7 @@ type WorkspaceIconProps = {
 function WorkspaceIcon({ title, color }: WorkspaceIconProps) {
   return (
     <div className="workspace-icon" style={{ backgroundColor: color }}>
-      {title[0].toLocaleUpperCase()}
+      {title.trim()[0].toLocaleUpperCase()}
     </div>
   );
 }

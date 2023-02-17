@@ -14,4 +14,8 @@
     font-weight: 700;
     text-transform: capitalize;
   }
+
+  &:not(:last-child) {
+    margin-bottom: rem(20);
+  }
 }

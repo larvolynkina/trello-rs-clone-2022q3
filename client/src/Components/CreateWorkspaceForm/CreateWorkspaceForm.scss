@@ -1,0 +1,50 @@
+@import '../../scss/base/mixins.scss';
+@import '../../scss/vars.scss';
+
+.create-workspace-form {
+  &__title {
+    @include adaptiveValue('font-size', 20, 16);
+    font-weight: 500;
+    margin-bottom: rem(20);
+  }
+
+  &__description {
+    max-width: rem(340);
+    font-size: rem(16);
+    color: #6b778c;
+    text-align: justify;
+    margin-bottom: rem(20);
+
+    @media (max-width: $mobileSmall) {
+      max-width: rem(240);
+    }
+  }
+
+  &__field-name {
+    font-size: rem(13);
+    color: #091e42;
+    margin-bottom: rem(5);
+    font-weight: 500;
+  }
+
+  &__label {
+    margin-bottom: rem(20);
+  }
+
+  &__textarea {
+    resize: none;
+  }
+
+  &__controls {
+    width: 100%;
+    display: flex;
+    gap: rem(10);
+    justify-content: flex-end;
+  }
+
+  &__cancel-btn {
+    font-size: rem(14);
+    padding: rem(5) rem(10);
+    color: #42526e;
+  }
+}

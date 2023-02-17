@@ -22,7 +22,7 @@ function Boards({ data, workspaceId }: BoardsProps) {
       }).unwrap();
       toast.success('Доска успешно создана!');
     } catch (err) {
-      //
+      toast.error('Произошла ошибка при создании доски.');
     }
   };
 
