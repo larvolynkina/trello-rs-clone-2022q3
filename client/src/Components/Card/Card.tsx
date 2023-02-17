@@ -14,19 +14,15 @@ import { setBoardParticipantsModalOpen, setCard } from '../../store/reducers/car
 import CheckListModal from './CheckListModal';
 import CheckListFullList from './CheckListFullList';
 import AttachModal from './AttachModal';
-// import { ParamTypes } from '../../types/card';
 import Loader from '../Loader';
 
 type CardProps = {
   boardId: string;
   cardId: string;
-  setOpenCard: Dispatch<
-    SetStateAction<{ isOpen: boolean; canOpen: boolean; cardId: string }>
-  >;
+  setOpenCard: Dispatch<SetStateAction<{ isOpen: boolean; canOpen: boolean; cardId: string }>>;
 };
 
 function Card({ boardId, cardId, setOpenCard }: CardProps) {
-  // const { boardId, cardId } = useParams() as ParamTypes;
   const { data, isLoading } = useGetCardByIdQuery({ boardId, cardId });
   const dispatch = useAppDispatch();
   const boardParticipantsModalActive = useAppSelector(
@@ -44,10 +40,10 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
   }
 
   function closeCard() {
-    setOpenCard(prev => ({...prev, isOpen: false}))
+    setOpenCard((prev) => ({ ...prev, isOpen: false }));
     searchParams.delete('card');
     setSearchParams(searchParams);
-  };
+  }
 
   useEffect(() => {
     if (data) {
@@ -59,8 +55,10 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     <>
       {isLoading && <Loader />}
       {data && card && (
-        <div className="card" >
-          <button type="button" onClick={closeCard}>Закрыть карточку</button>
+        <div className="card">
+          <button type="button" onClick={closeCard}>
+            Закрыть карточку
+          </button>
           <Title title={card.title} boardId={boardId} cardId={cardId} column={data.column} />
           <div className="card__wrapper">
             <div className="card__main">
@@ -69,7 +67,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
                 cardParticipants={card.participants}
               />
               <Description description={card.description} boardId={boardId} cardId={cardId} />
-              <CheckListFullList items={card.checklists} />
+              <CheckListFullList items={card.checklists} boardId={boardId} cardId={cardId} />
             </div>
             <aside className="card__aside">
               <AsideList title="Добавить на карточку" buttons={asideAddButtons} />
@@ -82,11 +80,12 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
         <div className="card__board-participants-modal">
           <BoardParticipantsModal
             boardId={boardId}
+            cardId={cardId}
             cardParticipants={card?.participants || []}
           />
         </div>
       )}
-      {checkListModalActive && <CheckListModal />}
+      {checkListModalActive && <CheckListModal boardId={boardId} cardId={cardId} />}
       {attachModalActive && <AttachModal />}
     </>
   );

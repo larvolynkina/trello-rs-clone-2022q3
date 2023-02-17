@@ -10,9 +10,10 @@ import Loader from '../Loader';
 interface ParticipantModalProps {
   boardId: string;
   cardParticipants: IUser[];
+  cardId: string;
 }
 
-function BoardParticipantsModal({ boardId, cardParticipants }: ParticipantModalProps) {
+function BoardParticipantsModal({ boardId, cardParticipants, cardId }: ParticipantModalProps) {
   const dispatch = useAppDispatch();
   const {
     data: boardParticipants,
@@ -42,6 +43,8 @@ function BoardParticipantsModal({ boardId, cardParticipants }: ParticipantModalP
           <div className="board-participants-modal__list">
             {boardParticipants?.map((participant) => (
               <BoardsParticipant
+                boardId={boardId}
+                cardId={cardId}
                 participant={participant}
                 key={participant._id}
                 cardParticipantsId={cardParticipants.map((user) => user._id)}

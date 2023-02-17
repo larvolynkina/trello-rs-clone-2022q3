@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useAppDispatch } from '../../hooks/redux';
 import { useAddCheckListMutation } from '../../store/reducers/cards/cards.api';
 import { setCheckListModalClose } from '../../store/reducers/cards/cardSlice';
-import { ParamTypes } from '../../types/card';
 import Loader from '../Loader';
 
-function CheckListModal() {
-  const { boardId, cardId } = useParams() as ParamTypes;
+interface CheckListModalProps {
+  boardId: string;
+  cardId: string;
+}
+
+function CheckListModal({boardId, cardId}: CheckListModalProps) {
   const [title, setTitle] = useState('Чек-лист');
   const [addCheckList, { isLoading, isSuccess }] = useAddCheckListMutation();
   const dispatch = useAppDispatch();

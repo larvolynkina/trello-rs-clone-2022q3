@@ -64,8 +64,3 @@ export interface ICard {
   updatedAt: Date;
   __v: number;
 }
-
-export type ParamTypes = {
-  boardId: string;
-  cardId: string;
-};

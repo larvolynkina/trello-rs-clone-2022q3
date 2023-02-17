@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { IChecklist, ParamTypes } from '../../types/card';
+import { IChecklist } from '../../types/card';
 import {
   useDeleteCheckListMutation,
   useAddCheckListItemMutation,
@@ -16,13 +15,14 @@ interface CheckListProps {
   checklist: IChecklist;
   id: string;
   checkListIndex: number;
+  boardId: string;
+  cardId: string;
 }
 
-function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
+function CheckList({ checklist, id, checkListIndex, boardId, cardId }: CheckListProps) {
   const [deleteCheckList] = useDeleteCheckListMutation();
   const [addCheckListItem, { isLoading }] = useAddCheckListItemMutation();
   const [updateCheckListTitle] = useUpdateCheckListTitleMutation();
-  const { boardId, cardId } = useParams() as ParamTypes;
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState(checklist.title);
   const [newItemTitle, setNewItemTitle] = useState('');
@@ -85,7 +85,13 @@ function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
       </div>
       <div className="checklist__items">
         {checklist.checkItems.map((item) => (
-          <CheckListItem checkListItem={item} key={item._id} checkListIndex={checkListIndex} />
+          <CheckListItem
+            checkListItem={item}
+            key={item._id}
+            checkListIndex={checkListIndex}
+            boardId={boardId}
+            cardId={cardId}
+          />
         ))}
       </div>
       {!adding && (
@@ -112,7 +118,7 @@ function CheckList({ checklist, id, checkListIndex }: CheckListProps) {
           </div>
         </div>
       )}
-      {isLoading && <Loader/>}
+      {isLoading && <Loader />}
     </div>
   );
 }

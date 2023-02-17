@@ -9,8 +9,10 @@ function AttachModal() {
     dispatch(setAttachModalClose());
   }
 
+  const ref = useDetectClickOutside({ onTriggered: onClickCloseHandler });
+
   return (
-    <div className="card__modal">
+    <div className="card__modal" ref={ref}>
       <h3>Прикрепить</h3>
       <button
         className="card__modal-close"

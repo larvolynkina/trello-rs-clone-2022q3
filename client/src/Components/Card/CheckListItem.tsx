@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
-import { ICheckItem, ParamTypes } from '../../types/card';
+import { ICheckItem } from '../../types/card';
 import {
   useDeleteCheckListItemMutation,
   useSetCheckListItemCheckedMutation,
@@ -15,10 +14,11 @@ import debounce from '../../helpers';
 interface CheckListItemProps {
   checkListItem: ICheckItem;
   checkListIndex: number;
+  boardId: string;
+  cardId: string;
 }
 
-function CheckListItem({ checkListItem, checkListIndex }: CheckListItemProps) {
-  const { boardId, cardId } = useParams() as ParamTypes;
+function CheckListItem({ checkListItem, checkListIndex, boardId, cardId }: CheckListItemProps) {
   const [deleteCheckListItem] = useDeleteCheckListItemMutation();
   const [setCheckListItemChecked] = useSetCheckListItemCheckedMutation();
   const [checked, setChecked] = useState(checkListItem.checked);
