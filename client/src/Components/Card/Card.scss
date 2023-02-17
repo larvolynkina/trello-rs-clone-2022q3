@@ -90,6 +90,11 @@
         &--checklist {
             background-image: url('./icons/check-big.svg');
         }
+
+        &--attach {
+            background-image: url('./icons/attach-big.svg');
+            top: 0;
+        }
     }
 
     &__participants {
@@ -276,6 +281,29 @@
             margin-bottom: 5px;
         }
 
+        &--attach {
+            p {
+                margin-bottom: 10px;
+            }
+
+            .attach-btn {
+                margin-bottom: 10px;
+            }
+
+            &__input-file {
+                width: 100%;
+                margin-bottom: 10px;
+                outline: none;
+                padding: 8px 12px;
+                border-radius: 3px;
+                box-shadow: inset 0 0 0 2px #dfe1e6;
+
+                &:focus {
+                    box-shadow: inset 0 0 0 2px #0079bf;
+                }
+            }
+        }
+
     }
 
     &__checklist-modal-input {
@@ -300,6 +328,80 @@
         right: 10px;
         cursor: pointer;
         background-image: url('../../../public/assets/icon/close.svg');
+    }
+
+    &__attachments {
+        position: relative;
+        margin-top: 30px;
+        margin-left: 40px;
+
+        h3 {
+            font-size: 14px;
+            color: #172b4d;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+    }
+
+    &__attachment {
+        display: flex;
+        margin-bottom: 15px;
+        justify-content: space-between;
+    }
+
+    &__attachment-label {
+        position: relative;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #5e6c84;
+        background-color: #eaecf0;
+        border-radius: 3px;
+        min-height: 70px;
+        width: 18%;
+        cursor: pointer;
+
+        &::after {
+            position: absolute;
+            content: url('./icons/link-arrow.svg');
+            right: 3px;
+            top: 3px;
+        }
+    }
+
+    &__attachment-info {
+        width: 79%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__attachment-link-container {
+        width: 80%;
+        p {
+            color: #5e6c84;
+        }
+    }
+
+    &__attachment-link {
+        color: #172b4d;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 300px;
+        width: 100%;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    &__attachment-delete-btn {
+        display: block;
+        height: fit-content;
+    }
+
+    &__activities {
+        margin-top: 30px;
     }
 }
 
@@ -339,6 +441,7 @@
     &__btn {
         background-color: #eaecf0;
         padding: 8px 12px;
+        border-radius: 3px;
 
         &--delete {
             background-color: transparent;

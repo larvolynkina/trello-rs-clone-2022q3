@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import {
   setBoardParticipantsModalClose,
   setBoardParticipantsModalOpen,
@@ -7,7 +7,7 @@ import {
   setCheckListModalOpen,
   setAttachModalClose,
   setAttachModalOpen,
-} from '../../store/reducers/cards/cardSlice';
+} from '../../../store/reducers/cards/cardSlice';
 
 interface AsideButtonProps {
   text: string;

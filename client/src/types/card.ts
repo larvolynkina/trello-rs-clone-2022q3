@@ -34,6 +34,8 @@ export interface IAttachment {
   type: 'link' | 'file';
   url: string;
   date: Date;
+  name: string;
+  _id: string;
 }
 export interface IUser {
   _id: string;
@@ -60,6 +62,7 @@ export interface ICard {
   activities: IActivity[];
   attachments: IAttachment[];
   checklists: IChecklist[];
+  column: string;
   createdAt: Date;
   updatedAt: Date;
   __v: number;

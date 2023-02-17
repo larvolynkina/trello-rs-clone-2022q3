@@ -1,4 +1,4 @@
-import { IChecklist } from '../../types/card';
+import { IChecklist } from '../../../types/card';
 import CheckList from './CheckList';
 
 interface CheckListFullListProps {

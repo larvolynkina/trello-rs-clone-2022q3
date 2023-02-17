@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import { useAppDispatch } from '../../hooks/redux';
-import { useAddCheckListMutation } from '../../store/reducers/cards/cards.api';
-import { setCheckListModalClose } from '../../store/reducers/cards/cardSlice';
-import Loader from '../Loader';
+import { useAppDispatch } from '../../../hooks/redux';
+import { useAddCheckListMutation } from '../../../store/reducers/cards/cards.api';
+import { setCheckListModalClose } from '../../../store/reducers/cards/cardSlice';
+import Loader from '../../Loader';
 
 interface CheckListModalProps {
   boardId: string;
