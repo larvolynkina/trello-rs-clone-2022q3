@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 import { APPRoute } from '../../const/const';
-import { useCreateBoardMutation } from '../../store/reducers/workspace/workspace.api';
 import { IWsBoard } from '../../types/workspace';
+import Modal from '../Modal';
+import CreateBoardForm from '../CreateBoardForm';
 import './Boards.scss';
 
 type BoardsProps = {
@@ -12,19 +13,11 @@ type BoardsProps = {
 };
 
 function Boards({ data, workspaceId }: BoardsProps) {
-  const [createBoard, { isLoading }] = useCreateBoardMutation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleCreateBoard = async () => {
-    try {
-      await createBoard({
-        workspaceId,
-        title: 'Test board',
-      }).unwrap();
-      toast.success('Доска успешно создана!');
-    } catch (err) {
-      toast.error('Произошла ошибка при создании доски.');
-    }
-  };
+  const handleModalOpen = async () => setIsModalOpen(true);
+
+  const handleModalClose = () => setIsModalOpen(false);
 
   return (
     <div className="boards">
@@ -45,11 +38,14 @@ function Boards({ data, workspaceId }: BoardsProps) {
       <button
         type="button"
         className="boards__board boards__board--button"
-        disabled={isLoading}
-        onClick={handleCreateBoard}
+        onClick={handleModalOpen}
       >
         Создать доску
       </button>
+
+      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+        <CreateBoardForm onClose={handleModalClose} workspaceId={workspaceId} />
+      </Modal>
     </div>
   );
 }
