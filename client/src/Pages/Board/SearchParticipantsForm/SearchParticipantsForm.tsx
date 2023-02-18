@@ -6,6 +6,8 @@ import {
   useGetUserByEmailMutation,
   useAddMembersOnBoardMutation,
 } from '../../../store/reducers/board/board.api';
+import { useAppDispatch } from '../../../hooks/redux';
+import { addParticipantsInStore } from '../../../store/reducers/board/boardState';
 import { IUser } from '../../../types/card';
 import UserAvatar from '../../../Components/UserAvatar';
 
@@ -19,18 +21,18 @@ function SearchParticipantsForm({ setIsShowSearchForm, boardId }: SearchParticip
   const [addMembersOnBoard] = useAddMembersOnBoardMutation();
   const [inputText, setInputText] = useState('');
   const [parts, setParts] = useState<IUser[] | []>([]);
+  const dispatch = useAppDispatch();
 
   const handleSaveParticipants = () => {
     const membersId = parts.map((part) => part._id);
     setIsShowSearchForm(false);
     setInputText('');
+    dispatch(addParticipantsInStore(parts));
     addMembersOnBoard({ boardId, membersId }).then((res) => {
       if ('error' in res && 'status' in res.error) {
         if (res.error.status === 400) {
           toast.error('Этот(эти) пользователь(-ли) уже участник(и) доски' , {autoClose: 1000});
         } 
-      } else {
-        toast.success('Участник(и) добавлен(ы)', {autoClose: 1000})
       }
     });
     setParts([]);
