@@ -10,6 +10,7 @@ type RedirectProps = {
 
 function Redirect({ outlet }: RedirectProps) {
   const { authorizationStatus } = useAppSelector((state) => state.USER);
+  const location = useLocation();
 
   if (authorizationStatus === AuthorizationStatus.Unknown) {
     return (
@@ -18,8 +19,6 @@ function Redirect({ outlet }: RedirectProps) {
       </main>
     );
   }
-
-  const location = useLocation();
 
   if (authorizationStatus === AuthorizationStatus.NoAuth) return outlet;
 

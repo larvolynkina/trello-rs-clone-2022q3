@@ -25,7 +25,7 @@ function ImageChangeForm({ onClose }: ImageChangeFormProps) {
   } = useForm<FileData>();
 
   const fileInput = useRef<HTMLInputElement | null>(null);
-  const { userData } = useAppSelector((state) => state.USER);
+  const { userData, isLoading } = useAppSelector((state) => state.USER);
 
   if (!userData) return null;
 
@@ -41,10 +41,10 @@ function ImageChangeForm({ onClose }: ImageChangeFormProps) {
     return URL.createObjectURL(file);
   };
 
-  const handleImageUpdate: SubmitHandler<FileData> = (data, evt) => {
+  const handleImageUpdate: SubmitHandler<FileData> = async (data, evt) => {
     evt?.preventDefault();
     const file = data.files[0];
-    if (file) dispatch(changeAvatarImageAction(file));
+    if (file) await dispatch(changeAvatarImageAction(file));
     onClose();
   };
 
@@ -83,7 +83,7 @@ function ImageChangeForm({ onClose }: ImageChangeFormProps) {
         <button type="button" className="image-change-form__cancel-btn" onClick={onClose}>
           Отмена
         </button>
-        <button className="form-btn form-btn--small" type="submit" disabled={!isValid}>
+        <button className="form-btn form-btn--small" type="submit" disabled={!isValid || isLoading}>
           Обновить
         </button>
       </div>

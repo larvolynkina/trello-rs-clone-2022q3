@@ -17,7 +17,7 @@ type ColorChangeFormProps = {
 };
 
 function ColorChangeForm({ onClose }: ColorChangeFormProps) {
-  const { userData } = useAppSelector((state) => state.USER);
+  const { userData, isLoading } = useAppSelector((state) => state.USER);
 
   if (!userData) return null;
 
@@ -29,9 +29,9 @@ function ColorChangeForm({ onClose }: ColorChangeFormProps) {
     },
   });
 
-  const handleFormSubmit: SubmitHandler<ColorsData> = (data, evt) => {
+  const handleFormSubmit: SubmitHandler<ColorsData> = async (data, evt) => {
     evt?.preventDefault();
-    dispatch(changeAvatarColorAction(data.colors));
+    await dispatch(changeAvatarColorAction(data.colors));
 
     onClose();
   };
@@ -90,7 +90,7 @@ function ColorChangeForm({ onClose }: ColorChangeFormProps) {
         <button
           className="form-btn form-btn--small"
           type="submit"
-          disabled={watch(groupName) === userData.avatarColor}
+          disabled={watch(groupName) === userData.avatarColor || isLoading}
         >
           Обновить
         </button>

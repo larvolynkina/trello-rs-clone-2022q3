@@ -10,6 +10,7 @@ type ProtectedRouteProps = {
 
 function ProtectedRoute({ outlet }: ProtectedRouteProps) {
   const { authorizationStatus } = useAppSelector((state) => state.USER);
+  const location = useLocation();
 
   if (authorizationStatus === AuthorizationStatus.Unknown) {
     return (
@@ -18,8 +19,6 @@ function ProtectedRoute({ outlet }: ProtectedRouteProps) {
       </main>
     );
   }
-
-  const location = useLocation();
 
   if (authorizationStatus === AuthorizationStatus.Auth) return outlet;
 
