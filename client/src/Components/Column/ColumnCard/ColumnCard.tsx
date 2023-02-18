@@ -29,6 +29,7 @@ function ColumnCard({
   const [, setSearchParams] = useSearchParams();
 
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
     openCardMenu(e);
     if (card._id) {
       dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, cardId: card._id}))

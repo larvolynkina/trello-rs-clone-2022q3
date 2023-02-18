@@ -1,4 +1,5 @@
 import { IUser } from "./card";
+import { IWorkspace } from "./workspace";
 
 export interface IMarks {
   _id: string;
@@ -50,6 +51,7 @@ export interface IBoard {
   activities?: IActivities[];
   createdAt?: string;
   updatedAt?: string;
+  workspace?: IWorkspace;
 }
 
 

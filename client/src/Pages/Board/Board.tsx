@@ -32,6 +32,7 @@ import SearchParticipantsForm from './SearchParticipantsForm';
 import BoardMenu from './BoardMenu';
 import Loader from '../../Components/Loader';
 import Card from '../../Components/Card';
+import BoardAside from './BoardAside';
 
 function Board() {
   const location = useLocation();
@@ -260,7 +261,9 @@ function Board() {
 
       {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && (
         <>
-          <aside className="board__aside">Рабочее пространство</aside>
+          <aside className="board__aside">
+            {boardData.workspace && <BoardAside workspace={boardData.workspace}/>}
+          </aside>
 
           <div className="board__body" ref={boardBody}>
             {boardData && boardData._id.length > 0 && (
