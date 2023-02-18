@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
+import mongoose from 'mongoose';
 import Board from '../models/boardModel.js';
 import User from '../models/userModel.js';
 import Workspace from '../models/workspaceModel.js';
@@ -46,12 +47,46 @@ async function getBoardById(req, res) {
     const { boardId } = req.params;
     const { userId } = req;
     const board = await Board.findById(boardId);
+    const query = [
+      {
+        $match: { boards: mongoose.Types.ObjectId(boardId) },
+      },
+      {
+        $lookup: {
+          from: 'boards',
+          localField: 'boards',
+          foreignField: '_id',
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                title: 1,
+                backgroundColor: 1,
+                backgroundImage: 1,
+              },
+            },
+          ],
+          as: 'boards',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          avatarColor: 1,
+          avatarImage: 1,
+          boards: 1,
+          participants: 1,
+        },
+      },
+    ];
+    const workspaces = await Workspace.aggregate(query);
+    const workspace = workspaces[0];
     // check if user is member of workspace
-    const workspace = await Workspace.findOne({ boards: boardId });
-    if (!workspace.participants.includes(userId)) {
+    if (!workspace.participants.map((item) => item.toString()).includes(userId)) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
-    return res.status(200).json(board);
+    return res.status(200).json({ ...board._doc, workspace });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

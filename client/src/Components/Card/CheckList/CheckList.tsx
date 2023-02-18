@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { IChecklist } from '../../types/card';
+import { IChecklist } from '../../../types/card';
 import {
   useDeleteCheckListMutation,
   useAddCheckListItemMutation,
   useUpdateCheckListTitleMutation,
-} from '../../store/reducers/cards/cards.api';
+} from '../../../store/reducers/cards/cards.api';
 import CheckListItem from './CheckListItem';
-import { deleteCheckListFromState } from '../../store/reducers/cards/cardSlice';
-import { useAppDispatch } from '../../hooks/redux';
-import Loader from '../Loader';
+import { deleteCheckListFromState } from '../../../store/reducers/cards/cardSlice';
+import { useAppDispatch } from '../../../hooks/redux';
+import Loader from '../../Loader';
 
 interface CheckListProps {
   checklist: IChecklist;

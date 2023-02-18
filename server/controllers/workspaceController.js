@@ -115,6 +115,7 @@ async function getAllUsersWorkspaces(req, res) {
                 title: 1,
                 backgroundColor: 1,
                 backgroundImage: 1,
+                activities: 1,
               },
             },
           ],

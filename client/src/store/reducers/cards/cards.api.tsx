@@ -1,17 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { toast } from 'react-toastify';
-import { ICard } from '../../../types/card';
+import { ICard, IUser } from '../../../types/card';
 import { SERVER_URL } from '../../../const/const';
 import { RootState } from '../../rootReducer';
 
 type TGetCardByIdQueryArgs = {
   boardId: string;
   cardId: string;
-};
-
-type TGetCardByIdQueryResponse = {
-  card: ICard;
-  column: string;
 };
 
 type TUpdateCardTitleOrDescrQueryArgs = {
@@ -64,10 +59,32 @@ type TUpdateCheckListTitleQueryArgs = {
   checkListIndex: number;
 };
 
+export type TUploadFileResponse = {
+  data: Record<string, string>;
+};
+
+export type TAttachmentDraft = {
+  name: string;
+  url: string;
+  type: 'link' | 'file';
+}
+
+type TAddAttachmentTitleQueryArgs = {
+  boardId: string;
+  cardId: string;
+  data: TAttachmentDraft
+};
+
+type TDeleteAttachmentQueryArgs = {
+  boardId: string;
+  cardId: string;
+  id: string;
+};
+
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${SERVER_URL}/cards`,
+    baseUrl: `${SERVER_URL}`,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('trello-rs-clone-token') || '';
       headers.set('authorization', `Bearer ${token}`);
@@ -76,15 +93,15 @@ export const cardsApi = createApi({
   }),
   tagTypes: ['Card'],
   endpoints: (builder) => ({
-    getCardById: builder.query<TGetCardByIdQueryResponse, TGetCardByIdQueryArgs>({
+    getCardById: builder.query<ICard, TGetCardByIdQueryArgs>({
       query: ({ boardId, cardId }) => ({
-        url: `/${boardId}/${cardId}`,
+        url: `/cards/${boardId}/${cardId}`,
       }),
       providesTags: ['Card'],
     }),
     updateCardTitleOrDescr: builder.mutation<ICard, TUpdateCardTitleOrDescrQueryArgs>({
       query: (body) => ({
-        url: '',
+        url: '/cards',
         method: 'PATCH',
         body,
       }),
@@ -92,21 +109,21 @@ export const cardsApi = createApi({
     }),
     addCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
       query: ({ boardId, cardId, participantId }) => ({
-        url: `/${boardId}/${cardId}/add-participant`,
+        url: `/cards/${boardId}/${cardId}/add-participant`,
         method: 'POST',
         body: { participantId },
       }),
     }),
     deleteCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
       query: ({ boardId, cardId, participantId }) => ({
-        url: `/${boardId}/${cardId}/delete-participant`,
+        url: `/cards/${boardId}/${cardId}/delete-participant`,
         method: 'POST',
         body: { participantId },
       }),
     }),
     addCheckList: builder.mutation<ICard, TAddCheckListQueryArgs>({
       query: ({ boardId, cardId, title }) => ({
-        url: `/${boardId}/${cardId}/add-checklist`,
+        url: `/cards/${boardId}/${cardId}/add-checklist`,
         method: 'POST',
         body: { title },
       }),
@@ -114,17 +131,12 @@ export const cardsApi = createApi({
         try {
           const { data: updatedCard } = await queryFulfilled;
           const state = getState() as RootState;
-          const obj = {
-            boardId,
-            cardId,
-          };
-          const url = `getCardById(${JSON.stringify(obj)})`;
-          const { column } = state.cardsApi.queries[url]?.data as Record<string, string>;
+          const column = state.CARD.card?.column || '';
           const card = { ...updatedCard };
           card.participants = state.CARD.card?.participants || [];
           dispatch(
-            cardsApi.util.updateQueryData('getCardById', { boardId, cardId }, (draft) => {
-              Object.assign(draft, { card, column });
+            cardsApi.util.updateQueryData('getCardById', { boardId, cardId }, (draft: ICard) => {
+              Object.assign(draft, { ...card, column });
             }),
           );
         } catch {
@@ -134,14 +146,14 @@ export const cardsApi = createApi({
     }),
     deleteCheckList: builder.mutation<void, TDeleteCheckListQueryArgs>({
       query: ({ boardId, cardId, title, id }) => ({
-        url: `/${boardId}/${cardId}/delete-checklist`,
+        url: `/cards/${boardId}/${cardId}/delete-checklist`,
         method: 'POST',
         body: { title, id },
       }),
     }),
     addCheckListItem: builder.mutation<ICard, TAddCheckListItemQueryArgs>({
       query: ({ boardId, cardId, title, id }) => ({
-        url: `/${boardId}/${cardId}/add-checklist-item`,
+        url: `/cards/${boardId}/${cardId}/add-checklist-item`,
         method: 'POST',
         body: { title, id },
       }),
@@ -149,22 +161,13 @@ export const cardsApi = createApi({
         try {
           const { data: updatedCard } = await queryFulfilled;
           const state = getState() as RootState;
-          const obj = {
-            boardId,
-            cardId,
-          };
-          const url = `getCardById(${JSON.stringify(obj)})`;
-          const { column } = state.cardsApi.queries[url]?.data as Record<string, string>;
+          const column = state.CARD.card?.column || '';
           const card = { ...updatedCard };
           card.participants = state.CARD.card?.participants || [];
           dispatch(
-            cardsApi.util.updateQueryData(
-              'getCardById',
-              { boardId, cardId },
-              (draft: TGetCardByIdQueryResponse) => {
-                Object.assign(draft, { card, column });
-              },
-            ),
+            cardsApi.util.updateQueryData('getCardById', { boardId, cardId }, (draft: ICard) => {
+              Object.assign(draft, { ...card, column });
+            }),
           );
         } catch {
           toast.error('Что-то пошло не так...');
@@ -173,25 +176,67 @@ export const cardsApi = createApi({
     }),
     deleteCheckListItem: builder.mutation<void, TDeleteCheckListItemQueryArgs>({
       query: ({ boardId, cardId, id, checkListIndex }) => ({
-        url: `/${boardId}/${cardId}/delete-checklist-item`,
+        url: `/cards/${boardId}/${cardId}/delete-checklist-item`,
         method: 'POST',
         body: { id, checkListIndex },
       }),
     }),
     setCheckListItemChecked: builder.mutation<void, TSetCheckListItemCheckedQueryArgs>({
       query: ({ boardId, cardId, id, checkListIndex, status }) => ({
-        url: `/${boardId}/${cardId}/set-checklist-item`,
+        url: `/cards/${boardId}/${cardId}/set-checklist-item`,
         method: 'POST',
         body: { id, checkListIndex, status },
       }),
     }),
     updateCheckListTitle: builder.mutation<void, TUpdateCheckListTitleQueryArgs>({
       query: ({ boardId, cardId, title, checkListIndex }) => ({
-        url: `/${boardId}/${cardId}/update-checklist-title`,
+        url: `/cards/${boardId}/${cardId}/update-checklist-title`,
         method: 'POST',
         body: { title, checkListIndex },
       }),
       invalidatesTags: ['Card'],
+    }),
+    uploadFile: builder.mutation<TUploadFileResponse, FormData>({
+      query: (formData) => ({
+        url: `/upload`,
+        method: 'POST',
+        body: formData,
+      }),
+    }),
+    addAttachment: builder.mutation<ICard, TAddAttachmentTitleQueryArgs>({
+      query: ({ boardId, cardId, data }) => ({
+        url: `/cards/${boardId}/${cardId}/add-attachment`,
+        method: 'POST',
+        body: { data },
+      }),
+      async onQueryStarted({ boardId, cardId }, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data: updatedCard } = await queryFulfilled;
+          const state = getState() as RootState;
+          const column = state.CARD.card?.column || '';
+          const card = { ...updatedCard };
+          card.participants = state.CARD.card?.participants || [];
+          dispatch(
+            cardsApi.util.updateQueryData('getCardById', { boardId, cardId }, (draft: ICard) => {
+              Object.assign(draft, { ...card, column });
+            }),
+          );
+        } catch {
+          toast.error('Что-то пошло не так...');
+        }
+      },
+    }),
+    deleteAttachment: builder.mutation<void, TDeleteAttachmentQueryArgs>({
+      query: ({ boardId, cardId, id }) => ({
+        url: `/cards/${boardId}/${cardId}/delete-attachment`,
+        method: 'POST',
+        body: { id },
+      }),
+    }),
+    getAllUsers: builder.query<IUser[], void>({
+      query: () => ({
+        url: `/users`,
+      }),
     }),
   }),
 });
@@ -207,4 +252,8 @@ export const {
   useDeleteCheckListItemMutation,
   useSetCheckListItemCheckedMutation,
   useUpdateCheckListTitleMutation,
+  useUploadFileMutation,
+  useAddAttachmentMutation,
+  useDeleteAttachmentMutation,
+  useGetAllUsersQuery,
 } = cardsApi;

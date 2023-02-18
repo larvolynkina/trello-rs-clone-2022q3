@@ -1,15 +1,15 @@
 import React, { useState, useCallback } from 'react';
-import { ICheckItem } from '../../types/card';
+import { ICheckItem } from '../../../types/card';
 import {
   useDeleteCheckListItemMutation,
   useSetCheckListItemCheckedMutation,
-} from '../../store/reducers/cards/cards.api';
+} from '../../../store/reducers/cards/cards.api';
 import {
   toggleCheckListItemCheckedInState,
   deleteCheckListItemFromState,
-} from '../../store/reducers/cards/cardSlice';
-import { useAppDispatch } from '../../hooks/redux';
-import debounce from '../../helpers';
+} from '../../../store/reducers/cards/cardSlice';
+import { useAppDispatch } from '../../../hooks/redux';
+import debounce from '../../../helpers';
 
 interface CheckListItemProps {
   checkListItem: ICheckItem;
