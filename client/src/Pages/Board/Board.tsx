@@ -86,19 +86,19 @@ function Board() {
   }, [paramsURL, cardsData]);
 
   useEffect(() => {
-    if (boardDetailsFromServer) {
+    if (boardData._id.length === 0 && boardDetailsFromServer) {
       dispatch(updateBoardDetails(boardDetailsFromServer));
-    }
+    } 
   }, [boardDetailsFromServer]);
 
   useEffect(() => {
-    if (columnsDataFromServer) {
+    if (columnsData.length === 0 && columnsDataFromServer) {
       dispatch(updateColumnsInStore(columnsDataFromServer));
     }
   }, [columnsDataFromServer]);
  
   useEffect(() => {
-    if (cardsDataFromServer) {
+    if (cardsData.length === 0 && cardsDataFromServer) {
       dispatch(updateCardInColumn(cardsDataFromServer));
     }
   }, [cardsDataFromServer]);

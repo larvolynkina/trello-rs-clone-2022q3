@@ -24,6 +24,10 @@ export const boardStateSlice = createSlice({
     updateBoardDetails(state, action: PayloadAction<IBoard>) {
       state.boardData = action.payload;
     },
+    updateBoardBgInStore(state, action: PayloadAction<{backgroundImage: string, backgroundColor: string}>) {
+      state.boardData.backgroundImage = action.payload.backgroundImage;
+      state.boardData.backgroundColor = action.payload.backgroundColor;
+    },
     updateParticipantsInStore(state, action: PayloadAction<IUser[]>) {
       state.participantsData = action.payload;
     },
@@ -86,6 +90,7 @@ export const {
   updateParticipantsInStore,
   addParticipantsInStore,
   updateOpenMenuCardArgs,
+  updateBoardBgInStore,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;

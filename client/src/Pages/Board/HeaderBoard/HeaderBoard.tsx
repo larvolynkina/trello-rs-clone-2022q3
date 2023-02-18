@@ -6,7 +6,10 @@ import {
   useUpdateBoardTitleMutation,
 } from '../../../store/reducers/board/board.api';
 import { useAppSelector, useAppDispatch } from '../../../hooks/redux';
-import { updateParticipantsInStore } from '../../../store/reducers/board/boardState';
+import {
+  updateParticipantsInStore,
+  updateBoardDetails,
+} from '../../../store/reducers/board/boardState';
 import { IBoard } from '../../../types/board';
 import UserAvatar from '../../../Components/UserAvatar';
 
@@ -22,7 +25,7 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
   const { data: participantsDataFromServer } = useGetBoardParticipantsQuery({
     boardId: boardDetails._id,
   });
-  const { participantsData } = useAppSelector((state) => state.BOARD);
+  const { participantsData, boardData } = useAppSelector((state) => state.BOARD);
   const dispatch = useAppDispatch();
 
   const [titleBoardText, setTitleBoardText] = useState('');
@@ -48,6 +51,7 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
   };
 
   const changeTitleBoard = () => {
+    
     async function asyncUpdateBoardTitle({
       boardIdforUpdate,
       titleforUpdate,
@@ -59,7 +63,8 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
     }
     setIsUpdateTitleBoard(false);
     if (titleBoardText.trim() !== '' && titleBoardText.trim() !== boardDetails.title) {
-      asyncUpdateBoardTitle({ boardIdforUpdate: boardDetails._id, titleforUpdate: titleBoardText });
+      dispatch(updateBoardDetails({...boardData, title: titleBoardText.trim()}));
+      asyncUpdateBoardTitle({ boardIdforUpdate: boardDetails._id, titleforUpdate: titleBoardText.trim() });
       if (errorUpdateBoardTitle) throw new Error('Ошибка обновления названия доски');
     }
   };
