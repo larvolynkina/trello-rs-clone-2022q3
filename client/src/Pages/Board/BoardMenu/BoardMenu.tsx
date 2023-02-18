@@ -3,6 +3,8 @@ import { IBoard } from '../../../types/board';
 import './boardMenu.scss';
 
 import { useUpdateBoardBackgroundMutation } from '../../../store/reducers/board/board.api';
+import { useAppDispatch } from '../../../hooks/redux';
+import { updateBoardBgInStore } from '../../../store/reducers/board/boardState';
 import { BG_COLORS, BG_IMAGES } from '../../../const/const';
 import Marks from '../../../Components/Marks';
 
@@ -23,6 +25,7 @@ type TStateComponentView = {
 };
 
 function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuProps) {
+  const dispatch = useAppDispatch();
   const [currentBg, setCurrentBg] = useState({});
   const [updateBoardBackground] = useUpdateBoardBackgroundMutation();
   const [stateComponentView, setStateComponentView] = useState<TStateComponentView>({
@@ -103,9 +106,10 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
   const handleClickColor = (index: number) => {
     const style = {
       backgroundColor: BG_COLORS[index],
-      backgroundImage: 'none',
+      backgroundImage: '',
     };
     setBgStyle(style);
+    dispatch(updateBoardBgInStore(style));
     updateBoardBackground({
       boardId: boardDetails._id,
       backgroundColor: style.backgroundColor,
@@ -119,6 +123,7 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       backgroundColor: '',
     };
     setBgStyle(style);
+    dispatch(updateBoardBgInStore(style));
     updateBoardBackground({
       boardId: boardDetails._id,
       backgroundColor: '',

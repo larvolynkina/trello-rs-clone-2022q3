@@ -15,6 +15,8 @@ import {
   deleteCheckListItem,
   setChecklistItemChecked,
   updateChecklistTitle,
+  addAttachment,
+  deleteAttachment,
 } from '../controllers/cardController.js';
 import verifyAuth from '../middlewares/auth.js';
 
@@ -35,5 +37,7 @@ router.post('/:boardId/:cardId/add-checklist-item', verifyAuth, addCheckListItem
 router.post('/:boardId/:cardId/delete-checklist-item', verifyAuth, deleteCheckListItem);
 router.post('/:boardId/:cardId/set-checklist-item', verifyAuth, setChecklistItemChecked);
 router.post('/:boardId/:cardId/update-checklist-title', verifyAuth, updateChecklistTitle);
+router.post('/:boardId/:cardId/add-attachment', verifyAuth, addAttachment);
+router.post('/:boardId/:cardId/delete-attachment', verifyAuth, deleteAttachment);
 
 export default router;

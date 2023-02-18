@@ -1,20 +1,25 @@
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-
 import Title from './Title';
 import Description from './Description';
 import Participants from './Participants';
 import BoardParticipantsModal from '../BoardParticipantsModal';
-import AsideList from './AsideList';
+import AsideList from './Aside/AsideList';
 import { asideAddButtons, asideActionButtons } from './helpers';
 import { useGetCardByIdQuery } from '../../store/reducers/cards/cards.api';
 import './Card.scss';
 import { useAppSelector, useAppDispatch } from '../../hooks/redux';
-import { setBoardParticipantsModalOpen, setCard } from '../../store/reducers/cards/cardSlice';
-import CheckListModal from './CheckListModal';
-import CheckListFullList from './CheckListFullList';
-import AttachModal from './AttachModal';
+import {
+  setBoardParticipantsModalOpen,
+  setCard,
+  resetCard,
+} from '../../store/reducers/cards/cardSlice';
+import CheckListModal from './Modals/CheckListModal';
+import CheckListFullList from './CheckList/CheckListFullList';
+import AttachModal from './Modals/AttachModal';
 import Loader from '../Loader';
+import AttachmentsList from './Attachments/AttachmentsList';
+import ActivitiesList from '../Activities';
 
 type CardProps = {
   boardId: string;
@@ -43,11 +48,12 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     setOpenCard((prev) => ({ ...prev, isOpen: false }));
     searchParams.delete('card');
     setSearchParams(searchParams);
+    dispatch(resetCard());
   }
 
   useEffect(() => {
     if (data) {
-      dispatch(setCard(data.card));
+      dispatch(setCard(data));
     }
   }, [data]);
 
@@ -59,7 +65,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
           <button type="button" onClick={closeCard}>
             Закрыть карточку
           </button>
-          <Title title={card.title} boardId={boardId} cardId={cardId} column={data.column} />
+          <Title title={card.title} boardId={boardId} cardId={cardId} column={card.column} />
           <div className="card__wrapper">
             <div className="card__main">
               <Participants
@@ -67,7 +73,13 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
                 cardParticipants={card.participants}
               />
               <Description description={card.description} boardId={boardId} cardId={cardId} />
+              {card.attachments.length > 0 && (
+                <AttachmentsList boardId={boardId} cardId={cardId} attachments={card.attachments} />
+              )}
               <CheckListFullList items={card.checklists} boardId={boardId} cardId={cardId} />
+              <div className='card__activities'>
+                <ActivitiesList activities={card.activities} />
+              </div>
             </div>
             <aside className="card__aside">
               <AsideList title="Добавить на карточку" buttons={asideAddButtons} />
@@ -86,7 +98,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
         </div>
       )}
       {checkListModalActive && <CheckListModal boardId={boardId} cardId={cardId} />}
-      {attachModalActive && <AttachModal />}
+      {attachModalActive && <AttachModal boardId={boardId} cardId={cardId} />}
     </>
   );
 }

@@ -23,6 +23,9 @@ const cardSlice = createSlice({
     setCard(state, action) {
       state.card = action.payload;
     },
+    resetCard(state) {
+      state.card = null;
+    },
     addParticipant(state, action) {
       if (state.card) {
         state.card.participants.push(action.payload);
@@ -44,7 +47,6 @@ const cardSlice = createSlice({
     },
     toggleCheckListItemCheckedInState(state, action) {
       if (state.card) {
-        
         const { id, checkListIndex } = action.payload;
         const itemIndex = state.card.checklists[checkListIndex].checkItems.findIndex(
           (item) => item._id === id,
@@ -59,6 +61,12 @@ const cardSlice = createSlice({
         state.card.checklists[checkListIndex].checkItems = [
           ...state.card.checklists[checkListIndex].checkItems,
         ].filter((item) => item._id !== id);
+      }
+    },
+    deleteAttachmentFromState(state, action) {
+      if (state.card) {
+        const { id } = action.payload;
+        state.card.attachments = [...state.card.attachments].filter((item) => item._id !== id);
       }
     },
     setBoardParticipantsModalOpen(state) {
@@ -84,6 +92,7 @@ const cardSlice = createSlice({
 
 export const {
   setCard,
+  resetCard,
   setBoardParticipantsModalClose,
   setBoardParticipantsModalOpen,
   setCheckListModalClose,
@@ -95,6 +104,7 @@ export const {
   deleteCheckListFromState,
   toggleCheckListItemCheckedInState,
   deleteCheckListItemFromState,
+  deleteAttachmentFromState,
 } = cardSlice.actions;
 
 export default cardSlice.reducer;

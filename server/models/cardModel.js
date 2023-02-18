@@ -56,19 +56,21 @@ const cardModel = new mongoose.Schema(
     ],
     attachments: [
       {
-        attachment: {
-          type: {
-            type: String,
-            enum: ['link', 'file'],
-          },
-          url: {
-            type: String,
-            required: true,
-          },
-          date: {
-            type: Date,
-            default: Date.now,
-          },
+        type: {
+          type: String,
+          enum: ['link', 'file'],
+        },
+        url: {
+          type: String,
+          required: true,
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],
