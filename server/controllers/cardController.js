@@ -92,9 +92,10 @@ async function getCardById(req, res) {
       },
     ];
 
-    const card = await Card.aggregate(query);
-    const column = await Column.findOne({ cards: card[0]._id });
-    return res.status(200).json({ card: card[0], column: column.title });
+    const cards = await Card.aggregate(query);
+    const card = cards[0];
+    const column = await Column.findOne({ cards: card._id });
+    return res.status(200).json({ ...card, column: column.title });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -467,6 +468,50 @@ async function updateChecklistTitle(req, res) {
   }
 }
 
+async function addAttachment(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { type, name, url } = req.body.data;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    const newAttachment = {
+      type,
+      url,
+      name,
+      date: Date.now(),
+    };
+    card.attachments.push(newAttachment);
+    await card.save();
+    return res.status(200).json(card);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function deleteAttachment(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { id } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    card.attachments = [...card.attachments].filter((item) => item._id.toString() !== id);
+    await card.save();
+    return res.status(200).json({ message: 'Вложение удалено' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createCard,
   updateCardTitleOrDescr,
@@ -483,4 +528,6 @@ export {
   deleteCheckListItem,
   setChecklistItemChecked,
   updateChecklistTitle,
+  addAttachment,
+  deleteAttachment,
 };

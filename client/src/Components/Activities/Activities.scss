@@ -1,0 +1,67 @@
+.activities {
+    position: relative;
+    font-size: 14px;
+    font-weight: 400;
+    color: #172b4d;
+
+    &__list {
+        margin-top: 15px;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__btn {
+        background-color: #eaecf0;
+        padding: 8px 12px;
+        border-radius: 3px;
+
+        &:hover {
+            background-color: #e2e4e9;
+        }
+    }
+
+    h3 {
+        margin-left: 40px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    &__icon {
+        position: absolute;
+        left: 0px;
+        top: 4px;
+        width: 24px;
+        height: 24px;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-image: url('../../../public/assets/icon/card-list.svg');
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    &__info {
+        margin-left: 10px;
+    }
+
+    &__text {
+        margin-bottom: 5px;
+    }
+
+    &__data {
+        color: #5e6c84;
+        font-size: 13px;
+        font-weight: 400;
+    }
+
+    &__user-name {
+        font-weight: 700;
+    }
+}
