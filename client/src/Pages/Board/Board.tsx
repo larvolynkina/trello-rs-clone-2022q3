@@ -91,6 +91,7 @@ function Board() {
       (boardData._id.length === 0 || boardId !== boardData._id) &&
       boardDetailsFromServer
     ) {
+      console.log(boardDetailsFromServer)
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
   }, [boardDetailsFromServer]);
@@ -262,7 +263,7 @@ function Board() {
       {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && (
         <>
           <aside className="board__aside">
-            {boardData.workspace && <BoardAside workspace={boardData.workspace}/>}
+            {boardData.workspace && <BoardAside workspace={boardData.workspace} boardData={boardData}/>}
           </aside>
 
           <div className="board__body" ref={boardBody}>
