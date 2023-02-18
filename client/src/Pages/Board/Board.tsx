@@ -90,8 +90,6 @@ function Board() {
       (boardData._id.length === 0 || boardId !== boardData._id) &&
       boardDetailsFromServer
     ) {
-      console.log('in store: ', boardData._id)
-      console.log('from server: ', boardDetailsFromServer._id)
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
   }, [boardDetailsFromServer]);
