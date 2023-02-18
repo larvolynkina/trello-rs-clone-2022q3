@@ -91,19 +91,18 @@ function Board() {
       (boardData._id.length === 0 || boardId !== boardData._id) &&
       boardDetailsFromServer
     ) {
-      console.log(boardDetailsFromServer)
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
   }, [boardDetailsFromServer]);
 
   useEffect(() => {
-    if (columnsData.length === 0 && columnsDataFromServer) {
+    if (columnsDataFromServer) {
       dispatch(updateColumnsInStore(columnsDataFromServer));
     }
   }, [columnsDataFromServer]);
 
   useEffect(() => {
-    if (cardsData.length === 0 && cardsDataFromServer) {
+    if (cardsDataFromServer) {
       dispatch(updateCardInColumn(cardsDataFromServer));
     }
   }, [cardsDataFromServer]);
