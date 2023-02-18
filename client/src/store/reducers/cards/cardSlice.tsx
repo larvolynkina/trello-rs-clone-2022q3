@@ -7,6 +7,7 @@ type TInitialState = {
   boardParticipantsModalActive: boolean;
   checkListModalActive: boolean;
   attachModalActive: boolean;
+  marksModalActive: boolean;
 };
 
 const initialState: TInitialState = {
@@ -14,6 +15,7 @@ const initialState: TInitialState = {
   boardParticipantsModalActive: false,
   checkListModalActive: false,
   attachModalActive: false,
+  marksModalActive: false,
 };
 
 const cardSlice = createSlice({
@@ -87,6 +89,12 @@ const cardSlice = createSlice({
     setAttachModalClose(state) {
       state.attachModalActive = false;
     },
+    setMarksModalOpen(state) {
+      state.marksModalActive = true;
+    },
+    setMarksModalClose(state) {
+      state.marksModalActive = false;
+    },
   },
 });
 
@@ -105,6 +113,8 @@ export const {
   toggleCheckListItemCheckedInState,
   deleteCheckListItemFromState,
   deleteAttachmentFromState,
+  setMarksModalClose,
+  setMarksModalOpen,
 } = cardSlice.actions;
 
 export default cardSlice.reducer;

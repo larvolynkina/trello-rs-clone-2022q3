@@ -9,9 +9,10 @@ import MarkEditModal from './MarkEditModal';
 type MarksProps = {
   from: 'menu' | 'card';
   boardId: string;
+  cardMarks?: string[];
 };
 
-function Marks({ from, boardId }: MarksProps) {
+function Marks({ from, boardId, cardMarks }: MarksProps) {
   const { data: boardData } = useGetBoardByIDQuery(boardId);
   const [marks, setMarks] = useState<IMark[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -41,6 +42,7 @@ function Marks({ from, boardId }: MarksProps) {
                 setMarks={setMarks}
                 index={index}
                 boardId={boardId}
+                cardMarks={cardMarks}
               />
             </li>
           ))}
@@ -61,5 +63,9 @@ function Marks({ from, boardId }: MarksProps) {
     </div>
   );
 }
+
+Marks.defaultProps = {
+  cardMarks: [],
+};
 
 export default Marks;

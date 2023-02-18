@@ -55,7 +55,7 @@ export interface ICard {
   description: string;
   archived: boolean;
   participants: IUser[];
-  marks: IMark[];
+  marks: string[];
   coverColor: string;
   coverImg: string;
   coverSize: string;

@@ -20,6 +20,8 @@ import AttachModal from './Modals/AttachModal';
 import Loader from '../Loader';
 import AttachmentsList from './Attachments/AttachmentsList';
 import ActivitiesList from '../Activities';
+import MarksModal from './Modals/MarksModal';
+import MarksList from './Marks/MarksList';
 
 type CardProps = {
   boardId: string;
@@ -36,6 +38,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
   const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
   const [searchParams, setSearchParams] = useSearchParams();
   const attachModalActive = useAppSelector((state) => state.CARD.attachModalActive);
+  const marksModalActive = useAppSelector((state) => state.CARD.marksModalActive);
   const card = useAppSelector((state) => state.CARD.card);
 
   function openBoardParticipantsModal() {
@@ -72,12 +75,13 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
                 onClick={() => openBoardParticipantsModal()}
                 cardParticipants={card.participants}
               />
+              {card.marks.length > 0 && <MarksList marksId={card.marks} />}
               <Description description={card.description} boardId={boardId} cardId={cardId} />
               {card.attachments.length > 0 && (
                 <AttachmentsList boardId={boardId} cardId={cardId} attachments={card.attachments} />
               )}
               <CheckListFullList items={card.checklists} boardId={boardId} cardId={cardId} />
-              <div className='card__activities'>
+              <div className="card__activities">
                 <ActivitiesList activities={card.activities} />
               </div>
             </div>
@@ -99,6 +103,9 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
       )}
       {checkListModalActive && <CheckListModal boardId={boardId} cardId={cardId} />}
       {attachModalActive && <AttachModal boardId={boardId} cardId={cardId} />}
+      {marksModalActive && (
+        <MarksModal boardId={boardId} cardMarks={card?.marks || []} from="card" />
+      )}
     </>
   );
 }

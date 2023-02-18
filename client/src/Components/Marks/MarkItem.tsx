@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from 'react';
+import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { IMark } from '../../types/card';
 import MarkEditModal from './MarkEditModal';
 
@@ -9,13 +9,39 @@ type MarkItemProps = {
   setMarks: Dispatch<SetStateAction<IMark[]>>;
   index: number;
   boardId: string;
+  cardMarks?: string[];
 };
 
-function MarkItem({ showCheckBox, showPensil, mark, setMarks, index, boardId }: MarkItemProps) {
+function MarkItem({
+  showCheckBox,
+  showPensil,
+  mark,
+  setMarks,
+  index,
+  boardId,
+  cardMarks,
+}: MarkItemProps) {
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    if (cardMarks && cardMarks.length > 0) {
+      if (mark._id && cardMarks.includes(mark._id)) {
+        setActive(true);
+      }
+    }
+  }, [mark]);
+
   return (
     <div className="mark-item">
-      {showCheckBox && <input type="checkbox" className="mark-item__checkbox" />}
+      {showCheckBox && (
+        <input
+          type="checkbox"
+          className="mark-item__checkbox"
+          checked={active}
+          onChange={(event) => setActive(event.target.checked)}
+        />
+      )}
       <button
         type="button"
         className="mark-item__body"
@@ -43,5 +69,9 @@ function MarkItem({ showCheckBox, showPensil, mark, setMarks, index, boardId }: 
     </div>
   );
 }
+
+MarkItem.defaultProps = {
+  cardMarks: [],
+};
 
 export default MarkItem;
