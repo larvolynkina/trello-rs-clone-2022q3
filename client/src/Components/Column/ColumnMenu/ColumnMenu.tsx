@@ -18,12 +18,16 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
   }
 
   const handleDeleteColumn = () => {
-    dispatch(deleteColumnFromStore({columnId: idOpenedColumn.columnId}))
+    dispatch(deleteColumnFromStore({ columnId: idOpenedColumn.columnId }));
     asyncDelColumn(idOpenedColumn);
   };
   const handleAddCard = () => {
     setAddCardFromMenu(true);
+  };
+  const handleCopyCard = () => {
+    // TODO
   }
+
   return (
     <ul className="column-menu">
       <div className="column-menu__header">
@@ -34,9 +38,15 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
       </div>
       <ul className="column-menu__group">
         <li className="column-menu__item">
-          <button className="column-menu__button" type="button" onClick={handleAddCard}>Добавить карточку...</button>
+          <button className="column-menu__button" type="button" onClick={handleAddCard}>
+            Добавить карточку...
+          </button>
         </li>
-        <li className="column-menu__item">Копировать колонку...</li>
+        <li className="column-menu__item">
+          <button className="column-menu__button" type="button" onClick={handleCopyCard}>
+            Копировать колонку...
+          </button>
+        </li>
       </ul>
       <ul className="column-menu__group">
         <li className="column-menu__item column-menu__item--del">

@@ -52,6 +52,7 @@ export const boardStateSlice = createSlice({
     },
     updateColumnsInStore(state, action: PayloadAction<IColumn[]>) {
       state.columnsData = action.payload;
+      state.boardData.columns = action.payload.map((column) => column._id);
     },
     createColumnInStore(state, action: PayloadAction<{ column: IColumn; boardId: string }>) {
       state.columnsData.push(action.payload.column);
