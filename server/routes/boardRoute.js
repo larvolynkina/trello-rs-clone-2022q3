@@ -11,6 +11,7 @@ import {
   deleteMarkOnBoard,
   deleteBoard,
   leaveBoardParticipants,
+  joinBoard,
 } from '../controllers/boardController.js';
 import verifyAuth from '../middlewares/auth.js';
 
@@ -27,5 +28,6 @@ router.post('/delete-mark', verifyAuth, deleteMarkOnBoard);
 router.post('/add-members', verifyAuth, addMembers);
 router.get('/:boardId/participants', verifyAuth, getBoardParticipants);
 router.post('/leave', verifyAuth, leaveBoardParticipants);
+router.post('/join', verifyAuth, joinBoard);
 
 export default router;

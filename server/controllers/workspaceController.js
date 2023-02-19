@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import Workspace from '../models/workspaceModel.js';
 import User from '../models/userModel.js';
 import Board from '../models/boardModel.js';
@@ -178,10 +179,45 @@ async function leaveWorkspaceParticipants(req, res) {
   }
 }
 
+async function addMembers(req, res) {
+  try {
+    const { workspaceId, membersId } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findById(workspaceId);
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    // get users
+    const promises = [];
+    membersId.forEach((id) => {
+      if (!workspace.participants.includes(id)) {
+        const user = User.findById(id);
+        promises.push(user);
+      }
+    });
+    const users = await Promise.all(promises);
+    
+    if (users.length === 0) {
+      return res.status(400).json({ message: 'Этот(эти) пользователь(-ли) уже участник(и) рабочего пространства' });
+    }
+    for (const user of users) {
+      workspace.participants.push(user._id);
+      user.workspaces.push(workspace._id);
+      await user.save();
+    }
+    await workspace.save();
+    return res.status(200).json({ message: 'Участник(и) успешно добавлены' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createWorkspace,
   updateWorkspaceTextFields,
   deleteWorkspace,
   getAllUsersWorkspaces,
   leaveWorkspaceParticipants,
+  addMembers,
 };
