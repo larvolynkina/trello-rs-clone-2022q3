@@ -34,7 +34,7 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
       </div>
       <ul className="column-menu__group">
         <li className="column-menu__item">
-          <button type="button" onClick={handleAddCard}>Добавить карточку...</button>
+          <button className="column-menu__button" type="button" onClick={handleAddCard}>Добавить карточку...</button>
         </li>
         <li className="column-menu__item">Копировать колонку...</li>
       </ul>
