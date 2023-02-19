@@ -26,6 +26,6 @@ router.post('/update-mark', verifyAuth, updateMarkOnBoard);
 router.post('/delete-mark', verifyAuth, deleteMarkOnBoard);
 router.post('/add-members', verifyAuth, addMembers);
 router.get('/:boardId/participants', verifyAuth, getBoardParticipants);
-router.post('/leave-board', verifyAuth, leaveBoardParticipants);
+router.post('/leave', verifyAuth, leaveBoardParticipants);
 
 export default router;

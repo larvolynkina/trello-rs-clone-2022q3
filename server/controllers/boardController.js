@@ -22,6 +22,7 @@ async function createBoard(req, res) {
       title,
       backgroundColor,
       backgroundImage,
+      owner: userId,
       participants: [userId],
       marks: defaultMarks,
     });
