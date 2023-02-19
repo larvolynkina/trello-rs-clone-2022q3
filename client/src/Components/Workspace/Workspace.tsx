@@ -1,12 +1,10 @@
-import { toast } from 'react-toastify';
-
 import { IWorkspace } from '../../types/workspace';
 import WorkspaceIcon from './WorkspaceIcon';
 import Boards from './Boards';
 import Title from './Title';
 import { useDeleteWorkspaceMutation } from '../../store/reducers/workspace/workspace.api';
-import { isFetchBaseQueryErrorWithMsg } from '../../utils/error';
 import './Workspace.scss';
+import { showErrorToast, showLoadingToast, showSuccessToast } from '../../utils/toast';
 
 type WorkspaceProps = {
   data: IWorkspace;
@@ -16,31 +14,12 @@ function Workspace({ data: { title, avatarColor, boards, _id: id } }: WorkspaceP
   const [deleteWorkspace, { isLoading }] = useDeleteWorkspaceMutation();
 
   const handleDeleteWorkspace = async () => {
-    const toastId = toast.loading('Удаление рабочего пространства...');
+    const toastId = showLoadingToast('Удаление рабочего пространства...');
     try {
       await deleteWorkspace(id).unwrap();
-      toast.update(toastId, {
-        render: 'Рабочее пространство удалено успешно!',
-        type: 'success',
-        isLoading: false,
-        autoClose: 3000,
-      });
+      showSuccessToast(toastId, 'Рабочее пространство удалено успешно!');
     } catch (err) {
-      if (isFetchBaseQueryErrorWithMsg(err)) {
-        toast.update(toastId, {
-          render: err.data.message,
-          type: 'error',
-          isLoading: false,
-          autoClose: 3000,
-        });
-      } else {
-        toast.update(toastId, {
-          render: 'Произошла ошибка при удалении рабочего пространства.',
-          type: 'error',
-          isLoading: false,
-          autoClose: 3000,
-        });
-      }
+      showErrorToast(toastId, err, 'Произошла ошибка при удалении рабочего пространства.');
     }
   };
 

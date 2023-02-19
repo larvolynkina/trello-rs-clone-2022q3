@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import { useCreateWorkspaceMutation } from '../../store/reducers/workspace/workspace.api';
+import { showErrorToast, showLoadingToast, showSuccessToast } from '../../utils/toast';
 import './CreateWorkspaceForm.scss';
 
 type NewWorkspace = {
@@ -24,15 +24,16 @@ function CreateWorkspaceForm({ onClose }: CreateWorkspaceFormProps) {
 
   const handleFormSubmit: SubmitHandler<NewWorkspace> = async (data, evt) => {
     evt?.preventDefault();
+    const toastId = showLoadingToast('Создание рабочего пространства...');
     try {
       await createWorkspace({
         ...data,
         title: data.title.trim(),
       }).unwrap();
-      toast.success('Рабочее пространство создано успешно!');
+      showSuccessToast(toastId, 'Рабочее пространство создано успешно!');
       onClose();
-    } catch {
-      toast.error('Произошла ошибка при создании рабочего пространства.');
+    } catch (err) {
+      showErrorToast(toastId, err, 'Произошла ошибка при создании рабочего пространства!');
     }
   };
 

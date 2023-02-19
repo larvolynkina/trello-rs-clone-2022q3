@@ -1,8 +1,8 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 
 import { BG_COLORS, BG_IMAGES } from '../../const/const';
 import { useCreateBoardMutation } from '../../store/reducers/workspace/workspace.api';
+import { showErrorToast, showLoadingToast, showSuccessToast } from '../../utils/toast';
 import './CreateBoardForm.scss';
 
 type NewBoard = {
@@ -35,18 +35,17 @@ function CreateBoardForm({ onClose, workspaceId }: CreateBoardFormProps) {
     const { theme, title } = data;
     const [name, value] = theme.split(DELIMITER);
 
+    const toastId = showLoadingToast('Создание доски...');
     try {
       await createBoard({
         title,
         workspaceId,
         [name]: value,
       }).unwrap();
-
-      toast.success('Доска создана успешно!');
-    } catch {
-      toast.error('Произошла ошибка при создании доски.');
+      showSuccessToast(toastId, 'Доска создана успешно!');
+    } catch (err) {
+      showErrorToast(toastId, err, 'Произошла ошибка при создании доски.');
     }
-
     onClose();
   };
 
