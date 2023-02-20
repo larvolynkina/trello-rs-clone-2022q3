@@ -199,6 +199,7 @@ async function leaveWorkspaceParticipants(req, res) {
   try {
     const { workspaceId } = req.body;
     const { userId } = req;
+    const user = await User.findById(userId);
     // check if user is member of workspace
     const workspace = await Workspace.findById(workspaceId);
     if (!workspace.participants.includes(userId)) {
@@ -208,6 +209,8 @@ async function leaveWorkspaceParticipants(req, res) {
       (item) => item.toString() !== userId,
     );
     await workspace.save();
+    user.workspaces = [...user.workspaces].filter((item) => item.toString() !== workspaceId);
+    await user.save();
     return res.status(200).json({ message: 'Вы покинули рабочее пространство' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
