@@ -87,10 +87,7 @@ function Board() {
   }, [paramsURL, cardsData]);
 
   useEffect(() => {
-    if (
-      (boardData._id.length === 0 || boardId !== boardData._id) &&
-      boardDetailsFromServer
-    ) {
+    if ((boardData._id.length === 0 || boardId !== boardData._id) && boardDetailsFromServer) {
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
   }, [boardDetailsFromServer]);
@@ -262,7 +259,9 @@ function Board() {
       {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && (
         <>
           <aside className="board__aside">
-            {boardData.workspace && <BoardAside workspace={boardData.workspace} boardData={boardData}/>}
+            {boardData.workspace && (
+              <BoardAside workspace={boardData.workspace} />
+            )}
           </aside>
 
           <div className="board__body" ref={boardBody}>

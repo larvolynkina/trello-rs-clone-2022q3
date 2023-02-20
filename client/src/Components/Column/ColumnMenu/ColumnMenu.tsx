@@ -1,7 +1,16 @@
 import './columnMenu.scss';
-import { useDeleteColumnMutation } from '../../../store/reducers/board/board.api';
-import { deleteColumnFromStore } from '../../../store/reducers/board/boardState';
-import { useAppDispatch } from '../../../hooks/redux';
+import { toast } from 'react-toastify';
+
+import {
+  useDeleteColumnMutation,
+  useCopyColumnMutation,
+} from '../../../store/reducers/board/board.api';
+import {
+  deleteColumnFromStore,
+  createColumnInStore,
+  // updateCardInColumn,
+} from '../../../store/reducers/board/boardState';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 
 type ColumnMenuProps = {
   onClose: () => void;
@@ -10,6 +19,8 @@ type ColumnMenuProps = {
 };
 function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuProps) {
   const [deleteColumn, { isError: errorDeleteColumn }] = useDeleteColumnMutation();
+  const [copyColumn] = useCopyColumnMutation();
+  const { columnsData } = useAppSelector((state) => state.BOARD);
   const dispatch = useAppDispatch();
 
   async function asyncDelColumn(idObj: { boardId: string; columnId: string }) {
@@ -25,8 +36,21 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
     setAddCardFromMenu(true);
   };
   const handleCopyCard = () => {
-    // TODO
-  }
+    const currentColumn = columnsData.find((column) => column._id === idOpenedColumn.columnId);
+    toast.loading('Добавляем копию колонки...');
+    copyColumn({
+      boardId: idOpenedColumn.boardId,
+      columnId: idOpenedColumn.columnId,
+      newTitle: `Копия колонки ${currentColumn?.title}`,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.dismiss();
+        if (res && res._id.length > 0) {
+          dispatch(createColumnInStore({ column: res, boardId: idOpenedColumn.boardId }));
+        }
+      });
+  };
 
   return (
     <ul className="column-menu">
