@@ -24,7 +24,10 @@ export const boardStateSlice = createSlice({
     updateBoardDetails(state, action: PayloadAction<IBoard>) {
       state.boardData = action.payload;
     },
-    updateBoardBgInStore(state, action: PayloadAction<{backgroundImage: string, backgroundColor: string}>) {
+    updateBoardBgInStore(
+      state,
+      action: PayloadAction<{ backgroundImage: string; backgroundColor: string }>,
+    ) {
       state.boardData.backgroundImage = action.payload.backgroundImage;
       state.boardData.backgroundColor = action.payload.backgroundColor;
     },
@@ -76,6 +79,25 @@ export const boardStateSlice = createSlice({
     ) {
       state.openMenuCardArgs = action.payload;
     },
+    addMarkToState(state, action) {
+      if (state.boardData.marks) {
+        state.boardData.marks.push(action.payload);
+      }
+    },
+    deleteMarkFromState(state, action) {
+      if (state.boardData.marks) {
+        state.boardData.marks = [
+          ...state.boardData.marks.filter((value) => value._id !== action.payload),
+        ];
+      }
+    },
+    updateMarkInState(state, action) {
+      const { color, text, index } = action.payload;
+      if (state.boardData.marks) {
+        state.boardData.marks[index].color = color;
+        state.boardData.marks[index].text = text;
+      }
+    },
   },
 });
 
@@ -91,6 +113,9 @@ export const {
   addParticipantsInStore,
   updateOpenMenuCardArgs,
   updateBoardBgInStore,
+  addMarkToState,
+  deleteMarkFromState,
+  updateMarkInState,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;

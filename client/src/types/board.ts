@@ -1,11 +1,11 @@
 import { IUser } from "./card";
 
-export interface IMarks {
-  _id: string;
+export interface IMark {
   color: string;
   text: string;
-  checked: boolean;
+  _id?: string;
 }
+
 export interface IActivities {
   _id: string;
   userId: string;
@@ -46,7 +46,7 @@ export interface IBoard {
   archived?: boolean;
   participants?: string[];
   columns?: string[];
-  marks?: IMarks[];
+  marks?: IMark[];
   activities?: IActivities[];
   createdAt?: string;
   updatedAt?: string;

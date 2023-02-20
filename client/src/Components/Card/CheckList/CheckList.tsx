@@ -31,9 +31,13 @@ function CheckList({ checklist, id, checkListIndex, boardId, cardId }: CheckList
   const dispatch = useAppDispatch();
 
   function addCheckListItemHandler() {
-    addCheckListItem({ boardId, cardId, title: newItemTitle, id });
-    setNewItemTitle('');
-    setAdding(false);
+    if (newItemTitle) {
+      addCheckListItem({ boardId, cardId, title: newItemTitle, id });
+      setNewItemTitle('');
+      setAdding(false);
+    } else {
+      toast.error('Введите название элемента');
+    }
   }
 
   function deleteCheckListItemHandler() {
