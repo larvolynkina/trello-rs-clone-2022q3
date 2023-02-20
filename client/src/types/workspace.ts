@@ -14,6 +14,7 @@ export interface IWorkspace {
   avatarColor: string;
   avatarImage: string;
   private: boolean;
+  owner: string;
   participants: string[];
   boards: IWsBoard[];
   createdAt: string;

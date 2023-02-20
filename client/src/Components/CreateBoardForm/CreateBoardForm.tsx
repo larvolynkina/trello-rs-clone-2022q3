@@ -28,6 +28,7 @@ function CreateBoardForm({ onClose, workspaceId }: CreateBoardFormProps) {
     defaultValues: {
       theme: `backgroundColor${DELIMITER}${BG_COLORS[0]}`,
     },
+    mode: 'all',
   });
 
   const handleFormSubmit: SubmitHandler<NewBoard> = async (data, evt) => {

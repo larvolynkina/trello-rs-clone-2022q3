@@ -20,7 +20,9 @@ function CreateWorkspaceForm({ onClose }: CreateWorkspaceFormProps) {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<NewWorkspace>();
+  } = useForm<NewWorkspace>({
+    mode: 'all',
+  });
 
   const handleFormSubmit: SubmitHandler<NewWorkspace> = async (data, evt) => {
     evt?.preventDefault();
