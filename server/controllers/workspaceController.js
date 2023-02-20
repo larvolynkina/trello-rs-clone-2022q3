@@ -154,6 +154,39 @@ async function getAllUsersWorkspaces(req, res) {
           as: 'boards',
         },
       },
+      {
+        $lookup: {
+          from: 'users',
+          let: { participantsIds: '$participants' },
+          localField: 'participants',
+          foreignField: '_id',
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$participantsIds'] },
+              },
+            },
+            {
+              $addFields: {
+                sort: {
+                  $indexOfArray: ['$$participantsIds', '$_id'],
+                },
+              },
+            },
+            { $sort: { sort: 1 } },
+            { $addFields: { sort: '$$REMOVE' } },
+            {
+              $project: {
+                _id: 1,
+                userName: 1,
+                avatarColor: 1,
+                avatarImage: 1,
+              },
+            },
+          ],
+          as: 'participants',
+        },
+      },
     ];
     const allWorkspaces = await Workspace.aggregate(query);
     return res.status(200).json(allWorkspaces);
@@ -167,11 +200,13 @@ async function leaveWorkspaceParticipants(req, res) {
     const { workspaceId } = req.body;
     const { userId } = req;
     // check if user is member of workspace
-    const workspace = await Workspace.findById (workspaceId);
+    const workspace = await Workspace.findById(workspaceId);
     if (!workspace.participants.includes(userId)) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
-    workspace.participants = [...workspace.participants].filter((item) => item.toString() !== userId);
+    workspace.participants = [...workspace.participants].filter(
+      (item) => item.toString() !== userId,
+    );
     await workspace.save();
     return res.status(200).json({ message: 'Вы покинули рабочее пространство' });
   } catch (error) {
@@ -197,9 +232,11 @@ async function addMembers(req, res) {
       }
     });
     const users = await Promise.all(promises);
-    
+
     if (users.length === 0) {
-      return res.status(400).json({ message: 'Этот(эти) пользователь(-ли) уже участник(и) рабочего пространства' });
+      return res
+        .status(400)
+        .json({ message: 'Этот(эти) пользователь(-ли) уже участник(и) рабочего пространства' });
     }
     for (const user of users) {
       workspace.participants.push(user._id);

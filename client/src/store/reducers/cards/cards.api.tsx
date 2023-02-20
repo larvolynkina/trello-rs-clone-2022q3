@@ -105,6 +105,12 @@ export const cardsApi = createApi({
       }),
       providesTags: ['Card'],
     }),
+    deleteCardById: builder.mutation<void, TGetCardByIdQueryArgs>({
+      query: ({ boardId, cardId }) => ({
+        url: `/cards/${boardId}/${cardId}`,
+        method: 'DELETE',
+      }),
+    }),
     updateCardTitleOrDescr: builder.mutation<ICard, TUpdateCardTitleOrDescrQueryArgs>({
       query: (body) => ({
         url: '/cards',
@@ -256,6 +262,7 @@ export const cardsApi = createApi({
 
 export const {
   useGetCardByIdQuery,
+  useDeleteCardByIdMutation,
   useUpdateCardTitleOrDescrMutation,
   useAddCardParticipantMutation,
   useDeleteCardParticipantMutation,
