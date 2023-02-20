@@ -137,6 +137,9 @@ function Board() {
   }, [dropColumnFromCard, dropCard]);
 
   useEffect(() => {
+    setDragColum(null);
+    setDropColum(null);
+
     if (dropColumn?._id === dragColumn?._id) {
       return;
     }
@@ -147,8 +150,6 @@ function Board() {
       updateColumnOrder({ boardId, data: newColumnsOrderId }).unwrap();
     }
 
-    setDragColum(null);
-    setDropColum(null);
   }, [dropColumn]);
 
   const saveColumn = (title: string) => {
@@ -233,18 +234,6 @@ function Board() {
     );
     updateCardTitleOnServer({ ...openMenuCardArgs, boardId, title });
   };
-
-  // const closeCard = () => {
-  //   setOpenCard((prev) => ({ ...prev, isOpen: false }));
-  //   paramsURL.delete('card');
-  //   setParamsURL(paramsURL);
-  // };
-
-  // const handleKeyDown = () => {
-  //   if (paramsURL.get('somesthing')) {
-  //     throw new Error('somesthing');
-  //   }
-  // };
 
   return (
     <main

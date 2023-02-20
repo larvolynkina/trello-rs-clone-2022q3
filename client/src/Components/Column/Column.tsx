@@ -162,7 +162,7 @@ function Column({
     }
   };
   const updateTitleOnServerAndStore = async () => {
-    dispatch(changeTitleColumnInStore({id: column._id, title: title.trim()}));
+    dispatch(changeTitleColumnInStore({ id: column._id, title: title.trim() }));
     setIsEditTitle(false);
     if (boardId && title)
       await updateTitleColumn({ boardId, columnId: column._id, title: title.trim() }).unwrap();
