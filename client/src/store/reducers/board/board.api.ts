@@ -9,7 +9,7 @@ type TGetBoardParticipantsQueryArgs = {
 
 export const boardApi = createApi({
   reducerPath: 'board',
-  tagTypes: ['Columns', 'ColumnsOrder', 'Cards', 'BoardParticipants'],
+  tagTypes: ['Columns', 'ColumnsOrder', 'Cards', 'BoardParticipants', 'board'],
   baseQuery: fetchBaseQuery({
     baseUrl: SERVER_URL,
     prepareHeaders: (headers) => {
@@ -30,7 +30,7 @@ export const boardApi = createApi({
       query: (id: string) => ({
         url: `/boards/${id}`,
       }),
-      providesTags: [{ type: 'ColumnsOrder', id: 'LIST' }],
+      providesTags: [{ type: 'ColumnsOrder', id: 'LIST' }, 'board'],
     }),
     updateBoardTitle: build.mutation({
       query: (body: { boardId: string; title: string }) => ({
@@ -135,6 +135,7 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['board'],
     }),
     updateMarkOnBoard: build.mutation({
       query: (body: {boardId: string, color: string, text: string, index: number}) => ({

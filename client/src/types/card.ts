@@ -11,13 +11,6 @@ export interface IActivity {
   date: Date;
 }
 
-export interface IMark {
-  color: string;
-  text?: string;
-  checked: boolean;
-  _id?: string;
-}
-
 export interface ICheckItem {
   title: string;
   checked: boolean;
@@ -55,7 +48,7 @@ export interface ICard {
   description: string;
   archived: boolean;
   participants: IUser[];
-  marks: IMark[];
+  marks: string[];
   coverColor: string;
   coverImg: string;
   coverSize: string;

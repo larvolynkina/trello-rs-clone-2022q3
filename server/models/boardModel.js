@@ -6,6 +6,10 @@ const boardModel = new mongoose.Schema(
       type: String,
       required: true,
     },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
     backgroundColor: {
       type: String,
       default: '',
@@ -39,10 +43,6 @@ const boardModel = new mongoose.Schema(
         text: {
           type: String,
           default: '',
-        },
-        checked: {
-          type: Boolean,
-          default: false,
         },
       },
     ],

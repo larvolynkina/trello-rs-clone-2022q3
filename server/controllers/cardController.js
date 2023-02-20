@@ -512,6 +512,25 @@ async function deleteAttachment(req, res) {
   }
 }
 
+async function updateMarks(req, res) {
+  try {
+    const { boardId, cardId } = req.params;
+    const { marks } = req.body;
+    const { userId } = req;
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    const card = await Card.findById(cardId);
+    card.marks = marks;
+    await card.save();
+    return res.status(200).json(card);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createCard,
   updateCardTitleOrDescr,
@@ -530,4 +549,5 @@ export {
   updateChecklistTitle,
   addAttachment,
   deleteAttachment,
+  updateMarks,
 };

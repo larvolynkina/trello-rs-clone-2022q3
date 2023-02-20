@@ -3,6 +3,8 @@
 import mongoose from 'mongoose';
 import Board from '../models/boardModel.js';
 import User from '../models/userModel.js';
+import Card from '../models/cardModel.js';
+import Column from '../models/columnModel.js';
 import Workspace from '../models/workspaceModel.js';
 import { defaultMarks, errors } from '../helpers.js';
 
@@ -20,6 +22,7 @@ async function createBoard(req, res) {
       title,
       backgroundColor,
       backgroundImage,
+      owner: userId,
       participants: [userId],
       marks: defaultMarks,
     });
@@ -281,6 +284,99 @@ async function addMembers(req, res) {
   }
 }
 
+async function deleteBoard(req, res) {
+  try {
+    const { boardId } = req.params;
+    const { userId } = req;
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(400).json({ message: 'Такой доски не существует' });
+    }
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    // delete board from workspace boards array
+    workspace.boards = [...workspace.boards].filter((item) => item.toString() !== boardId);
+    await workspace.save();
+    // delete board cards
+    const allColumns = await Column.find().where('_id').in(board.columns).exec();
+    const allCardsId = allColumns
+      .reduce((acc, curr) => {
+        acc.push(curr.cards);
+        return acc;
+      }, [])
+      .flat();
+    await Card.deleteMany({
+      _id: {
+        $in: allCardsId,
+      },
+    });
+    // delete columns from Board
+    await Column.deleteMany({
+      _id: {
+        $in: board.columns,
+      },
+    });
+    // delete board
+    await Board.findByIdAndDelete(boardId);
+    return res.status(200).json({ message: 'Доска удалена' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function leaveBoardParticipants(req, res) {
+  try {
+    const { boardId } = req.body;
+    const { userId } = req;
+    const board = await Board.findById(boardId);
+    const currentUser = await User.findById(userId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    // add activity
+    const activity = {
+      userId,
+      action: `${currentUser.userName} покинул доску ${board.title}`,
+    };
+    board.activities.push(activity);
+    board.participants = [...board.participants].filter((item) => item.toString() !== userId);
+    await board.save();
+    return res.status(200).json({ message: 'Вы покинули доску' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
+async function joinBoard(req, res) {
+  try {
+    const { boardId } = req.body;
+    const { userId } = req;
+    const board = await Board.findById(boardId);
+    const currentUser = await User.findById(userId);
+    // check if user is member of workspace
+    const workspace = await Workspace.findOne({ boards: boardId });
+    if (!workspace.participants.includes(userId)) {
+      return res.status(403).json({ message: errors.notAWorkspaceMember });
+    }
+    board.participants.push(userId);
+    // add activity
+    const activity = {
+      userId,
+      action: `${currentUser.userName} присоединился к доске ${board.title}`,
+    };
+    board.activities.push(activity);
+    await board.save();
+    return res.status(200).json({ message: 'Вы присоединились к доске' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 export {
   createBoard,
   addNewMarkOnBoard,
@@ -291,4 +387,7 @@ export {
   addMembers,
   updateMarkOnBoard,
   deleteMarkOnBoard,
+  deleteBoard,
+  leaveBoardParticipants,
+  joinBoard,
 };

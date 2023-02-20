@@ -81,6 +81,12 @@ type TDeleteAttachmentQueryArgs = {
   id: string;
 };
 
+type TUpdateMarksIdArrayQueryArgs = {
+  boardId: string;
+  cardId: string;
+  marks: string[];
+};
+
 export const cardsApi = createApi({
   reducerPath: 'cardsApi',
   baseQuery: fetchBaseQuery({
@@ -233,6 +239,13 @@ export const cardsApi = createApi({
         body: { id },
       }),
     }),
+    updateMarksIdArray: builder.mutation<ICard, TUpdateMarksIdArrayQueryArgs>({
+      query: ({ boardId, cardId, marks }) => ({
+        url: `/cards/${boardId}/${cardId}/update-marks`,
+        method: 'POST',
+        body: { marks },
+      }),
+    }),
     getAllUsers: builder.query<IUser[], void>({
       query: () => ({
         url: `/users`,
@@ -256,4 +269,5 @@ export const {
   useAddAttachmentMutation,
   useDeleteAttachmentMutation,
   useGetAllUsersQuery,
+  useUpdateMarksIdArrayMutation,
 } = cardsApi;
