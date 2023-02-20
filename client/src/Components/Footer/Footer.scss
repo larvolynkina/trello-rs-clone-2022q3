@@ -1,0 +1,30 @@
+@import '../../scss/base/mixins.scss';
+
+$boxShadowColor: #091e4226;
+
+.footer {
+    background-color: #026aa7;
+    padding: 9px 0;
+    color: #fff;
+    box-shadow: $boxShadowColor 0 rem(2) rem(4) 0;
+
+    &__container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__info {
+        display: flex;
+        align-items: center;
+    }
+
+    p, a {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    span {
+        padding: 0 10px;
+    }
+}

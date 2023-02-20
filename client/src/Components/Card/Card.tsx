@@ -52,7 +52,6 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     searchParams.delete('card');
     setSearchParams(searchParams);
     dispatch(resetCard());
-    refetch();
   }
 
   useEffect(() => {
@@ -66,9 +65,15 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
       {isLoading && <Loader />}
       {data && card && (
         <div className="card">
-          <button type="button" onClick={closeCard}>
-            Закрыть карточку
-          </button>
+          <button
+            className="card__close"
+            type="button"
+            aria-label="close card"
+            onClick={() => {
+              closeCard();
+              refetch();
+            }}
+          />
           <Title title={card.title} boardId={boardId} cardId={cardId} column={card.column} />
           <div className="card__wrapper">
             <div className="card__main">
@@ -76,7 +81,9 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
                 onClick={() => openBoardParticipantsModal()}
                 cardParticipants={card.participants}
               />
-              {card.marks.length > 0 && <MarksList boardId={boardId} cardId={cardId} marksId={card.marks} />}
+              {card.marks.length > 0 && (
+                <MarksList boardId={boardId} cardId={cardId} marksId={card.marks} />
+              )}
               <Description description={card.description} boardId={boardId} cardId={cardId} />
               {card.attachments.length > 0 && (
                 <AttachmentsList boardId={boardId} cardId={cardId} attachments={card.attachments} />
@@ -87,8 +94,19 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
               </div>
             </div>
             <aside className="card__aside">
-              <AsideList title="Добавить на карточку" buttons={asideAddButtons} />
-              <AsideList title="Действия" buttons={asideActionButtons} />
+              <AsideList
+                title="Добавить на карточку"
+                buttons={asideAddButtons}
+                boardId={boardId}
+                cardId={cardId}
+              />
+              <AsideList
+                title="Действия"
+                buttons={asideActionButtons}
+                boardId={boardId}
+                cardId={cardId}
+                closeCard={() => closeCard()}
+              />
             </aside>
           </div>
         </div>
