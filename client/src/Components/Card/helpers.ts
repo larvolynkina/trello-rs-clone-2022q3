@@ -1,7 +1,8 @@
 import person from './icons/person.svg';
 import check from './icons/check.svg';
 import attach from './icons/attach.svg';
-import mark from './icons/mark.svg'
+import mark from './icons/mark.svg';
+import deleteIco from './icons/delete-ico.svg';
 
 const asideAddButtons = [
   {
@@ -24,16 +25,8 @@ const asideAddButtons = [
 
 const asideActionButtons = [
   {
-    text: 'Перемещение',
-    ico: '../../../public/assets/icon/card-title.svg',
-  },
-  {
-    text: 'Копирование',
-    ico: '../../../public/assets/icon/card-title.svg',
-  },
-  {
     text: 'Удалить',
-    ico: '../../../public/assets/icon/card-title.svg',
+    ico: deleteIco,
   },
 ];
 
