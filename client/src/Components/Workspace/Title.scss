@@ -1,0 +1,22 @@
+@import '../../scss/base/mixins.scss';
+
+.ws-title {
+  &__input {
+    font-size: rem(16);
+    left: rem(-4);
+    color: #172b4d;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 1.5;
+    outline: 0;
+    border: rem(1) solid transparent;
+
+    background-color: transparent;
+
+    &:focus {
+      background-color: #fff;
+      border-radius: rem(3);
+      border: rem(1) solid #5d5e5f;
+    }
+  }
+}

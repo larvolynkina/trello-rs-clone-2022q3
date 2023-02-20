@@ -1,6 +1,8 @@
-// import { Link } from 'react-router-dom';
-import Workspace from '../../Components/Workcspace';
-// import { APPRoute } from '../../const/const';
+import { useState } from 'react';
+
+import CreateWorkspaceForm from '../../Components/CreateWorkspaceForm';
+import Modal from '../../Components/Modal';
+import Workspace from '../../Components/Workspace';
 import {
   useGetAllWorkspacesQuery,
   // useCreateWorkspaceMutation,
@@ -17,14 +19,29 @@ function Workspaces() {
   // const [deleteWorkspace, { isLoading }] = useDeleteWorkspaceMutation();
   // const [updateWorkspace, { isLoading }] = useUpdateWorkspaceMutation();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+
+  const handleCloseModal = () => setIsModalOpen(false);
+
   return (
     <main className="workspaces">
       <div className="workspaces__container">
-        <h1 className="workspaces__title">Ваши рабочие пространства</h1>
+        <div className="workspaces__header">
+          <h1 className="workspaces__title">Ваши рабочие пространства</h1>
+          <button className="form-btn form-btn--small" type="button" onClick={handleOpenModal}>
+            Создать рабочее пространство
+          </button>
+        </div>
+
         {data.map((ws) => (
           <Workspace key={ws._id} data={ws} />
         ))}
       </div>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <CreateWorkspaceForm onClose={handleCloseModal} />
+      </Modal>
     </main>
   );
 }
