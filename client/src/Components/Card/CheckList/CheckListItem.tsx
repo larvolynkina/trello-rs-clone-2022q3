@@ -25,14 +25,16 @@ function CheckListItem({ checkListItem, checkListIndex, boardId, cardId }: Check
   const dispatch = useAppDispatch();
 
   const setCheckListItemStatus = useCallback(
-    debounce((flag: boolean) => {
-      setCheckListItemChecked({
-        boardId,
-        cardId,
-        id: checkListItem._id,
-        checkListIndex,
-        status: flag,
-      });
+    debounce((flag) => {
+      if (typeof flag === 'boolean') {
+        setCheckListItemChecked({
+          boardId,
+          cardId,
+          id: checkListItem._id,
+          checkListIndex,
+          status: flag,
+        });
+      }
     }, 1000),
     [],
   );

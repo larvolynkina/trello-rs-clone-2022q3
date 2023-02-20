@@ -1,26 +1,27 @@
 import './marks.scss';
 import { useEffect, useState } from 'react';
-import { IMark } from '../../types/card';
-import { useGetBoardByIDQuery } from '../../store/reducers/board/board.api';
+import { IMark } from '../../types/board';
 import MarkItem from './MarkItem';
 import MarkHeader from './MarkHeader';
 import MarkEditModal from './MarkEditModal';
+import { useAppSelector } from '../../hooks/redux';
 
 type MarksProps = {
-  from: 'menu' | 'card';
+  from: 'menu' | 'card' | 'cardMenu';
   boardId: string;
+  cardId?: string;
   cardMarks?: string[];
 };
 
-function Marks({ from, boardId, cardMarks }: MarksProps) {
-  const { data: boardData } = useGetBoardByIDQuery(boardId);
+function Marks({ from, boardId, cardId, cardMarks }: MarksProps) {
+  const marksFromState = useAppSelector(state => state.BOARD.boardData.marks)
   const [marks, setMarks] = useState<IMark[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [typeAction, setTypeAction] = useState<'create' | 'edit'>('create');
 
   useEffect(() => {
-    if (boardData) {
-      setMarks(boardData.marks);
+    if (marksFromState) {
+      setMarks(marksFromState);
     }
   }, []);
 
@@ -30,7 +31,7 @@ function Marks({ from, boardId, cardMarks }: MarksProps) {
   };
   return (
     <div className="marks">
-      {from === 'card' && <MarkHeader isShow={setIsOpenModal} />}
+      {from === 'cardMenu' && <MarkHeader isShow={setIsOpenModal} />}
       <ul className="marks__list">
         {marks.length > 0 &&
           marks.map((mark, index) => (
@@ -42,6 +43,7 @@ function Marks({ from, boardId, cardMarks }: MarksProps) {
                 setMarks={setMarks}
                 index={index}
                 boardId={boardId}
+                cardId={cardId}
                 cardMarks={cardMarks}
               />
             </li>
@@ -66,6 +68,7 @@ function Marks({ from, boardId, cardMarks }: MarksProps) {
 
 Marks.defaultProps = {
   cardMarks: [],
+  cardId: undefined,
 };
 
 export default Marks;

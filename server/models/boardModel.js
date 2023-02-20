@@ -44,10 +44,6 @@ const boardModel = new mongoose.Schema(
           type: String,
           default: '',
         },
-        checked: {
-          type: Boolean,
-          default: false,
-        },
       },
     ],
     activities: [

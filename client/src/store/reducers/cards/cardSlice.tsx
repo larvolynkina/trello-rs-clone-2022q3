@@ -71,6 +71,21 @@ const cardSlice = createSlice({
         state.card.attachments = [...state.card.attachments].filter((item) => item._id !== id);
       }
     },
+    updateMarksIdArrayInState(state, action) {
+      if (state.card) {
+        state.card.marks = action.payload;
+      }
+    },
+    toggleMarkCheckedInState(state, action) {
+      if (state.card) {
+        const { id, checked } = action.payload;
+        if (checked) {
+          state.card.marks.push(id);
+        } else {
+          state.card.marks = [...state.card.marks].filter((item) => item !== id);
+        }
+      }
+    },
     setBoardParticipantsModalOpen(state) {
       state.boardParticipantsModalActive = true;
     },
@@ -111,6 +126,8 @@ export const {
   deleteParticipant,
   deleteCheckListFromState,
   toggleCheckListItemCheckedInState,
+  updateMarksIdArrayInState,
+  toggleMarkCheckedInState,
   deleteCheckListItemFromState,
   deleteAttachmentFromState,
   setMarksModalClose,

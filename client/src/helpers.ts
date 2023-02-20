@@ -1,9 +1,8 @@
-function debounce(fn: (flag: boolean) => void, delay: number) {
+function debounce(fn: (arg: boolean | string[]) => void, delay: number) {
   let timer: ReturnType<typeof setTimeout>;
-
-  return (flag: boolean) => {
+  return (arg: boolean | string[]) => {
     clearTimeout(timer);
-    timer = setTimeout(() => fn(flag), delay);
+    timer = setTimeout(() => fn(arg), delay);
   };
 }
 

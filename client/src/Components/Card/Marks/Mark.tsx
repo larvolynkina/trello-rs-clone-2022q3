@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IMark } from '../../../types/card';
+import { IMark } from '../../../types/board';
 
 interface MarkProps {
   markId: string;

@@ -30,7 +30,7 @@ type CardProps = {
 };
 
 function Card({ boardId, cardId, setOpenCard }: CardProps) {
-  const { data, isLoading } = useGetCardByIdQuery({ boardId, cardId });
+  const { data, isLoading, refetch } = useGetCardByIdQuery({ boardId, cardId });
   const dispatch = useAppDispatch();
   const boardParticipantsModalActive = useAppSelector(
     (state) => state.CARD.boardParticipantsModalActive,
@@ -52,6 +52,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     searchParams.delete('card');
     setSearchParams(searchParams);
     dispatch(resetCard());
+    refetch();
   }
 
   useEffect(() => {
@@ -75,7 +76,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
                 onClick={() => openBoardParticipantsModal()}
                 cardParticipants={card.participants}
               />
-              {card.marks.length > 0 && <MarksList marksId={card.marks} />}
+              {card.marks.length > 0 && <MarksList boardId={boardId} cardId={cardId} marksId={card.marks} />}
               <Description description={card.description} boardId={boardId} cardId={cardId} />
               {card.attachments.length > 0 && (
                 <AttachmentsList boardId={boardId} cardId={cardId} attachments={card.attachments} />
@@ -104,7 +105,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
       {checkListModalActive && <CheckListModal boardId={boardId} cardId={cardId} />}
       {attachModalActive && <AttachModal boardId={boardId} cardId={cardId} />}
       {marksModalActive && (
-        <MarksModal boardId={boardId} cardMarks={card?.marks || []} from="card" />
+        <MarksModal boardId={boardId} cardId={cardId} cardMarks={card?.marks || []} from="card" />
       )}
     </>
   );
