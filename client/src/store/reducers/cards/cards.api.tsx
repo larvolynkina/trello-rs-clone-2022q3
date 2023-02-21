@@ -67,12 +67,12 @@ export type TAttachmentDraft = {
   name: string;
   url: string;
   type: 'link' | 'file';
-}
+};
 
 type TAddAttachmentTitleQueryArgs = {
   boardId: string;
   cardId: string;
-  data: TAttachmentDraft
+  data: TAttachmentDraft;
 };
 
 type TDeleteAttachmentQueryArgs = {
@@ -215,6 +215,13 @@ export const cardsApi = createApi({
         body: formData,
       }),
     }),
+    deleteFile: builder.mutation<void, string>({
+      query: (path: string) => ({
+        url: `/upload/delete`,
+        method: 'POST',
+        body: { path },
+      }),
+    }),
     addAttachment: builder.mutation<ICard, TAddAttachmentTitleQueryArgs>({
       query: ({ boardId, cardId, data }) => ({
         url: `/cards/${boardId}/${cardId}/add-attachment`,
@@ -273,6 +280,7 @@ export const {
   useSetCheckListItemCheckedMutation,
   useUpdateCheckListTitleMutation,
   useUploadFileMutation,
+  useDeleteFileMutation,
   useAddAttachmentMutation,
   useDeleteAttachmentMutation,
   useGetAllUsersQuery,
