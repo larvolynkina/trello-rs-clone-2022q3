@@ -17,6 +17,9 @@ $boxShadowColor: #091e4226;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    &--board {
+      max-width: 100%;
+    }
   }
 }
 
