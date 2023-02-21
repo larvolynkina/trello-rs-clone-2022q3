@@ -2,9 +2,9 @@ import { IWorkspace } from '../../types/workspace';
 import WorkspaceIcon from './WorkspaceIcon';
 import Boards from './Boards';
 import Title from './Title';
+import WorkspaceParticipants from './WorkspaceParticipants';
 import {
   useDeleteWorkspaceMutation,
-  useGetAllWorkspacesQuery,
   useLeaveWorkspaceMutation,
 } from '../../store/reducers/workspace/workspace.api';
 import { showErrorToast, showLoadingToast, showSuccessToast } from '../../utils/toast';
@@ -15,8 +15,9 @@ type WorkspaceProps = {
   data: IWorkspace;
 };
 
-function Workspace({ data: { title, avatarColor, boards, _id: id, owner } }: WorkspaceProps) {
-  const { isLoading: isWSLoading } = useGetAllWorkspacesQuery();
+function Workspace({
+  data: { title, avatarColor, boards, _id: id, owner, participants },
+}: WorkspaceProps) {
   const [deleteWorkspace, { isLoading: deletionInProgress }] = useDeleteWorkspaceMutation();
   const [leaveWorkspace, { isLoading: leavingInProgress }] = useLeaveWorkspaceMutation();
   const { userData } = useAppSelector((state) => state.USER);
@@ -56,11 +57,12 @@ function Workspace({ data: { title, avatarColor, boards, _id: id, owner } }: Wor
         <button
           type="button"
           className="workspace__btn"
-          disabled={deletionInProgress || leavingInProgress || isWSLoading}
+          disabled={deletionInProgress || leavingInProgress}
           onClick={handleDeleteLeaveButtonClick}
         >
           {userId === owner ? 'Удалить' : 'Покинуть'}
         </button>
+        <WorkspaceParticipants participants={participants} className="workspace__participants" />
       </div>
       <Boards data={boards} workspaceId={id} />
     </div>

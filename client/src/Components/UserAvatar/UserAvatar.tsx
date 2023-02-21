@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 
 import { IUser } from '../../types/card';
+import { IParticipant } from '../../types/workspace';
 import './UserAvatar.scss';
 
 interface UserAvatarProps {
-  participant: IUser;
+  participant: IUser | IParticipant;
   className?: string;
 }
 
