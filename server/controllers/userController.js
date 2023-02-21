@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import { unlink } from 'fs/promises';
 import User from '../models/userModel.js';
 import Workspace from '../models/workspaceModel.js';
 import { errors } from '../helpers.js';
@@ -68,6 +69,13 @@ async function updateUserAvatar(req, res) {
   try {
     const { avatarColor, avatarImage } = req.body;
     const { userId } = req;
+    const user = await User.findById(userId);
+    // check if old avatarImage to remove
+    if (avatarColor && user.avatarImage) {
+      const splitPath = user.avatarImage.split('/');
+      const path = `./${splitPath[3]}/${splitPath[4]}`;
+      await unlink(path);
+    }
     // update user
     const updatedUser = await User.findByIdAndUpdate(
       userId,

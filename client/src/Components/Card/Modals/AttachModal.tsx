@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useAppDispatch } from '../../../hooks/redux';
@@ -17,7 +17,7 @@ interface IAttachModalProps {
 
 function AttachModal({ boardId, cardId }: IAttachModalProps) {
   const dispatch = useAppDispatch();
-  const [uploadFile] = useUploadFileMutation();
+  const [uploadFile, { isLoading: uploading, isSuccess: uploaded }] = useUploadFileMutation();
   const [addAttachment] = useAddAttachmentMutation();
   const [link, setLink] = useState('');
 
@@ -66,6 +66,15 @@ function AttachModal({ boardId, cardId }: IAttachModalProps) {
     addAttachment({ boardId, cardId, data });
     dispatch(setAttachModalClose());
   }
+
+  useEffect(() => {
+    if (uploading) {
+      toast.loading('Загружаем файл...');
+    }
+    if (uploaded) {
+      toast.dismiss();
+    }
+  }, [uploading, uploaded]);
 
   return (
     <div className="card__modal card__modal--attach" ref={ref}>
