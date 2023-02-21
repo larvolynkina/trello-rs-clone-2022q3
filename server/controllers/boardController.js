@@ -50,6 +50,9 @@ async function getBoardById(req, res) {
     const { boardId } = req.params;
     const { userId } = req;
     const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: 'Доска не найдена' });
+    }
     const query = [
       {
         $match: { boards: mongoose.Types.ObjectId(boardId) },

@@ -1,6 +1,6 @@
 import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
@@ -32,12 +32,17 @@ import SearchParticipantsForm from './SearchParticipantsForm';
 import BoardMenu from './BoardMenu';
 import Loader from '../../Components/Loader';
 import Card from '../../Components/Card';
+import { isFetchBaseQueryError } from '../../utils/error';
 
 function Board() {
   const location = useLocation();
   const boardId = location.pathname.split('/')[2];
-  const { data: boardDetailsFromServer, isLoading: boardDetailsLoading } =
-    useGetBoardByIDQuery(boardId);
+  const {
+    data: boardDetailsFromServer,
+    isLoading: boardDetailsLoading,
+    isError,
+    error,
+  } = useGetBoardByIDQuery(boardId);
   const { data: columnsDataFromServer, isLoading: columnsDataLoading } =
     useGetColumnsQuery(boardId);
   const { data: cardsDataFromServer, isLoading: cardsDataLoading } =
@@ -74,6 +79,13 @@ function Board() {
     canOpen: false,
     cardId: '',
   });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isError && error && isFetchBaseQueryError(error) && error.status === 403) {
+      navigate('/forbidden');
+    }
+  }, [isError]);
 
   useEffect(() => {
     const findCardId = paramsURL.get('card');
@@ -86,10 +98,7 @@ function Board() {
   }, [paramsURL, cardsData]);
 
   useEffect(() => {
-    if (
-      (boardData._id.length === 0 || boardId !== boardData._id) &&
-      boardDetailsFromServer
-    ) {
+    if ((boardData._id.length === 0 || boardId !== boardData._id) && boardDetailsFromServer) {
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
   }, [boardDetailsFromServer]);
