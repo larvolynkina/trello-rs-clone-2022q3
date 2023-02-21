@@ -26,7 +26,11 @@ type WorkspaceUpdatingData = {
   websiteAddress?: string;
 };
 
-type WorkspaceDeletionResponse = {
+type WorkspaceLeavingData = {
+  workspaceId: string;
+};
+
+type Message = {
   message: string;
 };
 
@@ -62,10 +66,18 @@ export const workspaceApi = createApi({
       }),
       invalidatesTags: ['Workspace'],
     }),
-    deleteWorkspace: builder.mutation<WorkspaceDeletionResponse, string>({
+    deleteWorkspace: builder.mutation<Message, string>({
       query: (id) => ({
         url: `/workspaces/${id}`,
         method: 'DELETE',
+      }),
+      invalidatesTags: ['Workspace'],
+    }),
+    leaveWorkspace: builder.mutation<Message, WorkspaceLeavingData>({
+      query: (body) => ({
+        url: '/workspaces/leave',
+        method: 'POST',
+        body,
       }),
       invalidatesTags: ['Workspace'],
     }),
@@ -85,5 +97,6 @@ export const {
   useCreateWorkspaceMutation,
   useUpdateWorkspaceMutation,
   useDeleteWorkspaceMutation,
+  useLeaveWorkspaceMutation,
   useCreateBoardMutation,
 } = workspaceApi;
