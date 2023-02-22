@@ -39,6 +39,7 @@ export interface IBoard {
   backgroundImage?: string;
   archived?: boolean;
   participants?: string[];
+  owner?: string;
   columns?: string[];
   marks?: IMark[];
   activities?: IActivity[];

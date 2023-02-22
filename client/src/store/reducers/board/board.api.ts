@@ -150,6 +150,19 @@ export const boardApi = createApi({
         body,
       }),
     }),
+    leaveBoardParticipants: build.mutation({
+      query: (body: {boardId: string}) => ({
+        url: '/boards/leave',
+        method: 'POST',
+        body,
+      }),
+    }),
+    deleteBoard: build.mutation({
+      query: (boardId: string) => ({
+        url: `/boards/${boardId}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -173,4 +186,6 @@ export const {
   useDeleteMarkFromBoardMutation,
   useUpdateCardTitleOnServerMutation,
   useCopyColumnMutation,
+  useLeaveBoardParticipantsMutation,
+  useDeleteBoardMutation,
 } = boardApi;
