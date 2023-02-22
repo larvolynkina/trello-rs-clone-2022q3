@@ -7,13 +7,6 @@ export interface IMark {
   _id?: string;
 }
 
-export interface IActivities {
-  _id: string;
-  userId: string;
-  action: string;
-  date: string;
-}
-
 export interface IColumnCard {
   id: string;
   title: string;
@@ -48,17 +41,11 @@ export interface IBoard {
   participants?: string[];
   columns?: string[];
   marks?: IMark[];
-  activities?: IActivities[];
+  activities?: IActivity[];
   createdAt?: string;
   updatedAt?: string;
   workspace?: IWorkspace;
 }
-
-
-// export interface ICard {
-//   _id: string;
-//   title: string;
-// }
 
 export interface IBoardState {
   boardData: IBoard;
