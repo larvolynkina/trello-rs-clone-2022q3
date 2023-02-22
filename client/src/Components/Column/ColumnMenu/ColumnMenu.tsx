@@ -8,7 +8,7 @@ import {
 import {
   deleteColumnFromStore,
   createColumnInStore,
-  // updateCardInColumn,
+  addFewCardsInColumn,
 } from '../../../store/reducers/board/boardState';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 
@@ -45,9 +45,11 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
     })
       .unwrap()
       .then((res) => {
+        console.log(res)
         toast.dismiss();
-        if (res && res._id.length > 0) {
-          dispatch(createColumnInStore({ column: res, boardId: idOpenedColumn.boardId }));
+        if (res && res.column._id.length > 0) {
+          dispatch(createColumnInStore({ column: res.column, boardId: idOpenedColumn.boardId }));
+          dispatch(addFewCardsInColumn(res.cards))
         }
       });
   };

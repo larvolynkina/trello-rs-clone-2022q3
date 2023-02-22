@@ -13,7 +13,8 @@ import { addCardInColumn, changeTitleColumnInStore } from '../../store/reducers/
 
 import ColumnCard from './ColumnCard';
 import AddCardOrColumnForm from './AddCardOrColumnForm';
-import { IColumn, ICard } from '../../types/board';
+import { IColumn } from '../../types/board';
+import { ICard } from '../../types/card';
 import { AddButtonsOnBoardText } from '../../const/const';
 import { getCardsOfColumn } from './utils';
 

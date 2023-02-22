@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IColumn, IBoardState, ICard, IBoard } from '../../../types/board';
-import { IUser } from '../../../types/card';
+import { IColumn, IBoardState, IBoard } from '../../../types/board';
+import { ICard, IUser } from '../../../types/card';
 
 const initialState: IBoardState = {
   boardData: {
@@ -61,6 +61,9 @@ export const boardStateSlice = createSlice({
     updateCardInColumn(state, action: PayloadAction<ICard[]>) {
       state.cardsData = action.payload;
     },
+    addFewCardsInColumn(state, action: PayloadAction<ICard[]>) {
+      state.cardsData.push(...action.payload);
+    },
     addCardInColumn(state, action: PayloadAction<{ card: ICard; id: string }>) {
       const columnForChange = state.columnsData.find((column) => column._id === action.payload.id);
       if (columnForChange) {
@@ -92,6 +95,7 @@ export const {
   addParticipantsInStore,
   updateOpenMenuCardArgs,
   updateBoardBgInStore,
+  addFewCardsInColumn,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;

@@ -1,4 +1,4 @@
-import { IActivity, IUser } from "./card";
+import { IActivity, ICard, IUser } from "./card";
 import { IWorkspace } from "./workspace";
 
 export interface IMarks {
@@ -49,10 +49,10 @@ export interface IBoard {
 }
 
 
-export interface ICard {
-  _id: string;
-  title: string;
-}
+// export interface ICard {
+//   _id: string;
+//   title: string;
+// }
 
 export interface IBoardState {
   boardData: IBoard;

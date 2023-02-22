@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { updateOpenMenuCardArgs } from '../../../store/reducers/board/boardState';
-import { ICard } from '../../../types/board';
+import { ICard } from '../../../types/card';
 
 type ColumnCardProps = {
   card: ICard;
