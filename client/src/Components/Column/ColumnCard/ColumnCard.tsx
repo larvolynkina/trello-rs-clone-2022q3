@@ -1,27 +1,20 @@
 import './columnCard.scss';
-import { DragEvent, MouseEvent } from 'react';
-import { useSearchParams  } from 'react-router-dom';
+import { MouseEvent, KeyboardEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { updateOpenMenuCardArgs } from '../../../store/reducers/board/boardState';
 import { ICard } from '../../../types/board';
 
 type ColumnCardProps = {
   card: ICard;
-  onDragStart: (e: DragEvent<HTMLLIElement>, card: ICard) => void;
-  onDragOver: (e: DragEvent<HTMLLIElement>, card: ICard) => void;
-  onDrop: (e: DragEvent<HTMLLIElement>, card: ICard) => void;
-  onDragLeave: () => void;
-  cardWithStyleID: string;
+  index: number;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
 };
 
 function ColumnCard({
   card,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  cardWithStyleID,
-  onDragLeave,
+  index,
   openCardMenu,
 }: ColumnCardProps) {
   const dispatch = useAppDispatch();
@@ -32,31 +25,44 @@ function ColumnCard({
     e.stopPropagation();
     openCardMenu(e);
     if (card._id) {
-      dispatch(updateOpenMenuCardArgs({...openMenuCardArgs, cardId: card._id}))
+      dispatch(updateOpenMenuCardArgs({ ...openMenuCardArgs, cardId: card._id }));
     }
   };
 
   const handleOpenCard = () => {
-    setSearchParams({'card': card._id});
+    setSearchParams({ card: card._id });
   };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLLIElement>) => {
+    if (e.key === 'enter') {
+      setSearchParams({ card: card._id });
+    }
+  };
+
   return (
-    <li
-      draggable
-      className={`column-card ${cardWithStyleID === card._id ? 'column-card--insert' : ''}`}
-      onDragStart={(e) => onDragStart(e, card)}
-      onDragOver={(e) => onDragOver(e, card)}
-      onDrop={(e) => onDrop(e, card)}
-      onDragLeave={() => onDragLeave()}
-      onContextMenu={(e) => handleContextMenu(e)}
-      onClick={handleOpenCard}
-      onKeyUp={handleOpenCard}
-      aria-hidden="true"
-    >
-      {card.title}
-      <button type="button" className="column-card__pensil" onClick={(e) => handleContextMenu(e)}>
-        Открыть меню
-      </button>
-    </li>
+    <Draggable draggableId={card._id} index={index}>
+      {(provided, snapshot) => (
+        <li
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+          className={`column-card ${snapshot.isDragging ? 'column-card--is-dragging' : '' }` }
+          onContextMenu={(e) => handleContextMenu(e)}
+          onClick={handleOpenCard}
+          onKeyUp={(e) => handleKeyDown(e)}
+          aria-hidden="true"
+        >
+          {card.title}
+          <button
+            type="button"
+            className="column-card__pensil"
+            onClick={(e) => handleContextMenu(e)}
+          >
+            Открыть меню
+          </button>
+        </li>
+      )}
+    </Draggable>
   );
 }
 

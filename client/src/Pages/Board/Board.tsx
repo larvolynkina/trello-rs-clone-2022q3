@@ -2,7 +2,7 @@ import './board.scss';
 import { MouseEvent, useEffect, useState, KeyboardEvent, useRef } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
   updateColumnsInStore,
@@ -11,9 +11,11 @@ import {
   updateCardInColumn,
 } from '../../store/reducers/board/boardState';
 
-import { IColumn, ICard } from '../../types/board';
 import { AddButtonsOnBoardText } from '../../const/const';
-import { getNewColumnsOrder, getTranspositionColumnCards } from './utils';
+import {
+  getNewColumnsOrder,
+  getColumnsWithOrderedCards,
+} from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
 import {
@@ -45,18 +47,13 @@ function Board() {
     useGetCardsOnBoardQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder] = useUpdateColumnOrderMutation();
-  const [updateCardOrder, { isError: errorUpdateCardOrder }] = useUpdateCardOrderMutation();
+  const [updateCardOrder ] = useUpdateCardOrderMutation();
   const [updateCardTitleOnServer] = useUpdateCardTitleOnServerMutation();
   const dispatch = useAppDispatch();
   const { boardData, columnsData, cardsData, openMenuCardArgs } = useAppSelector(
     (state) => state.BOARD,
   );
-  const [dragCard, setDragCard] = useState<ICard | null>(null);
-  const [dropCard, setDropCard] = useState<ICard | null>(null);
-  const [dragColumnFromCard, setDragColumnFromCard] = useState<IColumn | null>(null);
-  const [dropColumnFromCard, setDropColumnFromCard] = useState<IColumn | null>(null);
-  const [dragColumn, setDragColum] = useState<IColumn | null>(null);
-  const [dropColumn, setDropColum] = useState<IColumn | null>(null);
+
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
   const [isOpenColumnMenu, setIsOpenColumnMenu] = useState(false);
   const [isOpenCardMenu, setIsOpenCardMenu] = useState(false);
@@ -113,44 +110,6 @@ function Board() {
       }
     }
   }, [boardData.backgroundImage, boardData.backgroundColor]);
-
-  useEffect(() => {
-    if (dragColumnFromCard && dropColumnFromCard && dragCard && dropCard && columnsData) {
-      const { newColumns, resultColumn } = getTranspositionColumnCards({
-        dragColumnFromCard,
-        dropColumnFromCard,
-        dragCard,
-        dropCard,
-        columnsData,
-      });
-      if (resultColumn) {
-        dispatch(updateColumnsInStore(newColumns));
-        updateCardOrder({ boardId, data: resultColumn });
-        if (errorUpdateCardOrder) {
-          throw new Error('Ошибка изменения порядка карточек');
-        }
-      }
-      setDragColumnFromCard(null);
-      setDropColumnFromCard(null);
-      setDragCard(null);
-    }
-  }, [dropColumnFromCard, dropCard]);
-
-  useEffect(() => {
-    setDragColum(null);
-    setDropColum(null);
-
-    if (dropColumn?._id === dragColumn?._id) {
-      return;
-    }
-    if (dropColumn && dragColumn && columnsData) {
-      const newColumnsOrder = getNewColumnsOrder({ dragColumn, dropColumn, columnsData });
-      dispatch(updateColumnsInStore(newColumnsOrder));
-      const newColumnsOrderId = newColumnsOrder.map((column) => column._id);
-      updateColumnOrder({ boardId, data: newColumnsOrderId }).unwrap();
-    }
-
-  }, [dropColumn]);
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
@@ -235,6 +194,31 @@ function Board() {
     updateCardTitleOnServer({ ...openMenuCardArgs, boardId, title });
   };
 
+  const handleDragEndColumn = (dragResult: DropResult) => {
+    const { destination, source, type } = dragResult;
+
+    if (type === 'card') {
+      if (
+        destination &&
+        !(destination.droppableId === source.droppableId && destination.index === source.index)
+      ) {
+        const { newColumnsWithForStore, newColumnsForServer } = getColumnsWithOrderedCards({
+          columns: columnsData,
+          dragResult,
+        });
+
+        if (newColumnsWithForStore) {
+          dispatch(updateColumnsInStore(newColumnsWithForStore));
+          updateCardOrder({ boardId, data: newColumnsForServer });
+        }
+      }
+    } else if (destination && destination.index !== source.index) {
+      const newColumnsOrder = getNewColumnsOrder({dragResult, columnsData});
+      dispatch(updateColumnsInStore(newColumnsOrder));
+      const newColumnsOrderId = newColumnsOrder.map((column) => column._id);
+      updateColumnOrder({ boardId, data: newColumnsOrderId }).unwrap();
+    }
+  };
   return (
     <main
       className="board"
@@ -248,9 +232,7 @@ function Board() {
       {!(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && (
         <>
           <aside className="board__aside">
-            {boardData.workspace && (
-              <BoardAside workspace={boardData.workspace} />
-            )}
+            {boardData.workspace && <BoardAside workspace={boardData.workspace} />}
           </aside>
 
           <div className="board__body" ref={boardBody}>
@@ -262,50 +244,59 @@ function Board() {
               />
             )}
 
-            <ul className="board__columns">
-              {columnsData &&
-                columnsData.map((column) => (
-                  <Column
-                    key={column._id}
-                    boardId={boardId}
-                    column={column}
-                    cardsData={cardsData}
-                    setDragCard={setDragCard}
-                    setDropCard={setDropCard}
-                    setDragColumnFromCard={setDragColumnFromCard}
-                    dragCard={dragCard}
-                    setDropColumnFromCard={setDropColumnFromCard}
-                    openColumnMenu={handleOpenColumnMenu}
-                    dragColumn={dragColumn}
-                    setDragColum={setDragColum}
-                    setDropColum={setDropColum}
-                    openCardMenu={handleOpenCardMenu}
-                    setIdOpenedColumn={setIdOpenedColumn}
-                    idOpenedColumn={idOpenedColumn}
-                    addCardFromMenu={addCardFromMenu}
-                    setAddCardFromMenu={setAddCardFromMenu}
-                  />
-                ))}
-              {!boardDetailsLoading && !columnsDataLoading && (
-                <div className="board__last-column">
-                  {!isOpenAddForm && (
-                    <button type="button" className="board__add-column" onClick={handleAddColumn}>
-                      {columnsData && columnsData.length === 0
-                        ? AddButtonsOnBoardText.addColumn
-                        : AddButtonsOnBoardText.addOneMoreColumn}
-                    </button>
-                  )}
-                  {isOpenAddForm && (
-                    <AddCardOrColumnForm
-                      placeholderTextarea="Ввести заголовок списка"
-                      textButton="Добавить список"
-                      saveObject={saveColumn}
-                      setIsOpenAddForm={setIsOpenAddForm}
-                    />
-                  )}
-                </div>
-              )}
-            </ul>
+            <DragDropContext onDragEnd={handleDragEndColumn}>
+              <Droppable droppableId="all-columns" direction="horizontal" type="column">
+                {(provided) => (
+                  <ul
+                    className="board__columns"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {columnsData &&
+                      columnsData.map((column, index) => (
+                        <Column
+                          key={column._id}
+                          index={index}
+                          boardId={boardId}
+                          column={column}
+                          cardsData={cardsData}
+                          openColumnMenu={handleOpenColumnMenu}
+                          openCardMenu={handleOpenCardMenu}
+                          setIdOpenedColumn={setIdOpenedColumn}
+                          idOpenedColumn={idOpenedColumn}
+                          addCardFromMenu={addCardFromMenu}
+                          setAddCardFromMenu={setAddCardFromMenu}
+                        />
+                      ))}
+                    {!boardDetailsLoading && !columnsDataLoading && (
+                      <li className="board__last-column">
+                        {!isOpenAddForm && (
+                          <button
+                            type="button"
+                            className="board__add-column"
+                            onClick={handleAddColumn}
+                          >
+                            {columnsData && columnsData.length === 0
+                              ? AddButtonsOnBoardText.addColumn
+                              : AddButtonsOnBoardText.addOneMoreColumn}
+                          </button>
+                        )}
+                        {isOpenAddForm && (
+                          <AddCardOrColumnForm
+                            placeholderTextarea="Ввести заголовок списка"
+                            textButton="Добавить список"
+                            saveObject={saveColumn}
+                            setIsOpenAddForm={setIsOpenAddForm}
+                          />
+                        )}
+                      </li>
+                    )}
+                    {provided.placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            </DragDropContext>
+
             {isOpenColumnMenu && (
               <div className="board__column-menu" style={{ left: columnMenuPosition }}>
                 <ColumnMenu
