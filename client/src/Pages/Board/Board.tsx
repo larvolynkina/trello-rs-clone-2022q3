@@ -97,6 +97,7 @@ function Board() {
 
   useEffect(() => {
     if ((boardData._id.length === 0 || boardId !== boardData._id) && boardDetailsFromServer) {
+      console.log('update board from server')
       dispatch(updateBoardDetails(boardDetailsFromServer));
     }
   }, [boardDetailsFromServer]);
@@ -114,11 +115,15 @@ function Board() {
   }, [cardsDataFromServer]);
 
   useEffect(() => {
+    console.log(boardData.backgroundImage)
+    console.log(boardData.backgroundColor)
     if (boardData && boardData._id.length > 0) {
       if (boardData.backgroundImage && boardData.backgroundImage.length > 0) {
         setBgStyle({ backgroundImage: boardData.backgroundImage });
       } else if (boardData.backgroundColor && boardData.backgroundColor.length > 0) {
         setBgStyle({ backgroundImage: 'none', backgroundColor: boardData.backgroundColor });
+      } else {
+        setBgStyle({ backgroundImage: 'none', backgroundColor: '#97a0af' });
       }
     }
   }, [boardData.backgroundImage, boardData.backgroundColor]);
