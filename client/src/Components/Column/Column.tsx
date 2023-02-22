@@ -1,44 +1,29 @@
 import './column.scss';
-import {
-  ChangeEvent,
-  DragEvent,
-  KeyboardEvent,
-  useState,
-  useEffect,
-  MouseEvent,
-  useRef,
-} from 'react';
+import { ChangeEvent, KeyboardEvent, useState, useEffect, MouseEvent, useRef } from 'react';
 import { toast } from 'react-toastify';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 import {
   useCreateCardMutation,
-  // useGetCardsOnBoardQuery,
   useUpdateTitleColumnMutation,
 } from '../../store/reducers/board/board.api';
 
-// import { addCardInColumn } from '../../store/reducers/board/boardState';
 import { useAppDispatch } from '../../hooks/redux';
 import { addCardInColumn, changeTitleColumnInStore } from '../../store/reducers/board/boardState';
 
 import ColumnCard from './ColumnCard';
 import AddCardOrColumnForm from './AddCardOrColumnForm';
-import { IColumn, ICard } from '../../types/board';
+import { IColumn } from '../../types/board';
+import { ICard } from '../../types/card';
 import { AddButtonsOnBoardText } from '../../const/const';
 import { getCardsOfColumn } from './utils';
 
 type ColumnProps = {
   boardId: string;
   column: IColumn;
+  index: number;
   cardsData: ICard[];
-  dragCard: ICard | null;
-  setDragCard: (card: ICard) => void;
-  setDropCard: (card: ICard) => void;
-  setDragColumnFromCard: (column: IColumn) => void;
-  setDropColumnFromCard: (column: IColumn) => void;
   openColumnMenu: (e: MouseEvent<HTMLButtonElement>) => void;
-  dragColumn: IColumn | null;
-  setDragColum: (column: IColumn | null) => void;
-  setDropColum: (column: IColumn | null) => void;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
   setIdOpenedColumn: ({ boardId, columnId }: { boardId: string; columnId: string }) => void;
   idOpenedColumn: { boardId: string; columnId: string };
@@ -48,16 +33,9 @@ type ColumnProps = {
 function Column({
   boardId,
   column,
+  index,
   cardsData,
-  dragCard,
-  setDragCard,
-  setDropCard,
-  setDragColumnFromCard,
-  setDropColumnFromCard,
   openColumnMenu,
-  dragColumn,
-  setDragColum,
-  setDropColum,
   openCardMenu,
   setIdOpenedColumn,
   addCardFromMenu,
@@ -68,12 +46,10 @@ function Column({
     useCreateCardMutation();
   const [updateTitleColumn, { isError: errorUpdateTitleColumn }] = useUpdateTitleColumnMutation();
   const [title, setTitle] = useState(column.title);
-  const [cardWithStyleID, setCardWithStyleID] = useState<string>('');
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
   const [cards, setCards] = useState<ICard[]>([]);
   const [isEditTitle, setIsEditTitle] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [columnWithStyleID, setColumnWithStyleID] = useState<string>('');
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -96,46 +72,6 @@ function Column({
     }
   }, [loadingCreateCard]);
 
-  const handleDragStartCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
-    e.stopPropagation();
-    setDragCard(card);
-    setDragColumnFromCard(column);
-  };
-
-  const handleDragOverCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
-    e.preventDefault();
-    if (dragCard) {
-      if (card._id !== dragCard._id) {
-        setCardWithStyleID(card._id);
-      } else {
-        setCardWithStyleID('');
-      }
-    }
-  };
-
-  const handleDragLeaveCard = () => {
-    setCardWithStyleID('');
-  };
-  const handleDropCard = (e: DragEvent<HTMLLIElement>, card: ICard) => {
-    e.preventDefault();
-    if (dragCard) {
-      setCardWithStyleID('');
-    }
-    setDropCard(card);
-  };
-
-  const handleDropColumn = (e: DragEvent<HTMLLIElement>) => {
-    e.preventDefault();
-    setDropColumnFromCard(column);
-    setColumnWithStyleID('');
-    if (dragColumn) {
-      setDropColum(column);
-    }
-  };
-
-  const stopPrevent = (e: DragEvent<HTMLLIElement>) => {
-    e.preventDefault();
-  };
   const handleTitleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.currentTarget.blur();
@@ -162,7 +98,7 @@ function Column({
     }
   };
   const updateTitleOnServerAndStore = async () => {
-    dispatch(changeTitleColumnInStore({id: column._id, title: title.trim()}));
+    dispatch(changeTitleColumnInStore({ id: column._id, title: title.trim() }));
     setIsEditTitle(false);
     if (boardId && title)
       await updateTitleColumn({ boardId, columnId: column._id, title: title.trim() }).unwrap();
@@ -170,100 +106,112 @@ function Column({
       throw new Error('Ошибка изменения заголовка');
     }
   };
-  const handleClickTitleWrapper = () => {
-    setIsEditTitle(true);
-    inputRef.current?.focus();
-  };
-  const handleDragColumn = () => {
-    setDragColum(column);
-  };
-  const handleDragOverColumn = (e: DragEvent<HTMLLIElement>) => {
-    e.preventDefault();
-    if (dragColumn) {
-      if (dragColumn._id !== column._id) {
-        setColumnWithStyleID(column._id);
-      }
-    }
-  };
-  const handleDragLeaveColumn = () => {
-    setColumnWithStyleID('');
-  };
+  // const handleClickTitleWrapper = () => {
+  //   // 
+  // };
+
   const handleOpenMenu = (e: MouseEvent<HTMLButtonElement>) => {
     openColumnMenu(e);
     setIdOpenedColumn({ boardId, columnId: column._id });
   };
-  return (
-    <li
-      draggable
-      className={`column ${columnWithStyleID === column._id ? 'column--insert' : ''}`}
-      onDragStart={handleDragColumn}
-      onDrop={handleDropColumn}
-      onDragEnter={(e) => {
-        stopPrevent(e);
-      }}
-      onDragOver={handleDragOverColumn}
-      onDragLeave={handleDragLeaveColumn}
-    >
-      <div className="column__header">
-        <button
-          type="button"
-          onClick={handleClickTitleWrapper}
-          className={
-            isEditTitle
-              ? 'column__title-wrapper column__title-wrapper--hidden'
-              : 'column__title-wrapper'
-          }
-        >
-          Редактировать заголовок списка
-        </button>
-        <input
-          type="text"
-          className="column__title"
-          ref={inputRef}
-          value={title}
-          onChange={(e) => handleChangeTitle(e)}
-          onFocus={(e) => {
-            e.target.select();
-          }}
-          onKeyUp={(e) => handleTitleKeyUp(e)}
-          onBlur={updateTitleOnServerAndStore}
-        />
-        <button className="column__actions" type="button" onClick={handleOpenMenu}>
-          ...
-        </button>
-      </div>
-      <ul className="column__cards">
-        {cards &&
-          cards.map((card) => (
-            <ColumnCard
-              key={card._id}
-              card={card}
-              onDragStart={handleDragStartCard}
-              onDragOver={handleDragOverCard}
-              onDrop={handleDropCard}
-              onDragLeave={handleDragLeaveCard}
-              cardWithStyleID={cardWithStyleID}
-              openCardMenu={openCardMenu}
-            />
-          ))}
-      </ul>
 
-      {isOpenAddForm && (
-        <AddCardOrColumnForm
-          placeholderTextarea="Ввести заголовок для этой карточки"
-          textButton="Добавить карточку"
-          saveObject={saveCard}
-          setIsOpenAddForm={setIsOpenAddForm}
-        />
+  // const handleClickTitle = () => {
+  //   setIsEditTitle(true);
+  //    if (inputRef.current) {
+  //     inputRef.;
+  //    }
+  // };
+
+  useEffect(() => {
+    if (isEditTitle && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isEditTitle]);
+
+  return (
+    <Draggable draggableId={column._id} index={index}>
+      {(providedColumn) => (
+        <li className="column" {...providedColumn.draggableProps} ref={providedColumn.innerRef}>
+          <div className="column__header" {...providedColumn.dragHandleProps}>
+            {/* <button
+              type="button"
+              onClick={handleClickTitleWrapper}
+              className={
+                isEditTitle
+                  ? 'column__title-wrapper column__title-wrapper--hidden'
+                  : 'column__title-wrapper'
+              }
+            >
+              Редактировать заголовок списка
+            </button> */}
+            {!isEditTitle && (
+              <h3
+                className="column__text-title"
+                {...providedColumn.dragHandleProps}
+                onClick={() => setIsEditTitle(true)}
+                onKeyDown={() => setIsEditTitle(true)}
+                aria-hidden="true"
+              >
+                {title}
+              </h3>
+            )}
+            
+              <input
+                type="text"
+                className={`column__input-title ${! isEditTitle ? 'column__input-title--hidden' : ''}`}
+                ref={inputRef}
+                value={title}
+                onChange={(e) => handleChangeTitle(e)}
+                onFocus={(e) => {
+                  e.target.select();
+                }}
+                onKeyUp={(e) => handleTitleKeyUp(e)}
+                onBlur={updateTitleOnServerAndStore}
+              />
+            
+            <button className="column__actions" type="button" onClick={handleOpenMenu}>
+              ...
+            </button>
+          </div>
+          <Droppable droppableId={column._id} type="card">
+            {(provided) => (
+              <ul className="column__cards" ref={provided.innerRef}>
+                {cards &&
+                  cards.map((card, indexCard) => (
+                    <ColumnCard
+                      key={card._id}
+                      card={card}
+                      index={indexCard}
+                      openCardMenu={openCardMenu}
+                    />
+                  ))}
+                {provided.placeholder}
+              </ul>
+            )}
+          </Droppable>
+
+          {isOpenAddForm && (
+            <AddCardOrColumnForm
+              placeholderTextarea="Ввести заголовок для этой карточки"
+              textButton="Добавить карточку"
+              saveObject={saveCard}
+              setIsOpenAddForm={setIsOpenAddForm}
+            />
+          )}
+          {!isOpenAddForm && !loadingCreateCard && (
+            <div className="column__footer">
+              <button
+                className="column__add-card"
+                type="button"
+                onClick={() => setIsOpenAddForm(true)}
+              >
+                {AddButtonsOnBoardText.addCard}
+              </button>
+            </div>
+          )}
+        </li>
       )}
-      {!isOpenAddForm && !loadingCreateCard && (
-        <div className="column__footer">
-          <button className="column__add-card" type="button" onClick={() => setIsOpenAddForm(true)}>
-            {AddButtonsOnBoardText.addCard}
-          </button>
-        </div>
-      )}
-    </li>
+    </Draggable>
   );
 }
 

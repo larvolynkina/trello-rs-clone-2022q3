@@ -1,4 +1,4 @@
-import { ICard } from '../../types/board';
+import { ICard } from "../../types/card";
 
 export function getCardsOfColumn(ids: string[], cards: ICard[]): ICard[] | [] {
   if (ids.length > 0 && cards.length > 0) {

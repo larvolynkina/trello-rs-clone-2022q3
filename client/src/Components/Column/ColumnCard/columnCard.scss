@@ -5,16 +5,11 @@
   line-height: 150%;
   cursor: pointer;
   box-shadow: 0 1px 0 #091e4240;
-  transition: all 0.3s;
   position: relative;
+  margin-bottom: 8px;
 
-  &--insert {
-    box-shadow: 0 4px brown;
-  }
-
-  &__input {
+    &__input {
     resize: none;
-    
   }
 
   &__pensil {

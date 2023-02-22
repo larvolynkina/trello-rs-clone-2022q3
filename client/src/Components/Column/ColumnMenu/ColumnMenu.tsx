@@ -1,7 +1,16 @@
 import './columnMenu.scss';
-import { useDeleteColumnMutation } from '../../../store/reducers/board/board.api';
-import { deleteColumnFromStore } from '../../../store/reducers/board/boardState';
-import { useAppDispatch } from '../../../hooks/redux';
+import { toast } from 'react-toastify';
+
+import {
+  useDeleteColumnMutation,
+  useCopyColumnMutation,
+} from '../../../store/reducers/board/board.api';
+import {
+  deleteColumnFromStore,
+  createColumnInStore,
+  addFewCardsInColumn,
+} from '../../../store/reducers/board/boardState';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 
 type ColumnMenuProps = {
   onClose: () => void;
@@ -10,6 +19,8 @@ type ColumnMenuProps = {
 };
 function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuProps) {
   const [deleteColumn, { isError: errorDeleteColumn }] = useDeleteColumnMutation();
+  const [copyColumn] = useCopyColumnMutation();
+  const { columnsData } = useAppSelector((state) => state.BOARD);
   const dispatch = useAppDispatch();
 
   async function asyncDelColumn(idObj: { boardId: string; columnId: string }) {
@@ -18,12 +29,30 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
   }
 
   const handleDeleteColumn = () => {
-    dispatch(deleteColumnFromStore({columnId: idOpenedColumn.columnId}))
+    dispatch(deleteColumnFromStore({ columnId: idOpenedColumn.columnId }));
     asyncDelColumn(idOpenedColumn);
   };
   const handleAddCard = () => {
     setAddCardFromMenu(true);
-  }
+  };
+  const handleCopyCard = () => {
+    const currentColumn = columnsData.find((column) => column._id === idOpenedColumn.columnId);
+    toast.loading('Копируем колонку...');
+    copyColumn({
+      boardId: idOpenedColumn.boardId,
+      columnId: idOpenedColumn.columnId,
+      newTitle: `Копия ${currentColumn?.title}`,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.dismiss();
+        if (res && res.column._id.length > 0) {
+          dispatch(createColumnInStore({ column: res.column, boardId: idOpenedColumn.boardId }));
+          dispatch(addFewCardsInColumn(res.cards))
+        }
+      });
+  };
+
   return (
     <ul className="column-menu">
       <div className="column-menu__header">
@@ -34,9 +63,15 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
       </div>
       <ul className="column-menu__group">
         <li className="column-menu__item">
-          <button type="button" onClick={handleAddCard}>Добавить карточку...</button>
+          <button className="column-menu__button" type="button" onClick={handleAddCard}>
+            Добавить карточку...
+          </button>
         </li>
-        <li className="column-menu__item">Копировать колонку...</li>
+        <li className="column-menu__item">
+          <button className="column-menu__button" type="button" onClick={handleCopyCard}>
+            Копировать колонку...
+          </button>
+        </li>
       </ul>
       <ul className="column-menu__group">
         <li className="column-menu__item column-menu__item--del">
