@@ -37,15 +37,14 @@ function ColumnMenu({ onClose, idOpenedColumn, setAddCardFromMenu }: ColumnMenuP
   };
   const handleCopyCard = () => {
     const currentColumn = columnsData.find((column) => column._id === idOpenedColumn.columnId);
-    toast.loading('Добавляем копию колонки...');
+    toast.loading('Копируем колонку...');
     copyColumn({
       boardId: idOpenedColumn.boardId,
       columnId: idOpenedColumn.columnId,
-      newTitle: `Копия колонки ${currentColumn?.title}`,
+      newTitle: `Копия ${currentColumn?.title}`,
     })
       .unwrap()
       .then((res) => {
-        console.log(res)
         toast.dismiss();
         if (res && res.column._id.length > 0) {
           dispatch(createColumnInStore({ column: res.column, boardId: idOpenedColumn.boardId }));
