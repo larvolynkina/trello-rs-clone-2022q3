@@ -25,18 +25,7 @@ const cardModel = new mongoose.Schema(
     ],
     marks: [
       {
-        color: {
-          type: String,
-          required: true,
-        },
-        text: {
-          type: String,
-          default: '',
-        },
-        checked: {
-          type: Boolean,
-          default: false,
-        },
+        type: mongoose.Schema.Types.ObjectId,
       },
     ],
     activities: [

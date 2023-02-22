@@ -1,5 +1,5 @@
-import Boards from '../../../Components/Workcspace/Boards';
-import WorkspaceIcon from '../../../Components/Workcspace/WorkspaceIcon';
+import Boards from '../../../Components/Workspace/Boards';
+import WorkspaceIcon from '../../../Components/Workspace/WorkspaceIcon';
 import { IWorkspace } from '../../../types/workspace';
 import './BoardAside.scss';
 

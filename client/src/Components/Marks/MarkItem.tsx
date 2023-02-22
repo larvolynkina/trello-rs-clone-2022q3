@@ -1,6 +1,9 @@
-import { useState, Dispatch, SetStateAction } from 'react';
-import { IMark } from '../../types/card';
+import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
+import { IMark } from '../../types/board';
 import MarkEditModal from './MarkEditModal';
+import { toggleMarkCheckedInState } from '../../store/reducers/cards/cardSlice';
+import { useUpdateMarksIdArrayMutation } from '../../store/reducers/cards/cards.api';
+import { useAppDispatch } from '../../hooks/redux';
 
 type MarkItemProps = {
   showCheckBox: boolean;
@@ -9,13 +12,59 @@ type MarkItemProps = {
   setMarks: Dispatch<SetStateAction<IMark[]>>;
   index: number;
   boardId: string;
+  cardId?: string;
+  cardMarks?: string[];
 };
 
-function MarkItem({ showCheckBox, showPensil, mark, setMarks, index, boardId }: MarkItemProps) {
+function MarkItem({
+  showCheckBox,
+  showPensil,
+  mark,
+  setMarks,
+  index,
+  boardId,
+  cardId,
+  cardMarks,
+}: MarkItemProps) {
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [active, setActive] = useState(false);
+  const [cardMarksIdArray, setCardMarks] = useState(cardMarks);
+  const [updateMarksIdArray] = useUpdateMarksIdArrayMutation();
+  const dispatch = useAppDispatch();
+
+  function toggleMarkActive(event: React.ChangeEvent<HTMLInputElement>) {
+    let newMarksIdArray: string[] = [];
+    if (event.target.checked && cardMarksIdArray && mark._id) {
+      newMarksIdArray = [...cardMarksIdArray, mark._id];
+    } else if (cardMarksIdArray && mark._id) {
+      newMarksIdArray = [...cardMarksIdArray].filter((value) => value !== mark._id);
+    }
+    dispatch(toggleMarkCheckedInState({ id: mark?._id, checked: event.target.checked }));
+    setActive(event.target.checked);
+    setCardMarks(newMarksIdArray);
+    if (cardId) {
+      updateMarksIdArray({ boardId, cardId, marks: newMarksIdArray });
+    }
+  }
+
+  useEffect(() => {
+    if (cardMarksIdArray && cardMarksIdArray.length > 0) {
+      if (mark._id && cardMarksIdArray.includes(mark._id)) {
+        setActive(true);
+      }
+    }
+  }, [mark]);
+
   return (
     <div className="mark-item">
-      {showCheckBox && <input type="checkbox" className="mark-item__checkbox" />}
+      {showCheckBox && (
+        <input
+          type="checkbox"
+          className="mark-item__checkbox"
+          checked={active}
+          onChange={toggleMarkActive}
+        />
+      )}
       <button
         type="button"
         className="mark-item__body"
@@ -43,5 +92,10 @@ function MarkItem({ showCheckBox, showPensil, mark, setMarks, index, boardId }: 
     </div>
   );
 }
+
+MarkItem.defaultProps = {
+  cardMarks: [],
+  cardId: undefined,
+};
 
 export default MarkItem;

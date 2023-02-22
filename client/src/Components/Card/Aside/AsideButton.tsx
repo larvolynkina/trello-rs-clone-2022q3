@@ -1,5 +1,6 @@
-import React from 'react';
+import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { useDeleteCardByIdMutation } from '../../../store/reducers/cards/cards.api';
 import {
   setBoardParticipantsModalClose,
   setBoardParticipantsModalOpen,
@@ -7,20 +8,27 @@ import {
   setCheckListModalOpen,
   setAttachModalClose,
   setAttachModalOpen,
+  setMarksModalClose,
+  setMarksModalOpen,
 } from '../../../store/reducers/cards/cardSlice';
 
 interface AsideButtonProps {
   text: string;
   ico: string;
+  boardId: string;
+  cardId: string;
+  closeCard?: () => void;
 }
 
-function AsideButton({ text, ico }: AsideButtonProps) {
+function AsideButton({ text, ico, boardId, cardId, closeCard }: AsideButtonProps) {
   const dispatch = useAppDispatch();
   const boardParticipantsModalActive = useAppSelector(
     (state) => state.CARD.boardParticipantsModalActive,
   );
   const checkListModalActive = useAppSelector((state) => state.CARD.checkListModalActive);
   const attachModalActive = useAppSelector((state) => state.CARD.attachModalActive);
+  const marksModalActive = useAppSelector((state) => state.CARD.marksModalActive);
+  const [deleteCardById] = useDeleteCardByIdMutation();
 
   function onClickHandler() {
     if (text === 'Участники') {
@@ -50,6 +58,22 @@ function AsideButton({ text, ico }: AsideButtonProps) {
         }, 0);
       }
     }
+    if (text === 'Метки') {
+      if (marksModalActive) {
+        dispatch(setMarksModalClose());
+      } else {
+        setTimeout(() => {
+          dispatch(setMarksModalOpen());
+        }, 0);
+      }
+    }
+    if (text === 'Удалить') {
+      toast.loading('Удаляем карточку...');
+      deleteCardById({ boardId, cardId }).then(() => toast.dismiss());
+      if (closeCard) {
+        closeCard();
+      }
+    }
   }
 
   return (
@@ -59,5 +83,9 @@ function AsideButton({ text, ico }: AsideButtonProps) {
     </button>
   );
 }
+
+AsideButton.defaultProps = {
+  closeCard: undefined,
+};
 
 export default AsideButton;

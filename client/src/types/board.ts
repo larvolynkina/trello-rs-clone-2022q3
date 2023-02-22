@@ -1,11 +1,17 @@
 import { IActivity, ICard, IUser } from "./card";
 import { IWorkspace } from "./workspace";
 
-export interface IMarks {
-  _id: string;
+export interface IMark {
   color: string;
   text: string;
-  checked: boolean;
+  _id?: string;
+}
+
+export interface IActivities {
+  _id: string;
+  userId: string;
+  action: string;
+  date: string;
 }
 
 export interface IColumnCard {
@@ -41,8 +47,8 @@ export interface IBoard {
   archived?: boolean;
   participants?: string[];
   columns?: string[];
-  marks?: IMarks[];
-  activities?: IActivity[];
+  marks?: IMark[];
+  activities?: IActivities[];
   createdAt?: string;
   updatedAt?: string;
   workspace?: IWorkspace;

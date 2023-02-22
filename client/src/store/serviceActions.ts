@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 
 import { APIRoute, AuthorizationStatus, NameSpace, SERVER_URL } from '../const/const';
 import { dropToken, saveToken } from '../services/token';
+import { ErrorMessage } from '../types/Error';
 import {
   User,
   LoginData,
@@ -24,8 +25,6 @@ import { AppDispatch, RootState } from './rootReducer';
 const SERVER_CONNECTION_ERROR = 'Please, check server connection!';
 
 const UNKNOWN_ERROR = 'Oops, something went wrong!';
-
-type ErrorMessage = { message: string };
 
 const createAppAsyncThunk = createAsyncThunk.withTypes<{
   state: RootState;

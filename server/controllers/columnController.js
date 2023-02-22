@@ -205,7 +205,7 @@ async function copyColumn(req, res) {
       promises.push(card);
     });
     const cards = await Promise.all(promises);
-   
+
     const newCards = [];
     for (const { _id, title, ...rest } of cards) {
       const newCard = new Card({
@@ -226,7 +226,7 @@ async function copyColumn(req, res) {
     board.columns.push(copiedColumn._id);
     board.activities.push(activity);
     await board.save();
-    return res.status(200).json(copiedColumn);
+    return res.status(200).json({ column: copiedColumn, cards: newCards });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

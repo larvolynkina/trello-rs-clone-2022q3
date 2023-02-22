@@ -1,0 +1,36 @@
+@import '../../scss/base/mixins.scss';
+
+.workspace {
+  &__header {
+    display: flex;
+    gap: rem(12);
+    align-items: center;
+    margin-bottom: rem(15);
+  }
+
+  &__title {
+    font-size: rem(16);
+    color: #172b4d;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: rem(20);
+  }
+
+  &__btn {
+    padding: rem(7) rem(15);
+    background-color: #091e420a;
+    color: #172b4d;
+    font-weight: 400;
+    font-size: rem(14);
+    transition: all 0.3s ease 0s;
+
+    @media (any-hover: hover) {
+      &:hover {
+        background-color: #091e4214;
+      }
+    }
+  }
+}

@@ -4,16 +4,32 @@ $boxShadowColor: #091e4226;
 
 .header {
   position: fixed;
+  color: #fff;
+  padding: 9px 0;
   width: 100%;
   top: 0;
   left: 0;
   right: 0;
-  background-color: #fff;
+  background-color: #026aa7;
   box-shadow: $boxShadowColor 0 rem(2) rem(4) 0;
+  z-index: 2;
 
   &__container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    &--board {
+      max-width: 100%;
+    }
   }
+}
+
+.logo {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #fff;
 }

@@ -3,11 +3,11 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
+    width: 100px;
+    height: 100px;
     margin: 0 auto;
     padding: 15px;
-    border: 4px dashed #3588b9;
+    border: 3px dashed #3588b9;
     border-radius: 100%;
     animation: loading 2s ease infinite;
     z-index: 10;
