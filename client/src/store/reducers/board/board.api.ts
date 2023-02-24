@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { SERVER_URL } from '../../../const/const';
-import { ICard, IColumn } from '../../../types/board';
-import { IUser } from '../../../types/card';
+import { IColumn } from '../../../types/board';
+import { ICard, IUser } from '../../../types/card';
 
 type TGetBoardParticipantsQueryArgs = {
   boardId: string;
@@ -18,6 +18,7 @@ export const boardApi = createApi({
       return headers;
     },
   }),
+  keepUnusedDataFor: 1,
   endpoints: (build) => ({
     getUserByEmail: build.mutation<IUser, { email: string; boardId: string }>({
       query: (body) => ({
@@ -54,7 +55,7 @@ export const boardApi = createApi({
       providesTags: ['BoardParticipants'],
     }),
     updateBoardBackground: build.mutation({
-      query: (body: {boardId: string; backgroundColor: string; backgroundImage: string}) => ({
+      query: (body: { boardId: string; backgroundColor: string; backgroundImage: string }) => ({
         url: '/boards/background',
         method: 'PATCH',
         body,
@@ -72,7 +73,6 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     updateTitleColumn: build.mutation({
       query: (body: { boardId: string; columnId: string; title: string }) => ({
@@ -80,7 +80,6 @@ export const boardApi = createApi({
         method: 'PATCH',
         body,
       }),
-      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     updateColumnOrder: build.mutation({
       query: (body: { boardId: string; data: string[] }) => ({
@@ -88,14 +87,19 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
+    }),
+    copyColumn: build.mutation({
+      query: (body: { boardId: string; columnId: string; newTitle: string }) => ({
+        url: '/columns/copy',
+        method: 'POST',
+        body,
+      }),
     }),
     deleteColumn: build.mutation({
       query: (ids: { boardId: string; columnId: string }) => ({
         url: `/columns/${ids.boardId}/${ids.columnId}`,
         method: 'DELETE',
       }),
-      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     getCardsOnBoard: build.query<ICard[], string>({
       query: (boardId: string) => ({
@@ -109,10 +113,6 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      // invalidatesTags: [
-      //   { type: 'Columns', id: 'LIST' },
-        // { type: 'Cards', id: 'LIST' },
-      // ],
     }),
     updateCardOrder: build.mutation({
       query: (body: { boardId: string; data: { columnId: string; columnCards: string[] }[] }) => ({
@@ -120,17 +120,16 @@ export const boardApi = createApi({
         method: 'POST',
         body,
       }),
-      // invalidatesTags: [{ type: 'Columns', id: 'LIST' }],
     }),
     updateCardTitleOnServer: build.mutation({
-      query: (body: {boardId: string, cardId: string, title: string}) => ({
+      query: (body: { boardId: string; cardId: string; title: string }) => ({
         url: '/cards',
         method: 'PATCH',
         body,
       }),
     }),
     addNewMarkOnBoard: build.mutation({
-      query: (body: {boardId: string, text: string, color: string}) => ({
+      query: (body: { boardId: string; text: string; color: string }) => ({
         url: '/boards/add-mark',
         method: 'POST',
         body,
@@ -138,14 +137,14 @@ export const boardApi = createApi({
       invalidatesTags: ['board'],
     }),
     updateMarkOnBoard: build.mutation({
-      query: (body: {boardId: string, color: string, text: string, index: number}) => ({
+      query: (body: { boardId: string; color: string; text: string; index: number }) => ({
         url: '/boards/update-mark',
         method: 'POST',
         body,
       }),
     }),
     deleteMarkFromBoard: build.mutation({
-      query: (body: {boardId: string, markId: string}) => ({
+      query: (body: { boardId: string; markId: string }) => ({
         url: '/boards/delete-mark',
         method: 'POST',
         body,
@@ -173,4 +172,5 @@ export const {
   useUpdateMarkOnBoardMutation,
   useDeleteMarkFromBoardMutation,
   useUpdateCardTitleOnServerMutation,
+  useCopyColumnMutation,
 } = boardApi;

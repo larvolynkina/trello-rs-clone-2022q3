@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../../hooks/redux';
 import { updateBoardBgInStore } from '../../../store/reducers/board/boardState';
 import { BG_COLORS, BG_IMAGES } from '../../../const/const';
 import Marks from '../../../Components/Marks';
+import Activity from '../../../Components/Activities';
 
 type BoardMenuProps = {
   setIsShowBoardMenu: (b: boolean) => void;
@@ -168,8 +169,7 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
           </ul>
           <div className="board-menu__actions">
             <p className="board-menu__actions-title">Действия</p>
-            {boardDetails.activities &&
-              boardDetails.activities.map((activ) => <p key={activ._id}>{activ.action}</p>)}
+            {boardDetails.activities && <Activity activities={boardDetails.activities}/>}
           </div>
         </>
       )}

@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useState, useRef, useEffect } from 'react';
 import './addCardOrColumnForm.scss';
 
 type AddCardOrColumnFormProps = {
@@ -14,7 +14,13 @@ function AddCardOrColumnForm({
   setIsOpenAddForm,
 }: AddCardOrColumnFormProps) {
   const [text, setText] = useState('');
+  const inputArea = useRef<HTMLTextAreaElement | null>(null);
 
+  useEffect(() => {
+    if (inputArea.current) {
+      inputArea.current.focus();
+    }
+  }, []);
   const handleClickAddButton = () => {
     saveObject(text);
     setText('');
@@ -25,6 +31,13 @@ function AddCardOrColumnForm({
   const handleKeyUp = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       setIsOpenAddForm(false);
+      setText('');
+    }
+  };
+  const handleKeyDownTextArea = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveObject(text);
       setText('');
     }
   };
@@ -40,6 +53,8 @@ function AddCardOrColumnForm({
         placeholder={placeholderTextarea}
         value={text}
         onChange={handleChangeTextarea}
+        ref={inputArea}
+        onKeyDown={handleKeyDownTextArea}
       />
       <div className="AddCardOrColumnForm__footer">
         <button
