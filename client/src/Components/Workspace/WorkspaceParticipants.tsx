@@ -1,6 +1,9 @@
 import classNames from 'classnames';
+import { useState } from 'react';
 
 import { IParticipant } from '../../types/workspace';
+import AddParticipantsToWorkspace from '../AddParticipantsToWorkspace';
+import Modal from '../Modal';
 import UserAvatar from '../UserAvatar';
 import './WorkspaceParticipants.scss';
 
@@ -10,6 +13,8 @@ type WorkspaceParticipantsProps = {
 };
 
 function WorkspaceParticipants({ participants, className = '' }: WorkspaceParticipantsProps) {
+  const [isModalOpen, setModalIsOpen] = useState(false);
+
   return (
     <div
       className={classNames('workspace-participants', {
@@ -17,11 +22,19 @@ function WorkspaceParticipants({ participants, className = '' }: WorkspacePartic
       })}
     >
       {participants.map((participant) => (
-        <UserAvatar participant={participant} />
+        <UserAvatar key={participant._id} participant={participant} />
       ))}
-      <button className="workspace-participants__add-btn" type="button">
+      <button
+        className="workspace-participants__add-btn"
+        type="button"
+        onClick={() => setModalIsOpen(true)}
+      >
         +
       </button>
+
+      <Modal isOpen={isModalOpen} onClose={() => setModalIsOpen(false)}>
+        <AddParticipantsToWorkspace />
+      </Modal>
     </div>
   );
 }

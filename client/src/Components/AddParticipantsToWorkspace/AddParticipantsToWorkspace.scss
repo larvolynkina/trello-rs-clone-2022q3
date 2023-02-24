@@ -1,0 +1,34 @@
+@import '../../scss/base/mixins.scss';
+@import '../../scss/vars.scss';
+
+.add-participants-ws {
+  &__title {
+    @include adaptiveValue('font-size', 20, 16);
+    font-weight: 500;
+    margin-bottom: rem(20);
+  }
+
+  &__email {
+    width: rem(285);
+  }
+
+  &__input-wrapper {
+    display: flex;
+    gap: rem(20);
+
+    margin-bottom: rem(30);
+  }
+
+  &__controls {
+    width: 100%;
+    display: flex;
+    gap: rem(10);
+    justify-content: flex-end;
+  }
+
+  &__cancel-btn {
+    font-size: rem(14);
+    padding: rem(5) rem(10);
+    color: #42526e;
+  }
+}
