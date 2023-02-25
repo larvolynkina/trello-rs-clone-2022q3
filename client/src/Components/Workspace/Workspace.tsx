@@ -32,7 +32,11 @@ function Workspace({
       const { message } = await deleteWorkspace(id).unwrap();
       showSuccessToast(toastId, message);
     } catch (err) {
-      showErrorToast(toastId, err, 'Произошла ошибка при удалении рабочего пространства.');
+      showErrorToast({
+        id: toastId,
+        err,
+        fallbackMsg: 'Произошла ошибка при удалении рабочего пространства.',
+      });
     }
   };
 
@@ -42,7 +46,11 @@ function Workspace({
       const { message } = await leaveWorkspace({ workspaceId: id }).unwrap();
       showSuccessToast(toastId, message);
     } catch (err) {
-      showErrorToast(toastId, err, 'Произошла ошибка в процессе покидания рабочего пространства!');
+      showErrorToast({
+        id: toastId,
+        err,
+        fallbackMsg: 'Произошла ошибка в процессе покидания рабочего пространства!',
+      });
     }
   };
 
@@ -62,7 +70,11 @@ function Workspace({
         >
           {userId === owner ? 'Удалить' : 'Покинуть'}
         </button>
-        <WorkspaceParticipants participants={participants} className="workspace__participants" />
+        <WorkspaceParticipants
+          workspaceId={id}
+          participants={participants}
+          className="workspace__participants"
+        />
       </div>
       <Boards data={boards} workspaceId={id} />
     </div>

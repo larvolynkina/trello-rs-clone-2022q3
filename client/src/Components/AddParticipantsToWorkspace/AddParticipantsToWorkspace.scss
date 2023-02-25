@@ -10,13 +10,28 @@
 
   &__email {
     width: rem(285);
+
+    @media (max-width: $mobileSmall) {
+      width: rem(200);
+    }
   }
 
   &__input-wrapper {
     display: flex;
     gap: rem(20);
+    margin-bottom: rem(15);
+  }
 
-    margin-bottom: rem(30);
+  &__find-btn {
+    margin-top: rem(9);
+    align-self: flex-start;
+  }
+
+  &__users {
+    height: rem(32);
+    display: flex;
+    flex-wrap: wrap;
+    gap: rem(5);
   }
 
   &__controls {

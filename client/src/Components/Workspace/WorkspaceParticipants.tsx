@@ -8,12 +8,19 @@ import UserAvatar from '../UserAvatar';
 import './WorkspaceParticipants.scss';
 
 type WorkspaceParticipantsProps = {
+  workspaceId: string;
   participants: IParticipant[];
   className?: string;
 };
 
-function WorkspaceParticipants({ participants, className = '' }: WorkspaceParticipantsProps) {
+function WorkspaceParticipants({
+  workspaceId,
+  participants,
+  className = '',
+}: WorkspaceParticipantsProps) {
   const [isModalOpen, setModalIsOpen] = useState(false);
+
+  const onClose = () => setModalIsOpen(false);
 
   return (
     <div
@@ -32,8 +39,12 @@ function WorkspaceParticipants({ participants, className = '' }: WorkspacePartic
         +
       </button>
 
-      <Modal isOpen={isModalOpen} onClose={() => setModalIsOpen(false)}>
-        <AddParticipantsToWorkspace />
+      <Modal isOpen={isModalOpen} onClose={onClose}>
+        <AddParticipantsToWorkspace
+          workspaceId={workspaceId}
+          participants={participants}
+          onClose={onClose}
+        />
       </Modal>
     </div>
   );

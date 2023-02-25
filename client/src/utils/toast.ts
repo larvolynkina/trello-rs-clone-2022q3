@@ -1,5 +1,8 @@
+import axios from 'axios';
 import { toast } from 'react-toastify';
+import { UNKNOWN_ERROR } from '../store/serviceActions';
 
+import { ErrorMessage } from '../types/Error';
 import { isFetchBaseQueryErrorWithMsg } from './error';
 
 type Id = ReturnType<typeof toast.loading>;
@@ -16,8 +19,19 @@ export const showSuccessToast = (id: Id, msg: string) =>
     autoClose: AUTO_CLOSE_TIME,
   });
 
-export const showErrorToast = (id: Id, err: unknown, fallbackMsg: string) => {
-  const msg = (isFetchBaseQueryErrorWithMsg(err) && err.data.message) || fallbackMsg;
+type showErrorToastProps = {
+  id: Id;
+  err?: unknown;
+  fallbackMsg?: string;
+};
+
+export const showErrorToast = ({ id, fallbackMsg, err }: showErrorToastProps) => {
+  const msg =
+    (axios.isAxiosError<ErrorMessage>(err) && err.response?.data.message) ||
+    (isFetchBaseQueryErrorWithMsg(err) && err.data.message) ||
+    fallbackMsg ||
+    UNKNOWN_ERROR;
+
   toast.update(id, {
     render: msg,
     type: 'error',

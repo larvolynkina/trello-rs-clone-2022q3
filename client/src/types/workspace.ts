@@ -10,6 +10,7 @@ export interface IParticipant {
   avatarColor: string;
   avatarImage: string;
   userName: string;
+  email: string;
 }
 
 export interface IWorkspace {
