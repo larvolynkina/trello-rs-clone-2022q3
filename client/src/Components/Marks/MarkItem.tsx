@@ -2,8 +2,10 @@ import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { IMark } from '../../types/board';
 import MarkEditModal from './MarkEditModal';
 import { toggleMarkCheckedInState } from '../../store/reducers/cards/cardSlice';
+import { updateCardInStore } from '../../store/reducers/board/boardState';
 import { useUpdateMarksIdArrayMutation } from '../../store/reducers/cards/cards.api';
-import { useAppDispatch } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { ICard } from '../../types/card';
 
 type MarkItemProps = {
   showCheckBox: boolean;
@@ -31,6 +33,7 @@ function MarkItem({
   const [cardMarksIdArray, setCardMarks] = useState(cardMarks);
   const [updateMarksIdArray] = useUpdateMarksIdArrayMutation();
   const dispatch = useAppDispatch();
+  const { cardsData } = useAppSelector((state) => state.BOARD);
 
   function toggleMarkActive(event: React.ChangeEvent<HTMLInputElement>) {
     let newMarksIdArray: string[] = [];
@@ -44,6 +47,10 @@ function MarkItem({
     setCardMarks(newMarksIdArray);
     if (cardId) {
       updateMarksIdArray({ boardId, cardId, marks: newMarksIdArray });
+      const foundCard = cardsData.find((card) => card._id === cardId);
+      if (foundCard) {
+        dispatch(updateCardInStore({card: { ...foundCard, marks: newMarksIdArray }}));
+      }
     }
   }
 
