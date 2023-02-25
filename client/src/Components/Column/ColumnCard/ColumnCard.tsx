@@ -18,10 +18,30 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   const { openMenuCardArgs, boardData } = useAppSelector((state) => state.BOARD);
   const [, setSearchParams] = useSearchParams();
   const [cardMarks, setCardMarks] = useState<IMark[]>([]);
+  const [completedChecklist, setComplitedChecklist] = useState(false);
+  const [checkedItemsCount, setCheckedItemsCount] = useState(0);
+  const [checklistsItemsCout, setCheclistsItemsCout] = useState(0);
 
   useEffect(() => {
     if (boardData.marks && boardData.marks.length > 0) {
       setCardMarks(boardData.marks.filter((mark) => mark._id && card.marks.includes(mark._id)));
+    }
+    if (card.checklists.length > 0) {
+      let checkedCount = 0;
+      let itemsCount = 0;
+      card.checklists.forEach((checklist) =>
+        checklist.checkItems.forEach((item) => {
+          itemsCount += 1;
+          if (item.checked) {
+            checkedCount += 1;
+          }
+        }),
+      );
+      setCheckedItemsCount(checkedCount);
+      setCheclistsItemsCout(itemsCount);
+      if (checkedCount === itemsCount && itemsCount > 0) {
+        setComplitedChecklist(true);
+      }
     }
   }, [card]);
 
@@ -69,8 +89,23 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
           {card.title}
           <div className="column-card__icons">
             {card.description.length > 0 && <div className="column-card__description-icon" />}
-            {card.attachments.length > 0 && <div className="column-card__attachments-icon" />}
-            {card.attachments.length > 0 && card.attachments.length}
+            {card.attachments.length > 0 && (
+              <div className="column-card__attachments">
+                <div className="column-card__attachments-icon" />
+                {card.attachments.length}
+              </div>
+            )}
+            {card.checklists.length > 0 && (
+              <div
+                className="column-card__checklists"
+                style={
+                  completedChecklist ? { backgroundColor: '#61bd4f70' } : { backgroundColor: '' }
+                }
+              >
+                <div className="column-card__checklists-icon" />
+                {`${checkedItemsCount}/${checklistsItemsCout}`}
+              </div>
+            )}
           </div>
           <button
             type="button"

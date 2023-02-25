@@ -20,7 +20,6 @@
     width: 40px;
     height: 8px;
     border-radius: 4px;
-
   }
   &__input {
     resize: none;
@@ -55,11 +54,12 @@
   &__icons {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 5px;
     font-size: 12px;
   }
   &__description-icon,
-  &__attachments-icon {
+  &__attachments-icon,
+  &__checklists-icon {
     width: 15px;
     height: 15px;
     background-size: contain;
@@ -70,5 +70,20 @@
   }
   &__attachments-icon {
     background-image: url('../../Card/icons/attach.svg');
+  }
+  &__checklists-icon {
+    background-image: url('../../Card/icons/check.svg');
+  }
+  &__attachments {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  &__checklists {
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: flex;
+    gap: 3px;
+    align-items: center;
   }
 }
