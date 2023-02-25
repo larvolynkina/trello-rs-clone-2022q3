@@ -151,8 +151,8 @@ function Board() {
         x -= boardBody.current.scrollLeft;
       }
       y = e.currentTarget.offsetTop;
-      if (e.currentTarget.firstChild?.textContent) {
-        setTextFromCard(e.currentTarget.firstChild.textContent);
+      if (e.currentTarget.childNodes[1]?.textContent) {
+        setTextFromCard(e.currentTarget.childNodes[1].textContent);
       }
     } else if (e.currentTarget.parentElement) {
       x = e.currentTarget.parentElement.offsetLeft;
@@ -160,8 +160,8 @@ function Board() {
         x -= boardBody.current.scrollLeft;
       }
       y = e.currentTarget.parentElement.offsetTop;
-      if (e.currentTarget.parentElement?.firstChild?.textContent) {
-        setTextFromCard(e.currentTarget.parentElement.firstChild.textContent);
+      if (e.currentTarget.parentElement?.childNodes[1]?.textContent) {
+        setTextFromCard(e.currentTarget.parentElement.childNodes[1].textContent);
       }
     }
     document.body.style.overflow = 'hidden';

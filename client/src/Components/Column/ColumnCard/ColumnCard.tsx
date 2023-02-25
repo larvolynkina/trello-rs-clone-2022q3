@@ -19,7 +19,7 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   // const [cardMarks, setCardMarks] = useState();
 
   useEffect(() => {
-    console.log(card);
+    // console.log(card);
   }, [card]);
 
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {

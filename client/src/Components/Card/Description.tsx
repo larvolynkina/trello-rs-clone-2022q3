@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useUpdateCardTitleOrDescrMutation } from '../../store/reducers/cards/cards.api';
+import { updateCardInStore } from '../../store/reducers/board/boardState';
 
 interface DescriptionProps {
   description: string;
@@ -15,6 +17,8 @@ function Description({ description, boardId, cardId }: DescriptionProps) {
   const [updateCardTitle] = useUpdateCardTitleOrDescrMutation();
   const [updateDescription, setUpdateDescription] = useState(description);
   const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useAppDispatch();
+  const { cardsData } = useAppSelector((state) => state.BOARD);
 
   function onClickHandler() {
     setIsEditing(true);
@@ -31,6 +35,10 @@ function Description({ description, boardId, cardId }: DescriptionProps) {
 
   function onSaveHandler() {
     if (updateDescription !== description) {
+      const foundCard = cardsData.find((card) => card._id === cardId);
+      if (foundCard) {
+        dispatch(updateCardInStore({card: {...foundCard, description: updateDescription}}));
+      }
       updateCardTitle({ boardId, cardId, description: updateDescription });
     }
     if (updateDescription) {

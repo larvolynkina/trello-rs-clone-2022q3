@@ -91,3 +91,4 @@ export function getColumnsWithOrderedCards({
 
   return { newColumnsWithForStore, newColumnsForServer };
 }
+
