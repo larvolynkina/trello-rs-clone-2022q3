@@ -1,8 +1,7 @@
 import bcrypt from 'bcrypt';
 import { unlink } from 'fs/promises';
+import * as fs from 'fs';
 import User from '../models/userModel.js';
-import Workspace from '../models/workspaceModel.js';
-import { errors } from '../helpers.js';
 
 async function getAllUsers(_req, res) {
   try {
@@ -68,7 +67,11 @@ async function updateUserAvatar(req, res) {
     if (avatarColor && user.avatarImage) {
       const splitPath = user.avatarImage.split('/');
       const path = `./${splitPath[3]}/${splitPath[4]}`;
-      await unlink(path);
+      fs.stat(path, (err) => {
+        if (err && err.code === 'ENOENT')
+          return res.status(404).json({ message: 'Файл не найден' });
+        return unlink(path);
+      });
     }
     // update user
     const updatedUser = await User.findByIdAndUpdate(
