@@ -31,13 +31,7 @@ async function getUserByID(req, res) {
 
 async function getUserByEmail(req, res) {
   try {
-    const { email, boardId } = req.body;
-    const { userId } = req;
-    // check if user is member of workspace
-    const workspace = await Workspace.findOne({ boards: boardId });
-    if (!workspace.participants.includes(userId)) {
-      return res.status(403).json({ message: errors.notAWorkspaceMember });
-    }
+    const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Пользователя с указанным email не существует' });
