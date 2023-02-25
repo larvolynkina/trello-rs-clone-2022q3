@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import { useAppDispatch } from '../../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { setAttachModalClose } from '../../../store/reducers/cards/cardSlice';
 import {
   useUploadFileMutation,
@@ -9,6 +9,7 @@ import {
   TUploadFileResponse,
   TAttachmentDraft,
 } from '../../../store/reducers/cards/cards.api';
+import { updateCardInStore } from '../../../store/reducers/board/boardState';
 
 interface IAttachModalProps {
   boardId: string;
@@ -48,7 +49,11 @@ function AttachModal({ boardId, cardId }: IAttachModalProps) {
           name: result.data.name,
           url: result.data.url,
         };
-        addAttachment({ boardId, cardId, data });
+        addAttachment({ boardId, cardId, data })
+          .unwrap()
+          .then((res) => {
+            dispatch(updateCardInStore({ card: res }));
+          });
         dispatch(setAttachModalClose());
       }
     } catch {
@@ -63,7 +68,11 @@ function AttachModal({ boardId, cardId }: IAttachModalProps) {
       name: link,
       url: link,
     };
-    addAttachment({ boardId, cardId, data });
+    addAttachment({ boardId, cardId, data })
+      .unwrap()
+      .then((res) => {
+        dispatch(updateCardInStore({ card: res }));
+      });
     dispatch(setAttachModalClose());
   }
 
