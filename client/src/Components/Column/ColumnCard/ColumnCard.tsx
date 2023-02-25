@@ -18,7 +18,7 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   const { openMenuCardArgs, boardData } = useAppSelector((state) => state.BOARD);
   const [, setSearchParams] = useSearchParams();
   const [cardMarks, setCardMarks] = useState<IMark[]>([]);
-  const [completedChecklist, setComplitedChecklist] = useState(false);
+  const [completedChecklist, setCompletedChecklist] = useState(false);
   const [checkedItemsCount, setCheckedItemsCount] = useState(0);
   const [checklistsItemsCout, setCheclistsItemsCout] = useState(0);
 
@@ -40,11 +40,16 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
       setCheckedItemsCount(checkedCount);
       setCheclistsItemsCout(itemsCount);
       if (checkedCount === itemsCount && itemsCount > 0) {
-        setComplitedChecklist(true);
+        setCompletedChecklist(true);
+      } else {
+        setCompletedChecklist(false);
       }
     }
   }, [card]);
 
+  useEffect(() => {
+    console.log(completedChecklist);
+  }, [completedChecklist]);
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     openCardMenu(e);
@@ -98,9 +103,7 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
             {card.checklists.length > 0 && (
               <div
                 className="column-card__checklists"
-                style={
-                  completedChecklist ? { backgroundColor: '#61bd4f70' } : { backgroundColor: '' }
-                }
+                style={{ backgroundColor: `${completedChecklist ? '#61bd4f70' : 'unset'}` }}
               >
                 <div className="column-card__checklists-icon" />
                 {`${checkedItemsCount}/${checklistsItemsCout}`}

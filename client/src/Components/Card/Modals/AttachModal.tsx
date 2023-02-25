@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDetectClickOutside } from 'react-detect-click-outside';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { useAppDispatch } from '../../../hooks/redux';
 import { setAttachModalClose } from '../../../store/reducers/cards/cardSlice';
 import {
   useUploadFileMutation,

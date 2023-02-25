@@ -99,9 +99,9 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
           onChange={(e) => setTitleBoardText(e.target.value)}
           onBlur={() => changeTitleBoard()}
           onKeyDown={handleKeyDownChangeTitleBoard}
-          onFocus={(e) => {
-            e.target.select();
-          }}
+          // onFocus={(e) => {
+          //   e.target.select();
+          // }}
         />
       </div>
       <div className="board__participants">

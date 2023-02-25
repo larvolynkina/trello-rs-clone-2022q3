@@ -5,7 +5,6 @@ import { toggleMarkCheckedInState } from '../../store/reducers/cards/cardSlice';
 import { updateCardInStore } from '../../store/reducers/board/boardState';
 import { useUpdateMarksIdArrayMutation } from '../../store/reducers/cards/cards.api';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { ICard } from '../../types/card';
 
 type MarkItemProps = {
   showCheckBox: boolean;

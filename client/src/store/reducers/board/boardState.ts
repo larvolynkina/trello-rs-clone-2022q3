@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IColumn, IBoardState, IBoard } from '../../../types/board';
-import { ICard, IUser } from '../../../types/card';
+import { ICard, IChecklist, IUser } from '../../../types/card';
 
 const initialState: IBoardState = {
   boardData: {
@@ -64,10 +64,14 @@ export const boardStateSlice = createSlice({
     updateCardInColumn(state, action: PayloadAction<ICard[]>) {
       state.cardsData = action.payload;
     },
-    deleteCardFromColumnInStore(state, action: PayloadAction<{cardId: string}>) {
-      const parentColumn = state.columnsData.find((column) => column.cards.includes(action.payload.cardId));
+    deleteCardFromColumnInStore(state, action: PayloadAction<{ cardId: string }>) {
+      const parentColumn = state.columnsData.find((column) =>
+        column.cards.includes(action.payload.cardId),
+      );
       if (parentColumn) {
-        parentColumn.cards = parentColumn.cards.filter((cardId) => cardId !== action.payload.cardId)
+        parentColumn.cards = parentColumn.cards.filter(
+          (cardId) => cardId !== action.payload.cardId,
+        );
       }
       state.cardsData = state.cardsData.filter((card) => card._id !== action.payload.cardId);
     },
@@ -90,6 +94,15 @@ export const boardStateSlice = createSlice({
         }
         return card;
       });
+    },
+    updateCardChecklistsInStore(
+      state,
+      action: PayloadAction<{ cardId: string; checklists: IChecklist[] }>,
+    ) {
+      const foundCard = state.cardsData.find((card) => card._id === action.payload.cardId);
+      if (foundCard) {
+        foundCard.checklists = action.payload.checklists;
+      }
     },
     updateOpenMenuCardArgs(
       state,
@@ -137,6 +150,7 @@ export const {
   addFewCardsInColumn,
   updateCardInStore,
   deleteCardFromColumnInStore,
+  updateCardChecklistsInStore,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;
