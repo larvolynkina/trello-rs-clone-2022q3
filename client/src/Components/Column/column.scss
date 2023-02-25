@@ -8,10 +8,6 @@
   padding: 4px 8px 8px;
   user-select: none;
 
-  &--insert {
-    box-shadow: 4px 0 0 0 brown;
-  }
-
   &__header {
     min-height: 40px;
     position: relative;
@@ -21,33 +17,22 @@
     padding: 4px 0;
   }
 
-  &__title-wrapper {
-    font-size: 0;
-    width: 220px;
-    height: 100%;
-    position: absolute;
-    z-index: -1;
-
-    &--hidden {
-      display: none;
-    }
-  }
-
   &__text-title {
     font-weight: 600;
+    width: 220px;
     min-height: 28px;
-    width: 100%;
     border-radius: 3px;
     outline: none;
     background: none;
     padding: 8px 8px;
     margin: -4px 0;
     color: inherit;
+    overflow-wrap: break-word;
   }
   &__input-title {
     font-weight: 600;
     height: 28px;
-    width: 100%;
+    width: 220px;
     border-radius: 3px;
     outline: none;
     background: none;
