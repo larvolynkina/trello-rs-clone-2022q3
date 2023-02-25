@@ -8,7 +8,7 @@
   position: relative;
   margin-bottom: 8px;
 
-    &__input {
+  &__input {
     resize: none;
   }
 
@@ -37,5 +37,24 @@
   }
   &:hover &__pensil {
     opacity: 1;
+  }
+  &__icons {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+  }
+  &__description-icon,
+  &__attachments-icon {
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  &__description-icon {
+    background-image: url('../../../../public/assets/icon/card-description.svg');
+  }
+  &__attachments-icon {
+    background-image: url('../../Card/icons/attach.svg');
   }
 }

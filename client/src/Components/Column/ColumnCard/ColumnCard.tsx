@@ -1,5 +1,5 @@
 import './columnCard.scss';
-import { MouseEvent, KeyboardEvent } from 'react';
+import { MouseEvent, KeyboardEvent, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
@@ -12,14 +12,15 @@ type ColumnCardProps = {
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
 };
 
-function ColumnCard({
-  card,
-  index,
-  openCardMenu,
-}: ColumnCardProps) {
+function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   const dispatch = useAppDispatch();
-  const { openMenuCardArgs } = useAppSelector((state) => state.BOARD);
+  const { openMenuCardArgs, boardData } = useAppSelector((state) => state.BOARD);
   const [, setSearchParams] = useSearchParams();
+  // const [cardMarks, setCardMarks] = useState();
+
+  useEffect(() => {
+    console.log(card);
+  }, [card]);
 
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -46,13 +47,24 @@ function ColumnCard({
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          className={`column-card ${snapshot.isDragging ? 'column-card--is-dragging' : '' }` }
+          className={`column-card ${snapshot.isDragging ? 'column-card--is-dragging' : ''}`}
           onContextMenu={(e) => handleContextMenu(e)}
           onClick={handleOpenCard}
           onKeyUp={(e) => handleKeyDown(e)}
           aria-hidden="true"
         >
+          <div className="column-card__marks">
+            {card.marks.length > 0 &&
+              card.marks.map((mark) => <div key={Math.random()} className="column-card__mark" />)}
+          </div>
           {card.title}
+          <div className="column-card__icons">
+            {card.description.length > 0 && <div className="column-card__description-icon" />}
+            {card.attachments.length > 0 && (
+              <div className="column-card__attachments-icon" />
+            )}
+            {card.attachments.length > 0 && card.attachments.length}
+          </div>
           <button
             type="button"
             className="column-card__pensil"

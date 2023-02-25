@@ -52,6 +52,7 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     searchParams.delete('card');
     setSearchParams(searchParams);
     dispatch(resetCard());
+
   }
 
   useEffect(() => {

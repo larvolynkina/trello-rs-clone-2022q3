@@ -64,6 +64,13 @@ export const boardStateSlice = createSlice({
     updateCardInColumn(state, action: PayloadAction<ICard[]>) {
       state.cardsData = action.payload;
     },
+    deleteCardFromColumnInStore(state, action: PayloadAction<{cardId: string}>) {
+      const parentColumn = state.columnsData.find((column) => column.cards.includes(action.payload.cardId));
+      if (parentColumn) {
+        parentColumn.cards = parentColumn.cards.filter((cardId) => cardId !== action.payload.cardId)
+      }
+      state.cardsData = state.cardsData.filter((card) => card._id !== action.payload.cardId);
+    },
     addFewCardsInColumn(state, action: PayloadAction<ICard[]>) {
       state.cardsData.push(...action.payload);
     },
@@ -76,7 +83,14 @@ export const boardStateSlice = createSlice({
       }
       state.cardsData = [...state.cardsData, action.payload.card];
     },
-    // updateCardTitleInStore(state, action: PayloadAction) {},
+    updateCardInStore(state, action: PayloadAction<{ card: ICard }>) {
+      state.cardsData = state.cardsData.map((card) => {
+        if (card._id === action.payload.card._id) {
+          return action.payload.card;
+        }
+        return card;
+      });
+    },
     updateOpenMenuCardArgs(
       state,
       action: PayloadAction<{ boardId: string; cardId: string; title: string }>,
@@ -121,6 +135,8 @@ export const {
   deleteMarkFromState,
   updateMarkInState,
   addFewCardsInColumn,
+  updateCardInStore,
+  deleteCardFromColumnInStore,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;
