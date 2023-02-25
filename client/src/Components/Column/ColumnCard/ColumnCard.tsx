@@ -1,10 +1,11 @@
 import './columnCard.scss';
-import { MouseEvent, KeyboardEvent, useEffect } from 'react';
+import { MouseEvent, KeyboardEvent, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { updateOpenMenuCardArgs } from '../../../store/reducers/board/boardState';
 import { ICard } from '../../../types/card';
+import { IMark } from '../../../types/board';
 
 type ColumnCardProps = {
   card: ICard;
@@ -16,10 +17,12 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   const dispatch = useAppDispatch();
   const { openMenuCardArgs, boardData } = useAppSelector((state) => state.BOARD);
   const [, setSearchParams] = useSearchParams();
-  // const [cardMarks, setCardMarks] = useState();
+  const [cardMarks, setCardMarks] = useState<IMark[]>([]);
 
   useEffect(() => {
-    // console.log(card);
+    if (boardData.marks && boardData.marks.length > 0) {
+      setCardMarks(boardData.marks.filter((mark) => mark._id && card.marks.includes(mark._id)));
+    }
   }, [card]);
 
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
@@ -54,15 +57,19 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
           aria-hidden="true"
         >
           <div className="column-card__marks">
-            {card.marks.length > 0 &&
-              card.marks.map((mark) => <div key={Math.random()} className="column-card__mark" />)}
+            {cardMarks.length > 0 &&
+              cardMarks.map((mark) => (
+                <div
+                  key={Math.random()}
+                  className="column-card__mark"
+                  style={{ backgroundColor: mark.color }}
+                />
+              ))}
           </div>
           {card.title}
           <div className="column-card__icons">
             {card.description.length > 0 && <div className="column-card__description-icon" />}
-            {card.attachments.length > 0 && (
-              <div className="column-card__attachments-icon" />
-            )}
+            {card.attachments.length > 0 && <div className="column-card__attachments-icon" />}
             {card.attachments.length > 0 && card.attachments.length}
           </div>
           <button
