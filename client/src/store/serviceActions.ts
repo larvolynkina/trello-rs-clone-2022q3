@@ -20,6 +20,7 @@ import {
   requireLogout,
   setIsLoadingUserData,
 } from './reducers/userState';
+import { workspaceApi } from './reducers/workspace/workspace.api';
 import { AppDispatch, RootState } from './rootReducer';
 
 const SERVER_CONNECTION_ERROR = 'Please, check server connection!';
@@ -109,6 +110,8 @@ export const changeUserNameAction = createAppAsyncThunk(
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));
       toast.success('Имя пользователя изменено.');
+
+      dispatch(workspaceApi.util.invalidateTags(['Workspace']));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
         const message = err.response?.data.message || UNKNOWN_ERROR;
@@ -152,6 +155,8 @@ export const changeAvatarColorAction = createAppAsyncThunk(
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));
       toast.success('Аватар пользователя успешно обновлен.');
+
+      dispatch(workspaceApi.util.invalidateTags(['Workspace']));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
         const message = err.response?.data.message || UNKNOWN_ERROR;
@@ -185,6 +190,8 @@ export const changeAvatarImageAction = createAppAsyncThunk(
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));
       toast.success('Аватар пользователя успешно обновлен.');
+
+      dispatch(workspaceApi.util.invalidateTags(['Workspace']));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
         const message = err.response?.data.message || UNKNOWN_ERROR;
