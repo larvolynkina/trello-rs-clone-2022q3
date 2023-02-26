@@ -1,9 +1,12 @@
 import './headerBoard.scss';
 
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
+
 import {
   useGetBoardParticipantsQuery,
   useUpdateBoardTitleMutation,
+  useJoinBoardMutation,
 } from '../../../store/reducers/board/board.api';
 import { useAppSelector, useAppDispatch } from '../../../hooks/redux';
 import {
@@ -12,6 +15,7 @@ import {
 } from '../../../store/reducers/board/boardState';
 import { IBoard } from '../../../types/board';
 import UserAvatar from '../../../Components/UserAvatar';
+import { IUser } from '../../../types/card';
 
 type HeaderBoardType = {
   boardDetails: IBoard;
@@ -25,11 +29,27 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
   const { data: participantsDataFromServer } = useGetBoardParticipantsQuery({
     boardId: boardDetails._id,
   });
+  const [joinBoard] = useJoinBoardMutation();
   const { participantsData, boardData } = useAppSelector((state) => state.BOARD);
   const dispatch = useAppDispatch();
 
   const [titleBoardText, setTitleBoardText] = useState('');
   const [isUpdateTitleBoard, setIsUpdateTitleBoard] = useState(false);
+
+  const [myRole, setMyRole] = useState<'participant' | 'owner' | 'guest'>('guest');
+  const { userData } = useAppSelector((state) => state.USER);
+
+  useEffect(() => {
+    if (userData && userData._id.length > 0) {
+      if (userData._id === boardDetails.owner) {
+        setMyRole('owner');
+      } else if (boardDetails.participants?.includes(userData._id)) {
+        setMyRole('participant');
+      } else {
+        setMyRole('guest');
+      }
+    }
+  }, [boardDetails]);
 
   useEffect(() => {
     if (boardDetails) {
@@ -51,7 +71,6 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
   };
 
   const changeTitleBoard = () => {
-    
     async function asyncUpdateBoardTitle({
       boardIdforUpdate,
       titleforUpdate,
@@ -63,8 +82,11 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
     }
     setIsUpdateTitleBoard(false);
     if (titleBoardText.trim() !== '' && titleBoardText.trim() !== boardDetails.title) {
-      dispatch(updateBoardDetails({...boardData, title: titleBoardText.trim()}));
-      asyncUpdateBoardTitle({ boardIdforUpdate: boardDetails._id, titleforUpdate: titleBoardText.trim() });
+      dispatch(updateBoardDetails({ ...boardData, title: titleBoardText.trim() }));
+      asyncUpdateBoardTitle({
+        boardIdforUpdate: boardDetails._id,
+        titleforUpdate: titleBoardText.trim(),
+      });
       if (errorUpdateBoardTitle) throw new Error('Ошибка обновления названия доски');
     }
   };
@@ -75,6 +97,18 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
     }
     if (e.key === 'Escape') {
       setIsUpdateTitleBoard(false);
+    }
+  };
+
+  const handleJoinClick = () => {
+    if (userData) {
+      const newParticipants: IUser[] = [...participantsData, userData];
+      if (newParticipants) {
+        dispatch(updateParticipantsInStore(newParticipants));
+        setMyRole('participant');
+        toast.success(`Вы являетесь участником доски ${boardDetails.title}`, {autoClose: 1000});
+      }
+      joinBoard({ boardId: boardDetails._id });
     }
   };
 
@@ -99,11 +133,16 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
           onChange={(e) => setTitleBoardText(e.target.value)}
           onBlur={() => changeTitleBoard()}
           onKeyDown={handleKeyDownChangeTitleBoard}
-          // onFocus={(e) => {
-          //   e.target.select();
-          // }}
+          onFocus={(e) => {
+            e.target.select();
+          }}
         />
       </div>
+      {myRole === 'guest' && (
+        <button type="button" className="board__join" onClick={handleJoinClick}>
+          Присоединиться
+        </button>
+      )}
       <div className="board__participants">
         {participantsData.map((participant) => (
           <UserAvatar participant={participant} key={participant._id} />

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { updateOpenMenuCardArgs } from '../../../store/reducers/board/boardState';
 import { ICard } from '../../../types/card';
 import { IMark } from '../../../types/board';
+// import UserAvatar from '../../UserAvatar';
 
 type ColumnCardProps = {
   card: ICard;
@@ -21,6 +22,7 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   const [completedChecklist, setCompletedChecklist] = useState(false);
   const [checkedItemsCount, setCheckedItemsCount] = useState(0);
   const [checklistsItemsCout, setCheclistsItemsCout] = useState(0);
+  // const [participantsInCard, setParticipantsInCard] = useState<IUser[]>([]);
 
   useEffect(() => {
     if (boardData.marks && boardData.marks.length > 0) {
@@ -47,9 +49,6 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
     }
   }, [card]);
 
-  useEffect(() => {
-    console.log(completedChecklist);
-  }, [completedChecklist]);
   const handleContextMenu = (e: MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     openCardMenu(e);
@@ -67,6 +66,7 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
       setSearchParams({ card: card._id });
     }
   };
+
 
   return (
     <Draggable draggableId={card._id} index={index}>
@@ -107,6 +107,13 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
               >
                 <div className="column-card__checklists-icon" />
                 {`${checkedItemsCount}/${checklistsItemsCout}`}
+              </div>
+            )}
+            {card.participants && card.participants.length > 0 && (
+              <div className="column-card__participants">
+                {/* {card.participants.map((participant) => (
+                  <UserAvatar key={participant._id} participant={participant} />
+                ))} */}
               </div>
             )}
           </div>

@@ -106,21 +106,11 @@ function Column({
       throw new Error('Ошибка изменения заголовка');
     }
   };
-  // const handleClickTitleWrapper = () => {
-  //   // 
-  // };
 
   const handleOpenMenu = (e: MouseEvent<HTMLButtonElement>) => {
     openColumnMenu(e);
     setIdOpenedColumn({ boardId, columnId: column._id });
   };
-
-  // const handleClickTitle = () => {
-  //   setIsEditTitle(true);
-  //    if (inputRef.current) {
-  //     inputRef.;
-  //    }
-  // };
 
   useEffect(() => {
     if (isEditTitle && inputRef.current) {
@@ -133,17 +123,6 @@ function Column({
       {(providedColumn) => (
         <li className="column" {...providedColumn.draggableProps} ref={providedColumn.innerRef}>
           <div className="column__header" {...providedColumn.dragHandleProps}>
-            {/* <button
-              type="button"
-              onClick={handleClickTitleWrapper}
-              className={
-                isEditTitle
-                  ? 'column__title-wrapper column__title-wrapper--hidden'
-                  : 'column__title-wrapper'
-              }
-            >
-              Редактировать заголовок списка
-            </button> */}
             {!isEditTitle && (
               <h3
                 className="column__text-title"

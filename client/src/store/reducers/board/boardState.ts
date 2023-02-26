@@ -33,9 +33,11 @@ export const boardStateSlice = createSlice({
     },
     updateParticipantsInStore(state, action: PayloadAction<IUser[]>) {
       state.participantsData = action.payload;
+      state.boardData.participants = state.participantsData.map((part) => part._id);
     },
     addParticipantsInStore(state, action: PayloadAction<IUser[]>) {
       state.participantsData.push(...action.payload);
+      state.boardData.participants = state.participantsData.map((part) => part._id);
     },
     changeTitleColumnInStore(state, action: PayloadAction<{ id: string; title: string }>) {
       const columnForChange = state.columnsData.find((column) => column._id === action.payload.id);
@@ -55,7 +57,7 @@ export const boardStateSlice = createSlice({
     },
     updateColumnsInStore(state, action: PayloadAction<IColumn[]>) {
       state.columnsData = action.payload;
-      state.boardData.columns = action.payload.map((column) => column._id);
+      // state.boardData.columns = action.payload.map((column) => column._id);
     },
     createColumnInStore(state, action: PayloadAction<{ column: IColumn; boardId: string }>) {
       state.columnsData.push(action.payload.column);

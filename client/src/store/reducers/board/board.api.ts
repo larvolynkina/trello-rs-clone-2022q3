@@ -61,6 +61,13 @@ export const boardApi = createApi({
         body,
       }),
     }),
+    joinBoard: build.mutation({
+      query: (body: {boardId: string}) => ({
+        url: '/boards/join',
+        method: 'POST',
+        body,
+      }),
+    }),
     getColumns: build.query<IColumn[], string>({
       query: (boardId: string) => ({
         url: `/columns/${boardId}`,
@@ -188,4 +195,5 @@ export const {
   useCopyColumnMutation,
   useLeaveBoardParticipantsMutation,
   useDeleteBoardMutation,
+  useJoinBoardMutation,
 } = boardApi;

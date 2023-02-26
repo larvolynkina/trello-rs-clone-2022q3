@@ -11,7 +11,7 @@ import {
   useDeleteBoardMutation,
 } from '../../../store/reducers/board/board.api';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
-import { updateBoardBgInStore } from '../../../store/reducers/board/boardState';
+import { updateBoardBgInStore, updateParticipantsInStore } from '../../../store/reducers/board/boardState';
 import { APPRoute, BG_COLORS, BG_IMAGES } from '../../../const/const';
 import Marks from '../../../Components/Marks';
 import Activity from '../../../Components/Activities';
@@ -42,8 +42,9 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
     state: 'base',
   });
   const [titleHeader, setTitleHeader] = useState('Меню');
-  const [myRole, setMyRole] = useState<'participant' | 'owner'>('participant');
+  const [myRole, setMyRole] = useState<'participant' | 'owner' | 'guest'>('guest');
   const { userData } = useAppSelector((state) => state.USER);
+  const { participantsData } = useAppSelector((state) => state.BOARD);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,9 +63,13 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
     if (userData && userData._id.length > 0) {
       if (userData._id === boardDetails.owner) {
         setMyRole('owner');
+      } else if (boardDetails.participants?.includes(userData._id)) {
+        setMyRole('participant');
+      } else {
+        setMyRole('guest');
       }
     }
-  }, [userData]);
+  }, [userData, boardDetails]);
 
   useEffect(() => {
     switch (stateComponentView.state) {
@@ -154,12 +159,18 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
 
   const handleClickBtnQuit = () => {
     if (myRole === 'participant') {
+      if (userData) {
+        const newParticipants = participantsData.filter((part) => part._id !== userData._id);
+        if (newParticipants) {
+          dispatch(updateParticipantsInStore(newParticipants));
+        }
+      }
       leaveBoardParticipants({ boardId: boardDetails._id });
       toast.success(`Вы больше не являетесь участником доски ${boardDetails.title}`, {
         autoClose: 1500,
       });
     } else if (myRole === 'owner') {
-      toast.loading('Удаляем доску...')
+      toast.loading('Удаляем доску...');
       deleteBoard(boardDetails._id).then(() => {
         toast.dismiss();
         navigate(APPRoute.workspaces);
@@ -202,14 +213,16 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
               </button>
             </li>
             <li className="board-menu__item">
-              <button
-                type="button"
-                className="board-menu__btn board-menu__btn--quit"
-                onClick={handleClickBtnQuit}
-              >
-                <div className="board-menu__icon-quit" />
-                {myRole === 'owner' ? 'Удалить доску' : 'Покинуть доску'}
-              </button>
+              {myRole !== 'guest' && (
+                <button
+                  type="button"
+                  className="board-menu__btn board-menu__btn--quit"
+                  onClick={handleClickBtnQuit}
+                >
+                  <div className="board-menu__icon-quit" />
+                  {myRole === 'owner' ? 'Удалить доску' : 'Покинуть доску'}
+                </button>
+              )}
             </li>
           </ul>
           <div className="board-menu__actions">
