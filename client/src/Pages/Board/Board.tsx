@@ -15,6 +15,7 @@ import { AddButtonsOnBoardText } from '../../const/const';
 import {
   getNewColumnsOrder,
   getColumnsWithOrderedCards,
+  getCardsOfColumn,
 } from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
@@ -124,6 +125,10 @@ function Board() {
       }
     }
   }, [boardData.backgroundImage, boardData.backgroundColor]);
+
+  // useEffect(() => {
+
+  // }, [cardsData]);
 
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
@@ -273,7 +278,7 @@ function Board() {
                           index={index}
                           boardId={boardId}
                           column={column}
-                          cardsData={cardsData}
+                          cards={getCardsOfColumn(column.cards, cardsData)}
                           openColumnMenu={handleOpenColumnMenu}
                           openCardMenu={handleOpenCardMenu}
                           setIdOpenedColumn={setIdOpenedColumn}

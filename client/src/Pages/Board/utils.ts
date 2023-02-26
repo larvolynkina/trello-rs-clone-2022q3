@@ -1,5 +1,6 @@
 import { DropResult } from 'react-beautiful-dnd';
 import { IColumn } from '../../types/board';
+import { ICard } from '../../types/card';
 
 type getNewColumnsOrderProps = {
   dragResult: DropResult;
@@ -90,5 +91,17 @@ export function getColumnsWithOrderedCards({
   }
 
   return { newColumnsWithForStore, newColumnsForServer };
+}
+
+export function getCardsOfColumn(ids: string[], cards: ICard[]): ICard[] | [] {
+  if (ids.length > 0 && cards.length > 0) {
+    // eslint-disable-next-line
+    const result = ids.map((id) => cards.find((card) => card._id === id)!);
+    for (let i = 0; i < result.length; i +=1 ) {
+      if (result[i] === undefined) return [];
+    };
+    return result;
+  }
+  return [];
 }
 
