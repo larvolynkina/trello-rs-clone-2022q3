@@ -85,7 +85,14 @@ function CheckList({ checklist, id, checkListIndex, boardId, cardId }: CheckList
       </div>
       <div className="checklist__progress">
         <p className="checklist__progress-percent">{`${checklistProgress}%`}</p>
-        <div className="checklist__progress-line" style={{ width: `${progressLineWidth}%` }} />
+        <div
+          className={
+            progressLineWidth === 100
+              ? 'checklist__progress-line checklist__progress-line--completed'
+              : 'checklist__progress-line'
+          }
+          style={{ width: `${progressLineWidth}%` }}
+        />
       </div>
       <div className="checklist__items">
         {checklist.checkItems.map((item) => (

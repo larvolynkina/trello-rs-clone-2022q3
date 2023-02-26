@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { IAttachment } from '../../../types/card';
 import { SERVER_URL } from '../../../const/const';
-import { useDeleteAttachmentMutation } from '../../../store/reducers/cards/cards.api';
+import {
+  useDeleteAttachmentMutation,
+  useDeleteFileMutation,
+} from '../../../store/reducers/cards/cards.api';
 import { deleteAttachmentFromState } from '../../../store/reducers/cards/cardSlice';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { updateCardInStore } from '../../../store/reducers/board/boardState';
@@ -17,6 +20,7 @@ function Attachment({ boardId, cardId, attachment, id }: AttachmentProps) {
   const [label, setLabel] = useState('');
   const [link, setLink] = useState('');
   const [deleteAttachment] = useDeleteAttachmentMutation();
+  const [deleteFile] = useDeleteFileMutation();
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
@@ -30,6 +34,7 @@ function Attachment({ boardId, cardId, attachment, id }: AttachmentProps) {
     }
     dispatch(deleteAttachmentFromState({ id }));
     deleteAttachment({ boardId, cardId, id });
+    deleteFile(attachment.url);
   }
 
   useEffect(() => {

@@ -181,6 +181,7 @@ async function getAllUsersWorkspaces(req, res) {
                 userName: 1,
                 avatarColor: 1,
                 avatarImage: 1,
+                email: 1,
               },
             },
           ],

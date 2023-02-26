@@ -110,6 +110,12 @@ const cardSlice = createSlice({
     setMarksModalClose(state) {
       state.marksModalActive = false;
     },
+    closeAllModals(state) {
+      state.attachModalActive = false;
+      state.marksModalActive = false;
+      state.checkListModalActive = false;
+      state.boardParticipantsModalActive = false;
+    },
   },
 });
 
@@ -132,6 +138,7 @@ export const {
   deleteAttachmentFromState,
   setMarksModalClose,
   setMarksModalOpen,
+  closeAllModals,
 } = cardSlice.actions;
 
 export default cardSlice.reducer;

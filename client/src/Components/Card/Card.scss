@@ -583,6 +583,9 @@
         border-radius: 4px;
         background-color: #0075ff;
         transition: all 0.4s ease;
+        &--completed {
+            background-color: #61bd4f;
+        }
     }
 
     &__progress-percent {

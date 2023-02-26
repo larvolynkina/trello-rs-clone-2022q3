@@ -207,11 +207,15 @@ async function copyColumn(req, res) {
     const cards = await Promise.all(promises);
 
     const newCards = [];
-    for (const { _id, title, ...rest } of cards) {
+    for (const { title, description, participants, marks, attachments, checklists } of cards) {
       const newCard = new Card({
         title,
+        description,
+        participants,
         activities: newActivities,
-        ...rest,
+        marks,
+        attachments,
+        checklists,
       });
       const newCardSaved = await newCard.save();
       newCards.push(newCardSaved);
@@ -223,6 +227,7 @@ async function copyColumn(req, res) {
       cards: newCardsIdArray,
     });
     const copiedColumn = await column.save();
+
     board.columns.push(copiedColumn._id);
     board.activities.push(activity);
     await board.save();
