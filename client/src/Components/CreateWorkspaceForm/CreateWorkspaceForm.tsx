@@ -6,7 +6,6 @@ import './CreateWorkspaceForm.scss';
 
 type NewWorkspace = {
   title: string;
-  description?: string;
 };
 
 type CreateWorkspaceFormProps = {
@@ -66,16 +65,6 @@ function CreateWorkspaceForm({ onClose }: CreateWorkspaceFormProps) {
           placeholder="Введите название раб. пространства"
         />
         {errors?.title && <p className="auth-form__input-error">{errors?.title?.message}</p>}
-      </label>
-
-      <h4 className="create-workspace-form__field-name">Описание рабочего пространства</h4>
-      <label htmlFor="title" className="auth-form__label create-workspace-form__label">
-        <textarea
-          className="auth-form__input create-workspace-form__textarea"
-          {...register('description')}
-          placeholder="Необязательно для заполнения"
-          rows={6}
-        />
       </label>
 
       <div className="create-workspace-form__controls">
