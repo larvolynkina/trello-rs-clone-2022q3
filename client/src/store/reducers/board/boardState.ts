@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IColumn, IBoardState, IBoard } from '../../../types/board';
-import { ICard, IUser } from '../../../types/card';
+import { ICard, IChecklist, IUser } from '../../../types/card';
 
 const initialState: IBoardState = {
   boardData: {
@@ -33,9 +33,11 @@ export const boardStateSlice = createSlice({
     },
     updateParticipantsInStore(state, action: PayloadAction<IUser[]>) {
       state.participantsData = action.payload;
+      state.boardData.participants = state.participantsData.map((part) => part._id);
     },
     addParticipantsInStore(state, action: PayloadAction<IUser[]>) {
       state.participantsData.push(...action.payload);
+      state.boardData.participants = state.participantsData.map((part) => part._id);
     },
     changeTitleColumnInStore(state, action: PayloadAction<{ id: string; title: string }>) {
       const columnForChange = state.columnsData.find((column) => column._id === action.payload.id);
@@ -55,7 +57,7 @@ export const boardStateSlice = createSlice({
     },
     updateColumnsInStore(state, action: PayloadAction<IColumn[]>) {
       state.columnsData = action.payload;
-      state.boardData.columns = action.payload.map((column) => column._id);
+      // state.boardData.columns = action.payload.map((column) => column._id);
     },
     createColumnInStore(state, action: PayloadAction<{ column: IColumn; boardId: string }>) {
       state.columnsData.push(action.payload.column);
@@ -63,6 +65,17 @@ export const boardStateSlice = createSlice({
     },
     updateCardInColumn(state, action: PayloadAction<ICard[]>) {
       state.cardsData = action.payload;
+    },
+    deleteCardFromColumnInStore(state, action: PayloadAction<{ cardId: string }>) {
+      const parentColumn = state.columnsData.find((column) =>
+        column.cards.includes(action.payload.cardId),
+      );
+      if (parentColumn) {
+        parentColumn.cards = parentColumn.cards.filter(
+          (cardId) => cardId !== action.payload.cardId,
+        );
+      }
+      state.cardsData = state.cardsData.filter((card) => card._id !== action.payload.cardId);
     },
     addFewCardsInColumn(state, action: PayloadAction<ICard[]>) {
       state.cardsData.push(...action.payload);
@@ -76,7 +89,23 @@ export const boardStateSlice = createSlice({
       }
       state.cardsData = [...state.cardsData, action.payload.card];
     },
-    // updateCardTitleInStore(state, action: PayloadAction) {},
+    updateCardInStore(state, action: PayloadAction<{ card: ICard }>) {
+      state.cardsData = state.cardsData.map((card) => {
+        if (card._id === action.payload.card._id) {
+          return action.payload.card;
+        }
+        return card;
+      });
+    },
+    updateCardChecklistsInStore(
+      state,
+      action: PayloadAction<{ cardId: string; checklists: IChecklist[] }>,
+    ) {
+      const foundCard = state.cardsData.find((card) => card._id === action.payload.cardId);
+      if (foundCard) {
+        foundCard.checklists = action.payload.checklists;
+      }
+    },
     updateOpenMenuCardArgs(
       state,
       action: PayloadAction<{ boardId: string; cardId: string; title: string }>,
@@ -121,6 +150,9 @@ export const {
   deleteMarkFromState,
   updateMarkInState,
   addFewCardsInColumn,
+  updateCardInStore,
+  deleteCardFromColumnInStore,
+  updateCardChecklistsInStore,
 } = boardStateSlice.actions;
 
 export const boardState = boardStateSlice.reducer;

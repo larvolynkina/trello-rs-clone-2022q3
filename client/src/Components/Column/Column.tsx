@@ -16,13 +16,13 @@ import AddCardOrColumnForm from './AddCardOrColumnForm';
 import { IColumn } from '../../types/board';
 import { ICard } from '../../types/card';
 import { AddButtonsOnBoardText } from '../../const/const';
-import { getCardsOfColumn } from './utils';
+// import { getCardsOfColumn } from './utils';
 
 type ColumnProps = {
   boardId: string;
   column: IColumn;
   index: number;
-  cardsData: ICard[];
+  cards: ICard[];
   openColumnMenu: (e: MouseEvent<HTMLButtonElement>) => void;
   openCardMenu: (e: MouseEvent<HTMLElement>) => void;
   setIdOpenedColumn: ({ boardId, columnId }: { boardId: string; columnId: string }) => void;
@@ -34,7 +34,7 @@ function Column({
   boardId,
   column,
   index,
-  cardsData,
+  cards,
   openColumnMenu,
   openCardMenu,
   setIdOpenedColumn,
@@ -47,7 +47,7 @@ function Column({
   const [updateTitleColumn, { isError: errorUpdateTitleColumn }] = useUpdateTitleColumnMutation();
   const [title, setTitle] = useState(column.title);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
-  const [cards, setCards] = useState<ICard[]>([]);
+  // const [cards, setCards] = useState<ICard[]>([]);
   const [isEditTitle, setIsEditTitle] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -58,11 +58,11 @@ function Column({
     }
     setAddCardFromMenu(false);
   }, [addCardFromMenu]);
-  useEffect(() => {
-    if (cardsData) {
-      setCards(getCardsOfColumn(column.cards, cardsData));
-    }
-  }, [cardsData, column]);
+  // useEffect(() => {
+  //   if (cardsData) {
+  //     setCards(getCardsOfColumn(column.cards, cardsData));
+  //   }
+  // }, [cardsData, column]);
 
   useEffect(() => {
     if (loadingCreateCard) {
@@ -106,21 +106,11 @@ function Column({
       throw new Error('Ошибка изменения заголовка');
     }
   };
-  // const handleClickTitleWrapper = () => {
-  //   // 
-  // };
 
   const handleOpenMenu = (e: MouseEvent<HTMLButtonElement>) => {
     openColumnMenu(e);
     setIdOpenedColumn({ boardId, columnId: column._id });
   };
-
-  // const handleClickTitle = () => {
-  //   setIsEditTitle(true);
-  //    if (inputRef.current) {
-  //     inputRef.;
-  //    }
-  // };
 
   useEffect(() => {
     if (isEditTitle && inputRef.current) {
@@ -133,17 +123,6 @@ function Column({
       {(providedColumn) => (
         <li className="column" {...providedColumn.draggableProps} ref={providedColumn.innerRef}>
           <div className="column__header" {...providedColumn.dragHandleProps}>
-            {/* <button
-              type="button"
-              onClick={handleClickTitleWrapper}
-              className={
-                isEditTitle
-                  ? 'column__title-wrapper column__title-wrapper--hidden'
-                  : 'column__title-wrapper'
-              }
-            >
-              Редактировать заголовок списка
-            </button> */}
             {!isEditTitle && (
               <h3
                 className="column__text-title"
