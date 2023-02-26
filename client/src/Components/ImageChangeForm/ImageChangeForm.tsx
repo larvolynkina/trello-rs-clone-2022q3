@@ -8,6 +8,8 @@ import './ImageChangeForm.scss';
 
 const FILE_EXTENSIONS = 'image/gif,image/jpeg,image/png';
 
+const MAX_FILE_SIZE = 512000; // 500kb
+
 type FileData = {
   files: FileList;
 };
@@ -21,8 +23,10 @@ function ImageChangeForm({ onClose }: ImageChangeFormProps) {
     register,
     handleSubmit,
     watch,
-    formState: { isValid },
-  } = useForm<FileData>();
+    formState: { isValid, errors },
+  } = useForm<FileData>({
+    mode: 'all',
+  });
 
   const fileInput = useRef<HTMLInputElement | null>(null);
   const { userData, isLoading } = useAppSelector((state) => state.USER);
@@ -32,7 +36,8 @@ function ImageChangeForm({ onClose }: ImageChangeFormProps) {
   const dispatch = useAppDispatch();
 
   const { ref, ...rest } = register('files', {
-    required: true,
+    required: 'Выберите файл.',
+    validate: (files) => files[0]?.size < MAX_FILE_SIZE || 'Максимальный размер файла 500kb',
   });
 
   const getUrl = (data: FileList) => {
@@ -55,6 +60,7 @@ function ImageChangeForm({ onClose }: ImageChangeFormProps) {
         participant={{ ...userData, avatarImage: getUrl(watch('files')) || userData.avatarImage }}
         className="image-change-form__avatar"
       />
+      <p className="auth-form__input-error">{errors?.files?.message}</p>
       <input
         className="image-change-form__input"
         type="file"

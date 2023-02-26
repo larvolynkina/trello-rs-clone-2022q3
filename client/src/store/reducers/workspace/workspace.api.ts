@@ -34,7 +34,7 @@ type Message = {
   message: string;
 };
 
-type WorkspaceAddParticipantsAddingData = {
+type WorkspaceParticipantsAddingData = {
   workspaceId: string;
   membersId: string[];
 };
@@ -94,7 +94,7 @@ export const workspaceApi = createApi({
       }),
       invalidatesTags: ['Workspace'],
     }),
-    addParticipantsToWorkspace: builder.mutation<Message, WorkspaceAddParticipantsAddingData>({
+    addParticipantsToWorkspace: builder.mutation<Message, WorkspaceParticipantsAddingData>({
       query: (body) => ({
         url: '/workspaces/add-members',
         method: 'POST',
