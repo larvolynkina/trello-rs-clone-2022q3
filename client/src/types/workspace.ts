@@ -5,6 +5,14 @@ export interface IWsBoard {
   backgroundImage: string;
 }
 
+export interface IParticipant {
+  _id: string;
+  avatarColor: string;
+  avatarImage: string;
+  userName: string;
+  email: string;
+}
+
 export interface IWorkspace {
   _id: string;
   title: string;
@@ -15,7 +23,7 @@ export interface IWorkspace {
   avatarImage: string;
   private: boolean;
   owner: string;
-  participants: string[];
+  participants: IParticipant[];
   boards: IWsBoard[];
   createdAt: string;
   updatedAt: string;

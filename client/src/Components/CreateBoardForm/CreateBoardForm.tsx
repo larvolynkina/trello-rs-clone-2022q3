@@ -45,7 +45,11 @@ function CreateBoardForm({ onClose, workspaceId }: CreateBoardFormProps) {
       }).unwrap();
       showSuccessToast(toastId, 'Доска создана успешно!');
     } catch (err) {
-      showErrorToast(toastId, err, 'Произошла ошибка при создании доски.');
+      showErrorToast({
+        id: toastId,
+        err,
+        fallbackMsg: 'Произошла ошибка при создании доски.',
+      });
     }
     onClose();
   };

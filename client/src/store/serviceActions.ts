@@ -24,7 +24,7 @@ import { AppDispatch, RootState } from './rootReducer';
 
 const SERVER_CONNECTION_ERROR = 'Please, check server connection!';
 
-const UNKNOWN_ERROR = 'Oops, something went wrong!';
+export const UNKNOWN_ERROR = 'Oops, something went wrong!';
 
 const createAppAsyncThunk = createAsyncThunk.withTypes<{
   state: RootState;

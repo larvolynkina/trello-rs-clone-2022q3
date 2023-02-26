@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
 import { IBoard } from '../../../types/board';
 import './boardMenu.scss';
 
-import { useUpdateBoardBackgroundMutation } from '../../../store/reducers/board/board.api';
-import { useAppDispatch } from '../../../hooks/redux';
-import { updateBoardBgInStore } from '../../../store/reducers/board/boardState';
-import { BG_COLORS, BG_IMAGES } from '../../../const/const';
+import {
+  useUpdateBoardBackgroundMutation,
+  useLeaveBoardParticipantsMutation,
+  useDeleteBoardMutation,
+} from '../../../store/reducers/board/board.api';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { updateBoardBgInStore, updateParticipantsInStore } from '../../../store/reducers/board/boardState';
+import { APPRoute, BG_COLORS, BG_IMAGES } from '../../../const/const';
 import Marks from '../../../Components/Marks';
+import Activity from '../../../Components/Activities';
 
 type BoardMenuProps = {
   setIsShowBoardMenu: (b: boolean) => void;
@@ -28,10 +36,16 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
   const dispatch = useAppDispatch();
   const [currentBg, setCurrentBg] = useState({});
   const [updateBoardBackground] = useUpdateBoardBackgroundMutation();
+  const [leaveBoardParticipants] = useLeaveBoardParticipantsMutation();
+  const [deleteBoard] = useDeleteBoardMutation();
   const [stateComponentView, setStateComponentView] = useState<TStateComponentView>({
     state: 'base',
   });
   const [titleHeader, setTitleHeader] = useState('Меню');
+  const [myRole, setMyRole] = useState<'participant' | 'owner' | 'guest'>('guest');
+  const { userData } = useAppSelector((state) => state.USER);
+  const { participantsData } = useAppSelector((state) => state.BOARD);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (boardDetails.backgroundImage && boardDetails.backgroundImage.length > 0) {
@@ -44,6 +58,18 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       });
     }
   }, [boardDetails]);
+
+  useEffect(() => {
+    if (userData && userData._id.length > 0) {
+      if (userData._id === boardDetails.owner) {
+        setMyRole('owner');
+      } else if (boardDetails.participants?.includes(userData._id)) {
+        setMyRole('participant');
+      } else {
+        setMyRole('guest');
+      }
+    }
+  }, [userData, boardDetails]);
 
   useEffect(() => {
     switch (stateComponentView.state) {
@@ -131,6 +157,27 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
     });
   };
 
+  const handleClickBtnQuit = () => {
+    if (myRole === 'participant') {
+      if (userData) {
+        const newParticipants = participantsData.filter((part) => part._id !== userData._id);
+        if (newParticipants) {
+          dispatch(updateParticipantsInStore(newParticipants));
+        }
+      }
+      leaveBoardParticipants({ boardId: boardDetails._id });
+      toast.success(`Вы больше не являетесь участником доски ${boardDetails.title}`, {
+        autoClose: 1500,
+      });
+    } else if (myRole === 'owner') {
+      toast.loading('Удаляем доску...');
+      deleteBoard(boardDetails._id).then(() => {
+        toast.dismiss();
+        navigate(APPRoute.workspaces);
+      });
+    }
+  };
+
   return (
     <aside className="board-menu">
       <div className="board-menu__header">
@@ -165,11 +212,22 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
                 Метки
               </button>
             </li>
+            <li className="board-menu__item">
+              {myRole !== 'guest' && (
+                <button
+                  type="button"
+                  className="board-menu__btn board-menu__btn--quit"
+                  onClick={handleClickBtnQuit}
+                >
+                  <div className="board-menu__icon-quit" />
+                  {myRole === 'owner' ? 'Удалить доску' : 'Покинуть доску'}
+                </button>
+              )}
+            </li>
           </ul>
           <div className="board-menu__actions">
             <p className="board-menu__actions-title">Действия</p>
-            {boardDetails.activities &&
-              boardDetails.activities.map((activ) => <p key={activ._id}>{activ.action}</p>)}
+            {boardDetails.activities && <Activity activities={boardDetails.activities} />}
           </div>
         </>
       )}

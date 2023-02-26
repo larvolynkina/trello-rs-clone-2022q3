@@ -6,7 +6,8 @@ import {
   useDeleteFileMutation,
 } from '../../../store/reducers/cards/cards.api';
 import { deleteAttachmentFromState } from '../../../store/reducers/cards/cardSlice';
-import { useAppDispatch } from '../../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { updateCardInStore } from '../../../store/reducers/board/boardState';
 
 interface AttachmentProps {
   boardId: string;
@@ -23,8 +24,14 @@ function Attachment({ boardId, cardId, attachment, id }: AttachmentProps) {
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
+  const { cardsData } = useAppSelector((state) => state.BOARD);
 
   function deleteAttachmentHandler() {
+    const foundCard = cardsData.find((card) => card._id === cardId);
+    if (foundCard) {
+      const newAttachments = foundCard.attachments.filter((attach) => attach._id !== attachment._id);
+      dispatch(updateCardInStore({card: {...foundCard, attachments: newAttachments}}));
+    }
     dispatch(deleteAttachmentFromState({ id }));
     deleteAttachment({ boardId, cardId, id });
     deleteFile(attachment.url);

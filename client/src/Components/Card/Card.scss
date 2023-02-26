@@ -1,3 +1,5 @@
+@import '../../scss/colors.scss';
+
 .card {
     position: relative;
     padding: 15px;
@@ -172,11 +174,13 @@
         margin-top: 15px;
         padding: 10px;
         color: #172b4d;
+        width: 100%;
 
         &:focus {
             outline: none;
             border-radius: 3px;
-            border: 2px solid #0079bf;
+            // border: 2px solid #0079bf;
+            box-shadow: inset 0 0 0 2px $buttonShareAndOutlineColor;
         }
     }
 

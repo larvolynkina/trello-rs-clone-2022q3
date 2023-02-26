@@ -5,36 +5,34 @@
   border-radius: 5px;
   background-color: $columnBackgroundColor;
   color: $buttonAddColumnTextColor;
-  padding: 0 8px 8px;
+  padding: 4px 8px 8px;
   user-select: none;
 
-  &--insert {
-    box-shadow: 4px 0 0 0 brown;
-  }
-
   &__header {
-    height: 40px;
+    min-height: 40px;
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    padding: 4px 0;
   }
 
-  &__title-wrapper {
-    font-size: 0;
+  &__text-title {
+    font-weight: 600;
     width: 220px;
-    height: 100%;
-    position: absolute;
-
-    &--hidden {
-      display: none;
-    }
+    min-height: 28px;
+    border-radius: 3px;
+    outline: none;
+    background: none;
+    padding: 8px 8px;
+    margin: -4px 0;
+    color: inherit;
+    overflow-wrap: break-word;
   }
-
-  &__title {
+  &__input-title {
     font-weight: 600;
     height: 28px;
-    width: 100%;
+    width: 220px;
     border-radius: 3px;
     outline: none;
     background: none;
@@ -46,6 +44,10 @@
     &:focus {
       background: white;
       box-shadow: inset 0 0 0 2px $buttonShareAndOutlineColor;
+    }
+
+    &--hidden {
+      display: none;
     }
   }
 
@@ -66,8 +68,8 @@
   &__cards {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin: 0 0 10px 0;
+    flex-grow: 1;
+    min-height: 10px;
   }
 
   &__footer {
@@ -88,5 +90,10 @@
       background-color: rgba(0, 0, 0, 0.1);
       color: $mainColor;
     }
+  }
+  &__shadow-copy {
+    width: 100%;
+    height: 100%;
+    border: 1px solid gray;
   }
 }

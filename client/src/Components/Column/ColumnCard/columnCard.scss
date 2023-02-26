@@ -5,16 +5,24 @@
   line-height: 150%;
   cursor: pointer;
   box-shadow: 0 1px 0 #091e4240;
-  transition: all 0.3s;
   position: relative;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 
-  &--insert {
-    box-shadow: 0 4px brown;
+  &__marks {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
   }
-
+  &__mark {
+    width: 40px;
+    height: 8px;
+    border-radius: 4px;
+  }
   &__input {
     resize: none;
-    
   }
 
   &__pensil {
@@ -42,5 +50,40 @@
   }
   &:hover &__pensil {
     opacity: 1;
+  }
+  &__icons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+  }
+  &__description-icon,
+  &__attachments-icon,
+  &__checklists-icon {
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  &__description-icon {
+    background-image: url('../../../../public/assets/icon/card-description.svg');
+  }
+  &__attachments-icon {
+    background-image: url('../../Card/icons/attach.svg');
+  }
+  &__checklists-icon {
+    background-image: url('../../Card/icons/check.svg');
+  }
+  &__attachments {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  &__checklists {
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: flex;
+    gap: 3px;
+    align-items: center;
   }
 }

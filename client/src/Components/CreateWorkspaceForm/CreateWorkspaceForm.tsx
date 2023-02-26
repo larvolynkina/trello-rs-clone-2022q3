@@ -35,7 +35,11 @@ function CreateWorkspaceForm({ onClose }: CreateWorkspaceFormProps) {
       showSuccessToast(toastId, 'Рабочее пространство создано успешно!');
       onClose();
     } catch (err) {
-      showErrorToast(toastId, err, 'Произошла ошибка при создании рабочего пространства!');
+      showErrorToast({
+        id: toastId,
+        err,
+        fallbackMsg: 'Произошла ошибка при создании рабочего пространства!',
+      });
     }
   };
 
