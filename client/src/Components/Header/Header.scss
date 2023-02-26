@@ -5,7 +5,7 @@ $boxShadowColor: #091e4226;
 .header {
   position: fixed;
   color: #fff;
-  padding: 9px 0;
+  padding: rem(9) 0;
   width: 100%;
   top: 0;
   left: 0;
@@ -18,9 +18,17 @@ $boxShadowColor: #091e4226;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: rem(26);
     &--board {
       max-width: 100%;
     }
+  }
+
+  &__avatar {
+    width: rem(24);
+    height: rem(24);
+    flex: 0 0 rem(24);
+    font-size: rem(12.5);
   }
 }
 
