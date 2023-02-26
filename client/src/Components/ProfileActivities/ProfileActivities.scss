@@ -1,0 +1,15 @@
+@import '../../scss/base/mixins.scss';
+
+.profile-activities {
+  padding-bottom: rem(20);
+
+  & .activities {
+    width: 100%;
+    max-width: rem(960);
+    margin: 0 auto;
+  }
+
+  & .activities__header .activities__btn {
+    visibility: hidden;
+  }
+}

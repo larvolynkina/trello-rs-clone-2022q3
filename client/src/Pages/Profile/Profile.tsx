@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Tabs, { Tab } from '../../Components/Tabs';
 import ProfileForm from '../../Components/ProfileForm';
 import './Profile.scss';
+import ProfileActivities from '../../Components/ProfileActivities';
 
 const tabs: Tab[] = [
   { id: 1, label: 'Профиль' },
@@ -24,7 +25,7 @@ function Profile() {
           className="profile__tabs"
         />
         {tabs[0].id === currentTab && <ProfileForm />}
-        {tabs[1].id === currentTab && <div>Действия</div>}
+        {tabs[1].id === currentTab && <ProfileActivities />}
       </div>
     </main>
   );

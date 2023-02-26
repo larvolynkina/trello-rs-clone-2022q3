@@ -1,8 +1,11 @@
+import { IActivity } from './card';
+
 export interface IWsBoard {
   _id: string;
   title: string;
   backgroundColor: string;
   backgroundImage: string;
+  activities: IActivity[];
 }
 
 export interface IParticipant {
