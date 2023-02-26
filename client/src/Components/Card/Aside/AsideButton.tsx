@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { useDeleteCardByIdMutation } from '../../../store/reducers/cards/cards.api';
 import {
@@ -69,9 +68,8 @@ function AsideButton({ text, ico, boardId, cardId, closeCard }: AsideButtonProps
       }
     }
     if (text === 'Удалить') {
-      dispatch(deleteCardFromColumnInStore({cardId}));
-      toast.loading('Удаляем карточку...');
-      deleteCardById({ boardId, cardId }).then(() => toast.dismiss());
+      dispatch(deleteCardFromColumnInStore({ cardId }));
+      deleteCardById({ boardId, cardId });
       if (closeCard) {
         closeCard();
       }

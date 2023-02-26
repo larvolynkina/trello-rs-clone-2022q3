@@ -125,6 +125,7 @@ export const cardsApi = createApi({
         method: 'POST',
         body: { participantId },
       }),
+      invalidatesTags: ['Card'],
     }),
     deleteCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
       query: ({ boardId, cardId, participantId }) => ({
@@ -132,6 +133,7 @@ export const cardsApi = createApi({
         method: 'POST',
         body: { participantId },
       }),
+      invalidatesTags: ['Card'],
     }),
     addCheckList: builder.mutation<ICard, TAddCheckListQueryArgs>({
       query: ({ boardId, cardId, title }) => ({
@@ -162,6 +164,7 @@ export const cardsApi = createApi({
         method: 'POST',
         body: { title, id },
       }),
+      invalidatesTags: ['Card'],
     }),
     addCheckListItem: builder.mutation<ICard, TAddCheckListItemQueryArgs>({
       query: ({ boardId, cardId, title, id }) => ({

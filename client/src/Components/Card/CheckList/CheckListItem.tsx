@@ -33,7 +33,7 @@ function CheckListItem({ checkListItem, checkListIndex, boardId, cardId }: Check
         checkListIndex: index,
         status: flag,
       });
-    }, 1000),
+    }, 400),
     [],
   );
 

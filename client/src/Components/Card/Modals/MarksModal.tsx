@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useAppDispatch } from '../../../hooks/redux';
 import { setMarksModalClose } from '../../../store/reducers/cards/cardSlice';
 import Marks from '../../Marks';
+import { onMouseDownHandler } from '../helpers';
 
 interface MarksModalProps {
   from: 'card';
@@ -11,18 +13,32 @@ interface MarksModalProps {
 }
 
 function MarksModal({ from, boardId, cardId, cardMarks }: MarksModalProps) {
+  const [mouseDownTarget, setMouseDownTarget] = useState(false);
+
   const dispatch = useAppDispatch();
   const ref = useDetectClickOutside({
     onTriggered: (event: Event) => {
       const target = event.target as HTMLElement;
       if (
         !target.classList.contains('mark-item__checkbox') &&
-        !target.classList.contains('marks__btn--del')
+        !target.classList.contains('marks__btn--del') &&
+        mouseDownTarget === false
       ) {
         dispatch(setMarksModalClose());
       }
     },
   });
+
+  function myListener(event: MouseEvent) {
+    onMouseDownHandler(event, ref, setMouseDownTarget);
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', myListener);
+    return () => {
+      document.removeEventListener('mousedown', myListener);
+    };
+  }, []);
 
   return (
     <div className="card__modal" ref={ref}>
