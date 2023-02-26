@@ -43,6 +43,7 @@ function CheckListItem({ checkListItem, checkListIndex, boardId, cardId }: Check
     dispatch(toggleCheckListItemCheckedInState({ id: checkListItem._id, checkListIndex }));
     setChecked(event.target.checked);
     setCheckListItemStatus(event.target.checked);
+    
   }
 
   return (

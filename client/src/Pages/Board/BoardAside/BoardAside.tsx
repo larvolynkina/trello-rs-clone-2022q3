@@ -7,6 +7,7 @@ type BoardAsideProps = {
   workspace: IWorkspace;
 };
 function BoardAside({ workspace }: BoardAsideProps) {
+
   return (
     <div className="workspace-panel">
       <div className="workspace-panel__header">
@@ -14,7 +15,7 @@ function BoardAside({ workspace }: BoardAsideProps) {
         <h3 className="workspace-panel__title">{workspace.title}</h3>
       </div>
       <div className="workspace-panel__boards">
-        <Boards data={workspace.boards} workspaceId={workspace._id}  />
+        <Boards data={workspace.boards} workspaceId={workspace._id} />
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import {
   setMarksModalClose,
   setMarksModalOpen,
 } from '../../../store/reducers/cards/cardSlice';
+import { deleteCardFromColumnInStore } from '../../../store/reducers/board/boardState';
 
 interface AsideButtonProps {
   text: string;
@@ -68,6 +69,7 @@ function AsideButton({ text, ico, boardId, cardId, closeCard }: AsideButtonProps
       }
     }
     if (text === 'Удалить') {
+      dispatch(deleteCardFromColumnInStore({cardId}));
       toast.loading('Удаляем карточку...');
       deleteCardById({ boardId, cardId }).then(() => toast.dismiss());
       if (closeCard) {

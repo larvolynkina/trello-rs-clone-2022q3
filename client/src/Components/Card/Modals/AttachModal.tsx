@@ -9,6 +9,7 @@ import {
   TUploadFileResponse,
   TAttachmentDraft,
 } from '../../../store/reducers/cards/cards.api';
+import { updateCardInStore } from '../../../store/reducers/board/boardState';
 
 interface IAttachModalProps {
   boardId: string;
@@ -48,7 +49,11 @@ function AttachModal({ boardId, cardId }: IAttachModalProps) {
           name: result.data.name,
           url: result.data.url,
         };
-        addAttachment({ boardId, cardId, data });
+        addAttachment({ boardId, cardId, data })
+          .unwrap()
+          .then((res) => {
+            dispatch(updateCardInStore({ card: res }));
+          });
         dispatch(setAttachModalClose());
       }
     } catch {
@@ -63,7 +68,11 @@ function AttachModal({ boardId, cardId }: IAttachModalProps) {
       name: link,
       url: link,
     };
-    addAttachment({ boardId, cardId, data });
+    addAttachment({ boardId, cardId, data })
+      .unwrap()
+      .then((res) => {
+        dispatch(updateCardInStore({ card: res }));
+      });
     dispatch(setAttachModalClose());
   }
 

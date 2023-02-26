@@ -61,6 +61,13 @@ export const boardApi = createApi({
         body,
       }),
     }),
+    joinBoard: build.mutation({
+      query: (body: {boardId: string}) => ({
+        url: '/boards/join',
+        method: 'POST',
+        body,
+      }),
+    }),
     getColumns: build.query<IColumn[], string>({
       query: (boardId: string) => ({
         url: `/columns/${boardId}`,
@@ -150,6 +157,19 @@ export const boardApi = createApi({
         body,
       }),
     }),
+    leaveBoardParticipants: build.mutation({
+      query: (body: {boardId: string}) => ({
+        url: '/boards/leave',
+        method: 'POST',
+        body,
+      }),
+    }),
+    deleteBoard: build.mutation({
+      query: (boardId: string) => ({
+        url: `/boards/${boardId}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -173,4 +193,7 @@ export const {
   useDeleteMarkFromBoardMutation,
   useUpdateCardTitleOnServerMutation,
   useCopyColumnMutation,
+  useLeaveBoardParticipantsMutation,
+  useDeleteBoardMutation,
+  useJoinBoardMutation,
 } = boardApi;
