@@ -1,0 +1,49 @@
+@import '../../scss/base/mixins.scss';
+@import '../../scss/vars.scss';
+
+.add-participants-ws {
+  &__title {
+    @include adaptiveValue('font-size', 20, 16);
+    font-weight: 500;
+    margin-bottom: rem(20);
+  }
+
+  &__email {
+    width: rem(285);
+
+    @media (max-width: $mobileSmall) {
+      width: rem(200);
+    }
+  }
+
+  &__input-wrapper {
+    display: flex;
+    gap: rem(20);
+    margin-bottom: rem(15);
+  }
+
+  &__find-btn {
+    margin-top: rem(9);
+    align-self: flex-start;
+  }
+
+  &__users {
+    height: rem(32);
+    display: flex;
+    flex-wrap: wrap;
+    gap: rem(5);
+  }
+
+  &__controls {
+    width: 100%;
+    display: flex;
+    gap: rem(10);
+    justify-content: flex-end;
+  }
+
+  &__cancel-btn {
+    font-size: rem(14);
+    padding: rem(5) rem(10);
+    color: #42526e;
+  }
+}

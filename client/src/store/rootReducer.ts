@@ -17,6 +17,8 @@ export const rootReducer = combineReducers({
   [workspaceApi.reducerPath]: workspaceApi.reducer,
 });
 
+export const axiosApi = createAPI();
+
 const setupStore = () =>
   configureStore({
     reducer: rootReducer,
@@ -24,7 +26,7 @@ const setupStore = () =>
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         thunk: {
-          extraArgument: createAPI(),
+          extraArgument: axiosApi,
         },
       }).concat(cardsApi.middleware, boardApi.middleware, workspaceApi.middleware),
   });

@@ -34,6 +34,11 @@ type Message = {
   message: string;
 };
 
+type WorkspaceAddParticipantsAddingData = {
+  workspaceId: string;
+  membersId: string[];
+};
+
 export const workspaceApi = createApi({
   reducerPath: 'workspacesApi',
   baseQuery: fetchBaseQuery({
@@ -89,6 +94,14 @@ export const workspaceApi = createApi({
       }),
       invalidatesTags: ['Workspace'],
     }),
+    addParticipantsToWorkspace: builder.mutation<Message, WorkspaceAddParticipantsAddingData>({
+      query: (body) => ({
+        url: '/workspaces/add-members',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Workspace'],
+    }),
   }),
 });
 
@@ -99,4 +112,5 @@ export const {
   useDeleteWorkspaceMutation,
   useLeaveWorkspaceMutation,
   useCreateBoardMutation,
+  useAddParticipantsToWorkspaceMutation,
 } = workspaceApi;
