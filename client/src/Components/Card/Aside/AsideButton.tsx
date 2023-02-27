@@ -68,7 +68,7 @@ function AsideButton({ text, ico, boardId, cardId, closeCard }: AsideButtonProps
       }
     }
     if (text === 'Удалить') {
-      dispatch(deleteCardFromColumnInStore({cardId}));
+      dispatch(deleteCardFromColumnInStore({ cardId }));
       deleteCardById({ boardId, cardId });
       if (closeCard) {
         closeCard();

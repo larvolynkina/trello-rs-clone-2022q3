@@ -1,24 +1,14 @@
 import { useState } from 'react';
 
 import CreateWorkspaceForm from '../../Components/CreateWorkspaceForm';
+import Loader from '../../Components/Loader';
 import Modal from '../../Components/Modal';
 import Workspace from '../../Components/Workspace';
-import {
-  useGetAllWorkspacesQuery,
-  // useCreateWorkspaceMutation,
-  // useCreateBoardMutation,
-  // useDeleteWorkspaceMutation,
-  // useUpdateWorkspaceMutation,
-} from '../../store/reducers/workspace/workspace.api';
+import { useGetAllWorkspacesQuery } from '../../store/reducers/workspace/workspace.api';
 import './Workspaces.scss';
 
 function Workspaces() {
-  const { data = [] } = useGetAllWorkspacesQuery();
-  // const [createBoard, { isLoading }] = useCreateBoardMutation();
-  // const [createWorkspace, { isLoading }] = useCreateWorkspaceMutation();
-  // const [deleteWorkspace, { isLoading }] = useDeleteWorkspaceMutation();
-  // const [updateWorkspace, { isLoading }] = useUpdateWorkspaceMutation();
-
+  const { data = [], isLoading } = useGetAllWorkspacesQuery();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
@@ -34,6 +24,8 @@ function Workspaces() {
             Создать рабочее пространство
           </button>
         </div>
+
+        {isLoading && <Loader />}
 
         {data.map((ws) => (
           <Workspace key={ws._id} data={ws} />

@@ -67,12 +67,12 @@ export type TAttachmentDraft = {
   name: string;
   url: string;
   type: 'link' | 'file';
-}
+};
 
 type TAddAttachmentTitleQueryArgs = {
   boardId: string;
   cardId: string;
-  data: TAttachmentDraft
+  data: TAttachmentDraft;
 };
 
 type TDeleteAttachmentQueryArgs = {
@@ -125,6 +125,7 @@ export const cardsApi = createApi({
         method: 'POST',
         body: { participantId },
       }),
+      invalidatesTags: ['Card'],
     }),
     deleteCardParticipant: builder.mutation<void, TAddCardParticipantQueryArgs>({
       query: ({ boardId, cardId, participantId }) => ({
@@ -132,6 +133,7 @@ export const cardsApi = createApi({
         method: 'POST',
         body: { participantId },
       }),
+      invalidatesTags: ['Card'],
     }),
     addCheckList: builder.mutation<ICard, TAddCheckListQueryArgs>({
       query: ({ boardId, cardId, title }) => ({
@@ -162,6 +164,7 @@ export const cardsApi = createApi({
         method: 'POST',
         body: { title, id },
       }),
+      invalidatesTags: ['Card'],
     }),
     addCheckListItem: builder.mutation<ICard, TAddCheckListItemQueryArgs>({
       query: ({ boardId, cardId, title, id }) => ({
@@ -213,6 +216,13 @@ export const cardsApi = createApi({
         url: `/upload`,
         method: 'POST',
         body: formData,
+      }),
+    }),
+    deleteFile: builder.mutation<void, string>({
+      query: (path: string) => ({
+        url: `/upload/delete`,
+        method: 'POST',
+        body: { path },
       }),
     }),
     addAttachment: builder.mutation<ICard, TAddAttachmentTitleQueryArgs>({
@@ -273,6 +283,7 @@ export const {
   useSetCheckListItemCheckedMutation,
   useUpdateCheckListTitleMutation,
   useUploadFileMutation,
+  useDeleteFileMutation,
   useAddAttachmentMutation,
   useDeleteAttachmentMutation,
   useGetAllUsersQuery,

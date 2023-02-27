@@ -127,7 +127,44 @@ async function getAllCardsOnBoard(req, res) {
         return acc;
       }, [])
       .flat();
-    const allCards = await Card.find().where('_id').in(allCardsId).exec();
+
+    const query = [
+      { $match: { _id: { $in: allCardsId } } },
+      {
+        $lookup: {
+          from: 'users',
+          let: { participantsIds: '$participants' },
+          localField: 'participants',
+          foreignField: '_id',
+          pipeline: [
+            {
+              $match: {
+                $expr: { $in: ['$_id', '$$participantsIds'] },
+              },
+            },
+            {
+              $addFields: {
+                sort: {
+                  $indexOfArray: ['$$participantsIds', '$_id'],
+                },
+              },
+            },
+            { $sort: { sort: 1 } },
+            { $addFields: { sort: '$$REMOVE' } },
+            {
+              $project: {
+                _id: 1,
+                userName: 1,
+                avatarColor: 1,
+                avatarImage: 1,
+              },
+            },
+          ],
+          as: 'participants',
+        },
+      },
+    ];
+    const allCards = await Card.aggregate(query);
     return res.status(200).json(allCards);
   } catch (error) {
     return res.status(500).json({ message: error.message });
