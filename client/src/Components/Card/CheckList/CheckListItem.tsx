@@ -25,25 +25,22 @@ function CheckListItem({ checkListItem, checkListIndex, boardId, cardId }: Check
   const dispatch = useAppDispatch();
 
   const setCheckListItemStatus = useCallback(
-    debounce((flag) => {
-      if (typeof flag === 'boolean') {
-        setCheckListItemChecked({
-          boardId,
-          cardId,
-          id: checkListItem._id,
-          checkListIndex,
-          status: flag,
-        });
-      }
-    }, 1000),
+    debounce((flag, index) => {
+      setCheckListItemChecked({
+        boardId,
+        cardId,
+        id: checkListItem._id,
+        checkListIndex: index,
+        status: flag,
+      });
+    }, 400),
     [],
   );
 
   function onChangeCheckboxHandler(event: React.ChangeEvent<HTMLInputElement>) {
     dispatch(toggleCheckListItemCheckedInState({ id: checkListItem._id, checkListIndex }));
     setChecked(event.target.checked);
-    setCheckListItemStatus(event.target.checked);
-    
+    setCheckListItemStatus(event.target.checked, checkListIndex);
   }
 
   return (

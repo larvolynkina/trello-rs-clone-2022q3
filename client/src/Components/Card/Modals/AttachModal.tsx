@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useAppDispatch } from '../../../hooks/redux';
@@ -10,6 +10,7 @@ import {
   TAttachmentDraft,
 } from '../../../store/reducers/cards/cards.api';
 import { updateCardInStore } from '../../../store/reducers/board/boardState';
+import { onMouseDownHandler } from '../helpers';
 
 interface IAttachModalProps {
   boardId: string;
@@ -18,16 +19,35 @@ interface IAttachModalProps {
 
 function AttachModal({ boardId, cardId }: IAttachModalProps) {
   const dispatch = useAppDispatch();
-  const [uploadFile] = useUploadFileMutation();
+  const [uploadFile, { isLoading: uploading, isSuccess: uploaded }] = useUploadFileMutation();
   const [addAttachment] = useAddAttachmentMutation();
   const [link, setLink] = useState('');
+  const [mouseDownTarget, setMouseDownTarget] = useState(false);
 
   function onClickCloseHandler() {
     dispatch(setAttachModalClose());
   }
 
-  const ref = useDetectClickOutside({ onTriggered: onClickCloseHandler });
   const fileInput = useRef<HTMLInputElement | null>(null);
+
+  const ref = useDetectClickOutside({
+    onTriggered: () => {
+      if (mouseDownTarget === false) {
+        onClickCloseHandler();
+      }
+    },
+  });
+
+  function myListener(event: MouseEvent) {
+    onMouseDownHandler(event, ref, setMouseDownTarget);
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', myListener);
+    return () => {
+      document.removeEventListener('mousedown', myListener);
+    };
+  }, []);
 
   async function inputFileOnChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
     try {
@@ -75,6 +95,15 @@ function AttachModal({ boardId, cardId }: IAttachModalProps) {
       });
     dispatch(setAttachModalClose());
   }
+
+  useEffect(() => {
+    if (uploading) {
+      toast.loading('Загружаем файл...');
+    }
+    if (uploaded) {
+      toast.dismiss();
+    }
+  }, [uploading, uploaded]);
 
   return (
     <div className="card__modal card__modal--attach" ref={ref}>

@@ -269,9 +269,11 @@ async function addMembers(req, res) {
 
     for (const user of users) {
       board.participants.push(user._id);
-      workspace.participants.push(user._id);
-      user.workspaces.push(workspace._id);
-      await user.save();
+      if (!workspace.participants.includes(user._id.toString())) {
+        workspace.participants.push(user._id);
+        user.workspaces.push(workspace._id);
+        await user.save();
+      }
     }
 
     const activity = {
