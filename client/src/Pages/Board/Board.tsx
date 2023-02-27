@@ -126,10 +126,6 @@ function Board() {
     }
   }, [boardData.backgroundImage, boardData.backgroundColor]);
 
-  // useEffect(() => {
-
-  // }, [cardsData]);
-
   const saveColumn = (title: string) => {
     setIsOpenAddForm(false);
     toast.loading('Добавляем колонку...');
@@ -243,7 +239,7 @@ function Board() {
       className="board"
       onClick={handleClickBoard}
       onKeyUp={handleKeyUpBoard}
-      style={bgStyle}
+      style={boardDetailsLoading ? {backgroundImage: 'none', backgroundColor: 'none'} : bgStyle}
       aria-hidden="true"
     >
       {(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && <Loader />}

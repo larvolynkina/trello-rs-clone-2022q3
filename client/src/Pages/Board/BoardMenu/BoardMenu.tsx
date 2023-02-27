@@ -11,7 +11,11 @@ import {
   useDeleteBoardMutation,
 } from '../../../store/reducers/board/board.api';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
-import { updateBoardBgInStore, updateBoardDetails, updateParticipantsInStore } from '../../../store/reducers/board/boardState';
+import {
+  updateBoardBgInStore,
+  updateBoardDetails,
+  updateParticipantsInStore,
+} from '../../../store/reducers/board/boardState';
 import { APPRoute, BG_COLORS, BG_IMAGES } from '../../../const/const';
 import Marks from '../../../Components/Marks';
 import Activity from '../../../Components/Activities';
@@ -155,7 +159,7 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       );
     }
     dispatch(updateBoardBgInStore(style));
-    dispatch(workspaceApi.util.invalidateTags(['Workspace']))
+    dispatch(workspaceApi.util.invalidateTags(['Workspace']));
 
     updateBoardBackground({
       boardId: boardDetails._id,
@@ -188,7 +192,7 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       );
     }
     dispatch(updateBoardBgInStore(style));
-    dispatch(workspaceApi.util.invalidateTags(['Workspace']))
+    dispatch(workspaceApi.util.invalidateTags(['Workspace']));
 
     updateBoardBackground({
       boardId: boardDetails._id,
@@ -212,6 +216,8 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
     } else if (myRole === 'owner') {
       toast.loading('Удаляем доску...');
       deleteBoard(boardDetails._id).then(() => {
+        dispatch(workspaceApi.util.invalidateTags(['Workspace']));
+
         toast.dismiss();
         navigate(APPRoute.workspaces);
       });
