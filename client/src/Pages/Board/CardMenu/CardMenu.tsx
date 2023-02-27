@@ -1,8 +1,9 @@
 import './cardMenu.scss';
 import { KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useAppSelector } from '../../../hooks/redux';
-
+import { useAppSelector, useAppDispatch } from '../../../hooks/redux';
+import { useDeleteCardByIdMutation } from '../../../store/reducers/cards/cards.api';
+import { deleteCardFromColumnInStore } from '../../../store/reducers/board/boardState';
 
 type CardMenuProps = {
   text: string;
@@ -15,9 +16,9 @@ export default function CardMenu({ text, position, closeMenu, saveCardTitle }: C
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [valueArea, setValueArea] = useState(text);
   const [, setSearchParams] = useSearchParams();
-  const { openMenuCardArgs } = useAppSelector(
-    (state) => state.BOARD,
-  );
+  const { openMenuCardArgs, boardData } = useAppSelector((state) => state.BOARD);
+  const dispatch = useAppDispatch();
+  const [deleteCardById] = useDeleteCardByIdMutation();
   const inputText = useRef<HTMLTextAreaElement | null>(null);
   const x = position.x + 260;
   const y = position.y + 40;
@@ -57,10 +58,16 @@ export default function CardMenu({ text, position, closeMenu, saveCardTitle }: C
 
   const handleClickOpenCard = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setSearchParams({'card': openMenuCardArgs.cardId});
+    setSearchParams({ card: openMenuCardArgs.cardId });
     closeMenu(false);
-  }
+  };
 
+  const handleDeleteClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    dispatch(deleteCardFromColumnInStore({ cardId: openMenuCardArgs.cardId }));
+    deleteCardById({ boardId: boardData._id, cardId: openMenuCardArgs.cardId });
+    closeMenu(false);
+  };
   return (
     <div
       className="card-context-menu"
@@ -91,12 +98,8 @@ export default function CardMenu({ text, position, closeMenu, saveCardTitle }: C
           >
             Открыть карточку
           </button>
-          
-          <button
-            type="button"
-            className="card-context-menu__func-btn"
-            onClick={(e) => e.stopPropagation()}
-          >
+
+          <button type="button" className="card-context-menu__func-btn" onClick={handleDeleteClick}>
             Удалить
           </button>
         </div>
