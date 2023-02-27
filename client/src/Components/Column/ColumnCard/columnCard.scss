@@ -52,8 +52,10 @@
     opacity: 1;
   }
   &__icons {
+    max-width: 246px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 5px;
     font-size: 12px;
   }
@@ -85,5 +87,13 @@
     display: flex;
     gap: 3px;
     align-items: center;
+  }
+  &__participants {
+    flex: 1 1 auto;
+    padding-left: 10px;
+    display: flex;
+    gap: 3px;
+    justify-content: flex-end;
+    overflow: hidden;
   }
 }

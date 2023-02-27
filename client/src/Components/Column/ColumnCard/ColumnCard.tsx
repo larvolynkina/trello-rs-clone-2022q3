@@ -1,12 +1,12 @@
 import './columnCard.scss';
-import { MouseEvent, KeyboardEvent, useEffect, useState } from 'react';
+import { MouseEvent, KeyboardEvent, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { updateOpenMenuCardArgs } from '../../../store/reducers/board/boardState';
 import { ICard } from '../../../types/card';
 import { IMark } from '../../../types/board';
-// import UserAvatar from '../../UserAvatar';
+import UserAvatar from '../../UserAvatar';
 
 type ColumnCardProps = {
   card: ICard;
@@ -22,9 +22,8 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   const [completedChecklist, setCompletedChecklist] = useState(false);
   const [checkedItemsCount, setCheckedItemsCount] = useState(0);
   const [checklistsItemsCout, setCheclistsItemsCout] = useState(0);
-  // const [participantsInCard, setParticipantsInCard] = useState<IUser[]>([]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (boardData.marks && boardData.marks.length > 0) {
       setCardMarks(boardData.marks.filter((mark) => mark._id && card.marks.includes(mark._id)));
     }
@@ -111,9 +110,9 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
             )}
             {card.participants && card.participants.length > 0 && (
               <div className="column-card__participants">
-                {/* {card.participants.map((participant) => (
+                {card.participants.map((participant) => (
                   <UserAvatar key={participant._id} participant={participant} />
-                ))} */}
+                ))}
               </div>
             )}
           </div>

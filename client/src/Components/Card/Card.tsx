@@ -15,6 +15,7 @@ import {
   resetCard,
   closeAllModals,
 } from '../../store/reducers/cards/cardSlice';
+import { updateCardInStore } from '../../store/reducers/board/boardState';
 import CheckListModal from './Modals/CheckListModal';
 import CheckListFullList from './CheckList/CheckListFullList';
 import AttachModal from './Modals/AttachModal';
@@ -55,7 +56,11 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     dispatch(resetCard());
     dispatch(closeAllModals());
   }
-
+  useEffect(() => {
+    if (card) {
+      dispatch(updateCardInStore({ card }));
+    }
+  }, [card]);
   useEffect(() => {
     if (data) {
       dispatch(setCard(data));

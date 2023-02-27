@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { useUpdateCardTitleOrDescrMutation } from '../../store/reducers/cards/cards.api';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { updateCardInColumn } from '../../store/reducers/board/boardState';
 
 interface TitleProps {
   title: string;
@@ -13,6 +15,8 @@ function Title({ title, boardId, cardId, column }: TitleProps) {
   const [text, setText] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
   const [updateCardTitle] = useUpdateCardTitleOrDescrMutation();
+  const dispatch = useAppDispatch();
+  const { cardsData } = useAppSelector((state) => state.BOARD);
 
   function onBlurHandler() {
     if (!text) {
@@ -22,6 +26,16 @@ function Title({ title, boardId, cardId, column }: TitleProps) {
     }
     if (text !== title) {
       updateCardTitle({ boardId, cardId, title: text });
+      dispatch(
+        updateCardInColumn(
+          cardsData.map((card) => {
+            if (card._id === cardId) {
+              return { ...card, title: text };
+            }
+            return card;
+          }),
+        ),
+      );
     }
   }
 
