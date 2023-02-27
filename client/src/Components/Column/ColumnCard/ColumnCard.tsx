@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { updateOpenMenuCardArgs } from '../../../store/reducers/board/boardState';
 import { ICard } from '../../../types/card';
 import { IMark } from '../../../types/board';
-// import UserAvatar from '../../UserAvatar';
+import UserAvatar from '../../UserAvatar';
 
 type ColumnCardProps = {
   card: ICard;
@@ -111,9 +111,9 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
             )}
             {card.participants && card.participants.length > 0 && (
               <div className="column-card__participants">
-                {/* {card.participants.map((participant) => (
+                {card.participants.map((participant) => (
                   <UserAvatar key={participant._id} participant={participant} />
-                ))} */}
+                ))}
               </div>
             )}
           </div>

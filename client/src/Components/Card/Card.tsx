@@ -14,6 +14,7 @@ import {
   setCard,
   resetCard,
 } from '../../store/reducers/cards/cardSlice';
+import { updateCardInStore } from '../../store/reducers/board/boardState';
 import CheckListModal from './Modals/CheckListModal';
 import CheckListFullList from './CheckList/CheckListFullList';
 import AttachModal from './Modals/AttachModal';
@@ -52,9 +53,12 @@ function Card({ boardId, cardId, setOpenCard }: CardProps) {
     searchParams.delete('card');
     setSearchParams(searchParams);
     dispatch(resetCard());
-
   }
-
+  useEffect(() => {
+    if (card) {
+      dispatch(updateCardInStore({ card }));
+    }
+  }, [card]);
   useEffect(() => {
     if (data) {
       dispatch(setCard(data));

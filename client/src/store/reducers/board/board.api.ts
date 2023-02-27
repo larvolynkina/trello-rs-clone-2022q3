@@ -18,6 +18,7 @@ export const boardApi = createApi({
       return headers;
     },
   }),
+  keepUnusedDataFor: 1,
   endpoints: (build) => ({
     getUserByEmail: build.mutation<IUser, { email: string; boardId: string }>({
       query: (body) => ({
