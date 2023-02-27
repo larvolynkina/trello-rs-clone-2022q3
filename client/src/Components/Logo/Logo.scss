@@ -1,0 +1,28 @@
+@import '../../scss/base/mixins.scss';
+
+.logo {
+  display: flex;
+  gap: rem(5);
+  align-items: center;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 700;
+  font-size: rem(24);
+  color: #fff;
+
+  &__svg {
+    height: rem(22);
+    width: rem(22);
+    fill: #ffffff;
+  }
+
+  &--large {
+    color: #026aa7;
+    font-size: rem(60);
+
+    & .logo__svg {
+      fill: #026aa7;
+      height: rem(60);
+      width: rem(60);
+    }
+  }
+}
