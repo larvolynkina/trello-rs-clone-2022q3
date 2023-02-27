@@ -1,3 +1,4 @@
+import React from 'react';
 import person from './icons/person.svg';
 import check from './icons/check.svg';
 import attach from './icons/attach.svg';
@@ -30,4 +31,18 @@ const asideActionButtons = [
   },
 ];
 
-export { asideAddButtons, asideActionButtons };
+function onMouseDownHandler(
+  event: MouseEvent,
+  ref: React.MutableRefObject<null>,
+  setter: React.Dispatch<React.SetStateAction<boolean>>,
+) {
+  const target = event.target as HTMLElement;
+  const modal = ref.current as HTMLElement | null;
+  if (modal && modal.contains(target)) {
+    setter(modal && modal.contains(target));
+  } else {
+    setter(false);
+  }
+}
+
+export { asideAddButtons, asideActionButtons, onMouseDownHandler };

@@ -10,6 +10,7 @@ import {
   TAttachmentDraft,
 } from '../../../store/reducers/cards/cards.api';
 import { updateCardInStore } from '../../../store/reducers/board/boardState';
+import { onMouseDownHandler } from '../helpers';
 
 interface IAttachModalProps {
   boardId: string;
@@ -21,13 +22,32 @@ function AttachModal({ boardId, cardId }: IAttachModalProps) {
   const [uploadFile, { isLoading: uploading, isSuccess: uploaded }] = useUploadFileMutation();
   const [addAttachment] = useAddAttachmentMutation();
   const [link, setLink] = useState('');
+  const [mouseDownTarget, setMouseDownTarget] = useState(false);
 
   function onClickCloseHandler() {
     dispatch(setAttachModalClose());
   }
 
-  const ref = useDetectClickOutside({ onTriggered: onClickCloseHandler });
   const fileInput = useRef<HTMLInputElement | null>(null);
+
+  const ref = useDetectClickOutside({
+    onTriggered: () => {
+      if (mouseDownTarget === false) {
+        onClickCloseHandler();
+      }
+    },
+  });
+
+  function myListener(event: MouseEvent) {
+    onMouseDownHandler(event, ref, setMouseDownTarget);
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', myListener);
+    return () => {
+      document.removeEventListener('mousedown', myListener);
+    };
+  }, []);
 
   async function inputFileOnChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
     try {

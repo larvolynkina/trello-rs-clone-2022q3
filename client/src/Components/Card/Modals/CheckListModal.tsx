@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDetectClickOutside } from 'react-detect-click-outside';
 import { useAppDispatch } from '../../../hooks/redux';
 import { useAddCheckListMutation } from '../../../store/reducers/cards/cards.api';
 import { setCheckListModalClose } from '../../../store/reducers/cards/cardSlice';
 import Loader from '../../Loader';
+import { onMouseDownHandler } from '../helpers';
 
 interface CheckListModalProps {
   boardId: string;
   cardId: string;
 }
 
-function CheckListModal({boardId, cardId}: CheckListModalProps) {
+function CheckListModal({ boardId, cardId }: CheckListModalProps) {
   const [title, setTitle] = useState('Чек-лист');
+  const [mouseDownTarget, setMouseDownTarget] = useState(false);
   const [addCheckList, { isLoading, isSuccess }] = useAddCheckListMutation();
   const dispatch = useAppDispatch();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   function onClickHandler() {
     addCheckList({ boardId, cardId, title });
@@ -25,7 +28,28 @@ function CheckListModal({boardId, cardId}: CheckListModalProps) {
     setTitle('Чек-лист');
   }
 
-  const ref = useDetectClickOutside({ onTriggered: onClickCloseHandler });
+  const ref = useDetectClickOutside({
+    onTriggered: () => {
+      if (mouseDownTarget === false) {
+        onClickCloseHandler();
+      }
+    },
+  });
+
+  function myListener(event: MouseEvent) {
+    onMouseDownHandler(event, ref, setMouseDownTarget);
+  }
+
+  useEffect(() => {
+    if(inputRef.current){
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+    document.addEventListener('mousedown', myListener);
+    return () => {
+      document.removeEventListener('mousedown', myListener);
+    };
+  }, []);
 
   useEffect(() => {
     if (isSuccess) {
@@ -48,6 +72,7 @@ function CheckListModal({boardId, cardId}: CheckListModalProps) {
         <p>Название</p>
         <input
           className="card__checklist-modal-input"
+          ref={inputRef}
           type="text"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
