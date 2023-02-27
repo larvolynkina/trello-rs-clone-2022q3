@@ -98,12 +98,18 @@ function Column({
     }
   };
   const updateTitleOnServerAndStore = async () => {
-    dispatch(changeTitleColumnInStore({ id: column._id, title: title.trim() }));
-    setIsEditTitle(false);
-    if (boardId && title)
-      await updateTitleColumn({ boardId, columnId: column._id, title: title.trim() }).unwrap();
-    if (errorUpdateTitleColumn) {
-      throw new Error('Ошибка изменения заголовка');
+    if (title.trim() === '') {
+      setTitle(column.title);
+    } else if (title.trim() !== column.title) {
+      dispatch(changeTitleColumnInStore({ id: column._id, title: title.trim() }));
+      setIsEditTitle(false);
+      if (boardId && title)
+        await updateTitleColumn({ boardId, columnId: column._id, title: title.trim() }).unwrap();
+      if (errorUpdateTitleColumn) {
+        throw new Error('Ошибка изменения заголовка');
+      }
+    } else {
+      setTitle(column.title);
     }
   };
 
@@ -114,7 +120,7 @@ function Column({
 
   useEffect(() => {
     if (isEditTitle && inputRef.current) {
-      inputRef.current.focus()
+      inputRef.current.focus();
     }
   }, [isEditTitle]);
 
@@ -134,20 +140,20 @@ function Column({
                 {title}
               </h3>
             )}
-            
-              <input
-                type="text"
-                className={`column__input-title ${! isEditTitle ? 'column__input-title--hidden' : ''}`}
-                ref={inputRef}
-                value={title}
-                onChange={(e) => handleChangeTitle(e)}
-                onFocus={(e) => {
-                  e.target.select();
-                }}
-                onKeyUp={(e) => handleTitleKeyUp(e)}
-                onBlur={updateTitleOnServerAndStore}
-              />
-            
+
+            <input
+              type="text"
+              className={`column__input-title ${!isEditTitle ? 'column__input-title--hidden' : ''}`}
+              ref={inputRef}
+              value={title}
+              onChange={(e) => handleChangeTitle(e)}
+              onFocus={(e) => {
+                e.target.select();
+              }}
+              onKeyUp={(e) => handleTitleKeyUp(e)}
+              onBlur={updateTitleOnServerAndStore}
+            />
+
             <button className="column__actions" type="button" onClick={handleOpenMenu}>
               ...
             </button>

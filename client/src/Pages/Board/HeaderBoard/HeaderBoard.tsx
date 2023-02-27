@@ -81,13 +81,16 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
       await updateBoardTitle({ boardId: boardIdforUpdate, title: titleforUpdate });
     }
     setIsUpdateTitleBoard(false);
-    if (titleBoardText.trim() !== '' && titleBoardText.trim() !== boardDetails.title) {
+    if ((titleBoardText.trim() !== '') && (titleBoardText.trim() !== boardDetails.title)) {
       dispatch(updateBoardDetails({ ...boardData, title: titleBoardText.trim() }));
       asyncUpdateBoardTitle({
         boardIdforUpdate: boardDetails._id,
         titleforUpdate: titleBoardText.trim(),
       });
       if (errorUpdateBoardTitle) throw new Error('Ошибка обновления названия доски');
+    } 
+    if (titleBoardText.trim() === '') {
+      setTitleBoardText(boardDetails.title);
     }
   };
   const handleKeyDownChangeTitleBoard = (e: KeyboardEvent<HTMLInputElement>) => {

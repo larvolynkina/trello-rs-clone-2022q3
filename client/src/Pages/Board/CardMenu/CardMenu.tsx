@@ -41,8 +41,12 @@ export default function CardMenu({ text, position, closeMenu, saveCardTitle }: C
 
   const handleClickSave = (e: MouseEvent) => {
     e.stopPropagation();
-    if (valueArea && text !== valueArea.trim()) {
+    if (valueArea.trim() === '') {
+      setValueArea(text);
+    } else if (valueArea && text !== valueArea.trim()) {
       saveCardTitle(valueArea.trim());
+    } else {
+      setValueArea(text);
     }
     closeMenu(false);
   };
