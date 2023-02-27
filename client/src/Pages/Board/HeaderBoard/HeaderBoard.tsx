@@ -16,6 +16,8 @@ import {
 import { IBoard } from '../../../types/board';
 import UserAvatar from '../../../Components/UserAvatar';
 import { IUser } from '../../../types/card';
+import { IWorkspace, IWsBoard } from '../../../types/workspace';
+import { workspaceApi } from '../../../store/reducers/workspace/workspace.api';
 
 type HeaderBoardType = {
   boardDetails: IBoard;
@@ -30,7 +32,7 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
     boardId: boardDetails._id,
   });
   const [joinBoard] = useJoinBoardMutation();
-  const { participantsData, boardData } = useAppSelector((state) => state.BOARD);
+  const { participantsData } = useAppSelector((state) => state.BOARD);
   const dispatch = useAppDispatch();
 
   const [titleBoardText, setTitleBoardText] = useState('');
@@ -82,12 +84,33 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
     }
     setIsUpdateTitleBoard(false);
     if (titleBoardText.trim() !== '' && titleBoardText.trim() !== boardDetails.title) {
-      dispatch(updateBoardDetails({ ...boardData, title: titleBoardText.trim() }));
+      const newBoards: IWsBoard[] = [];
+      if (boardDetails.workspace) {
+        boardDetails.workspace.boards.forEach((board) => {
+          if (board._id === boardDetails._id) {
+            newBoards.push({ ...board, title: titleBoardText.trim() });
+          } else {
+            newBoards.push(board);
+          }
+        });
+        const newWorkspace: IWorkspace = { ...boardDetails.workspace, boards: newBoards };
+        dispatch(
+          updateBoardDetails({
+            ...boardDetails,
+            title: titleBoardText.trim(),
+            workspace: newWorkspace,
+          }),
+        );
+        dispatch(workspaceApi.util.invalidateTags(['Workspace']))
+      }
       asyncUpdateBoardTitle({
         boardIdforUpdate: boardDetails._id,
         titleforUpdate: titleBoardText.trim(),
       });
       if (errorUpdateBoardTitle) throw new Error('Ошибка обновления названия доски');
+    }
+    if (titleBoardText.trim() === '') {
+      setTitleBoardText(boardDetails.title);
     }
   };
   const handleKeyDownChangeTitleBoard = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -106,7 +129,7 @@ function HeaderBoard({ boardDetails, setIsShowSearchForm, setIsShowBoardMenu }: 
       if (newParticipants) {
         dispatch(updateParticipantsInStore(newParticipants));
         setMyRole('participant');
-        toast.success(`Вы являетесь участником доски ${boardDetails.title}`, {autoClose: 1000});
+        toast.success(`Вы являетесь участником доски ${boardDetails.title}`, { autoClose: 1000 });
       }
       joinBoard({ boardId: boardDetails._id });
     }
