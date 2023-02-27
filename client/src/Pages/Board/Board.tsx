@@ -12,11 +12,7 @@ import {
 } from '../../store/reducers/board/boardState';
 
 import { AddButtonsOnBoardText } from '../../const/const';
-import {
-  getNewColumnsOrder,
-  getColumnsWithOrderedCards,
-  getCardsOfColumn,
-} from './utils';
+import { getNewColumnsOrder, getColumnsWithOrderedCards, getCardsOfColumn } from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
 import {
@@ -53,7 +49,7 @@ function Board() {
     useGetCardsOnBoardQuery(boardId);
   const [createColumn, { isError: errorCreateColumn }] = useCreateColumnMutation();
   const [updateColumnOrder] = useUpdateColumnOrderMutation();
-  const [updateCardOrder ] = useUpdateCardOrderMutation();
+  const [updateCardOrder] = useUpdateCardOrderMutation();
   const [updateCardTitleOnServer] = useUpdateCardTitleOnServerMutation();
   const dispatch = useAppDispatch();
   const { boardData, columnsData, cardsData, openMenuCardArgs } = useAppSelector(
@@ -72,7 +68,7 @@ function Board() {
   const [isShowSearchForm, setIsShowSearchForm] = useState(false);
   const [isShowBoardMenu, setIsShowBoardMenu] = useState(false);
   const [bgStyle, setBgStyle] = useState({});
-  const [paramsURL] = useSearchParams();
+  const [paramsURL, setParamsURL] = useSearchParams();
   const [openCard, setOpenCard] = useState({
     isOpen: false,
     canOpen: false,
@@ -228,18 +224,28 @@ function Board() {
         }
       }
     } else if (destination && destination.index !== source.index) {
-      const newColumnsOrder = getNewColumnsOrder({dragResult, columnsData});
+      const newColumnsOrder = getNewColumnsOrder({ dragResult, columnsData });
       dispatch(updateColumnsInStore(newColumnsOrder));
       const newColumnsOrderId = newColumnsOrder.map((column) => column._id);
       updateColumnOrder({ boardId, data: newColumnsOrderId }).unwrap();
     }
+  };
+  const closeCard = () => {
+    setOpenCard((prev) => ({ ...prev, isOpen: false }));
+    paramsURL.delete('card');
+    setParamsURL(paramsURL);
+  };
+  const handleKeyDown = () => {
+    setOpenCard((prev) => ({ ...prev, isOpen: false }));
+    paramsURL.delete('card');
+    setParamsURL(paramsURL);
   };
   return (
     <main
       className="board"
       onClick={handleClickBoard}
       onKeyUp={handleKeyUpBoard}
-      style={boardDetailsLoading ? {backgroundImage: 'none', backgroundColor: 'none'} : bgStyle}
+      style={boardDetailsLoading ? { backgroundImage: 'none', backgroundColor: 'none' } : bgStyle}
       aria-hidden="true"
     >
       {(boardDetailsLoading || columnsDataLoading || cardsDataLoading) && <Loader />}
@@ -346,12 +352,13 @@ function Board() {
         </>
       )}
       {openCard.isOpen && (
-        <div
-          className="board__card-modal"
-          // onClick={closeCard}
-          // onKeyDown={handleKeyDown}
-          // aria-hidden="true"
-        >
+        <div className="board__card-modal">
+          <div
+            className="board__card-modal-for-click"
+            onClick={closeCard}
+            onKeyDown={handleKeyDown}
+            aria-hidden="true"
+          />
           <Card boardId={boardId} cardId={openCard.cardId} setOpenCard={setOpenCard} />
         </div>
       )}

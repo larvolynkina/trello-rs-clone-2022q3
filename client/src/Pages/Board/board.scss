@@ -49,13 +49,21 @@
   &__card-menu {
     position: absolute;
   }
-  &__card-modal {
+  &__card-modal-for-click {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: #0009;
+  }
+
+  &__card-modal {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
     align-items: flex-start;
