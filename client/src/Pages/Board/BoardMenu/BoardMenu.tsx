@@ -11,10 +11,12 @@ import {
   useDeleteBoardMutation,
 } from '../../../store/reducers/board/board.api';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
-import { updateBoardBgInStore, updateParticipantsInStore } from '../../../store/reducers/board/boardState';
+import { updateBoardBgInStore, updateBoardDetails, updateParticipantsInStore } from '../../../store/reducers/board/boardState';
 import { APPRoute, BG_COLORS, BG_IMAGES } from '../../../const/const';
 import Marks from '../../../Components/Marks';
 import Activity from '../../../Components/Activities';
+import { IWorkspace, IWsBoard } from '../../../types/workspace';
+import { workspaceApi } from '../../../store/reducers/workspace/workspace.api';
 
 type BoardMenuProps = {
   setIsShowBoardMenu: (b: boolean) => void;
@@ -135,7 +137,26 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       backgroundImage: '',
     };
     setBgStyle(style);
+    const newBoards: IWsBoard[] = [];
+    if (boardDetails.workspace) {
+      boardDetails.workspace.boards.forEach((board) => {
+        if (board._id === boardDetails._id) {
+          newBoards.push({ ...board, backgroundColor: BG_COLORS[index], backgroundImage: '' });
+        } else {
+          newBoards.push(board);
+        }
+      });
+      const newWorkspace: IWorkspace = { ...boardDetails.workspace, boards: newBoards };
+      dispatch(
+        updateBoardDetails({
+          ...boardDetails,
+          workspace: newWorkspace,
+        }),
+      );
+    }
     dispatch(updateBoardBgInStore(style));
+    dispatch(workspaceApi.util.invalidateTags(['Workspace']))
+
     updateBoardBackground({
       boardId: boardDetails._id,
       backgroundColor: style.backgroundColor,
@@ -149,7 +170,26 @@ function BoardMenu({ setIsShowBoardMenu, boardDetails, setBgStyle }: BoardMenuPr
       backgroundColor: '',
     };
     setBgStyle(style);
+    const newBoards: IWsBoard[] = [];
+    if (boardDetails.workspace) {
+      boardDetails.workspace.boards.forEach((board) => {
+        if (board._id === boardDetails._id) {
+          newBoards.push({ ...board, backgroundImage: `url(${image})` });
+        } else {
+          newBoards.push(board);
+        }
+      });
+      const newWorkspace: IWorkspace = { ...boardDetails.workspace, boards: newBoards };
+      dispatch(
+        updateBoardDetails({
+          ...boardDetails,
+          workspace: newWorkspace,
+        }),
+      );
+    }
     dispatch(updateBoardBgInStore(style));
+    dispatch(workspaceApi.util.invalidateTags(['Workspace']))
+
     updateBoardBackground({
       boardId: boardDetails._id,
       backgroundColor: '',
