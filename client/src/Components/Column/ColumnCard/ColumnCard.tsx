@@ -1,5 +1,5 @@
 import './columnCard.scss';
-import { MouseEvent, KeyboardEvent, useEffect, useState } from 'react';
+import { MouseEvent, KeyboardEvent, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd';
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
@@ -22,9 +22,8 @@ function ColumnCard({ card, index, openCardMenu }: ColumnCardProps) {
   const [completedChecklist, setCompletedChecklist] = useState(false);
   const [checkedItemsCount, setCheckedItemsCount] = useState(0);
   const [checklistsItemsCout, setCheclistsItemsCout] = useState(0);
-  // const [participantsInCard, setParticipantsInCard] = useState<IUser[]>([]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (boardData.marks && boardData.marks.length > 0) {
       setCardMarks(boardData.marks.filter((mark) => mark._id && card.marks.includes(mark._id)));
     }

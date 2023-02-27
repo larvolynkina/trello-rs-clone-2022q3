@@ -47,7 +47,6 @@ function Column({
   const [updateTitleColumn, { isError: errorUpdateTitleColumn }] = useUpdateTitleColumnMutation();
   const [title, setTitle] = useState(column.title);
   const [isOpenAddForm, setIsOpenAddForm] = useState(false);
-  // const [cards, setCards] = useState<ICard[]>([]);
   const [isEditTitle, setIsEditTitle] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -58,11 +57,6 @@ function Column({
     }
     setAddCardFromMenu(false);
   }, [addCardFromMenu]);
-  // useEffect(() => {
-  //   if (cardsData) {
-  //     setCards(getCardsOfColumn(column.cards, cardsData));
-  //   }
-  // }, [cardsData, column]);
 
   useEffect(() => {
     if (loadingCreateCard) {
