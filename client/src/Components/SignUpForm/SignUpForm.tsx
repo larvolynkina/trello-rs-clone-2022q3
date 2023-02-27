@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { signUpAction } from '../../store/serviceActions';
 import { SignUpData } from '../../types/userData';
 import FormInput from '../FormInput';
+import Logo from '../Logo';
 import './SignUpForm.scss';
 
 function SignUpForm() {
@@ -27,8 +28,10 @@ function SignUpForm() {
   return (
     <section className="sign-up-form auth-form">
       <div className="sign-up-form__container">
+        <Logo className="sign-up-form__logo logo--large" />
+
         <form className="auth-form__wrapper" onSubmit={handleSubmit(handleFormSubmit)}>
-          <h1 className="auth-form__title">Регистрация в Trello</h1>
+          <h1 className="auth-form__title sign-up-form__title">Регистрация на Boards</h1>
 
           {signUpInputData.map(({ id, ...props }) => (
             <FormInput<SignUpData> key={id} register={register} errors={errors} {...props} />

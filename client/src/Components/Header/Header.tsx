@@ -1,26 +1,29 @@
-import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import Logo from './Logo';
+import { Link, useLocation } from 'react-router-dom';
+import classNames from 'classnames';
+
+import Logo from '../Logo';
 import Auth from '../Auth/Auth';
 import './Header.scss';
+import { APPRoute } from '../../const/const';
 
 function Header() {
-  const location = useLocation();
-  const pathname = location.pathname.split('/');
-  const [className, setClassName] = useState('header__container');
-
-  useEffect(() => {
-    if (pathname[1] === 'boards') {
-      setClassName('header__container header__container--board');
-    } else {
-      setClassName('header__container');
-    }
-  }, [location]);
+  const { pathname } = useLocation();
 
   return (
-    <header className="header">
-      <div className={className}>
-        <Logo />
+    <header
+      className={classNames('header', {
+        'header--hide': pathname === APPRoute.login || pathname === APPRoute.signUp,
+      })}
+    >
+      <div
+        className={classNames('header__container', {
+          'header__container--board': pathname.startsWith('/boards'),
+        })}
+      >
+        <Link to={APPRoute.main}>
+          <Logo />
+        </Link>
+
         <Auth />
       </div>
     </header>

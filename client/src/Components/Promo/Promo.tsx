@@ -8,7 +8,7 @@ function Promo() {
       <div className="promo__container">
         <div className="promo__right">
           <h1 className="promo__title">
-            Trello помогает собрать всех сотрудников, задачи и инструменты в одном месте
+            Boards помогает собрать всех сотрудников, задачи и инструменты в одном месте
           </h1>
           <p className="promo__text">
             Объедините все в одном месте, даже если участники вашей команды рассеяны по миру.

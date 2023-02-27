@@ -8,7 +8,6 @@ interface ParticipantsProps {
 }
 
 function Participants({ onClick, cardParticipants }: ParticipantsProps) {
-
   return (
     <div className="card__participants">
       <h3>Участники</h3>
