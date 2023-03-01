@@ -15,13 +15,18 @@ function Title({ title, workspaceId }: TitleProps) {
   const [updateWorkspace, { isLoading }] = useUpdateWorkspaceMutation();
 
   const handleTitleChange = async () => {
-    if (!value) {
+    if (!value.trim()) {
       setValue(title);
       return;
     }
 
-    if (value.length < 3) {
-      toast.error('Минимальная длина поля 3 символа');
+    if (value.trim().length < 1) {
+      toast.error('Минимальная длина поля 1 символ');
+      return;
+    }
+
+    if (value.trim().length > 20) {
+      toast.error('Максимальная длина поля 20 символов');
       return;
     }
 
@@ -29,8 +34,9 @@ function Title({ title, workspaceId }: TitleProps) {
       try {
         await updateWorkspace({
           workspaceId,
-          title: value,
+          title: value.trim(),
         }).unwrap();
+        setValue(value.trim());
       } catch {
         setValue(title);
         toast.error('Произошла ошибка при изменении заголовка!');
