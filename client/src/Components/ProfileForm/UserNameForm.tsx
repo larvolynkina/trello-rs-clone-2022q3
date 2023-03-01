@@ -15,7 +15,9 @@ function UserNameForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<NewUserName>();
+  } = useForm<NewUserName>({
+    mode: 'onBlur',
+  });
 
   const handleFormSubmit: SubmitHandler<NewUserName> = (data, evt) => {
     evt?.preventDefault();

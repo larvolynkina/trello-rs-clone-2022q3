@@ -36,6 +36,7 @@ function ChangePasswordForm() {
         name="currentPassword"
         validation={passwordValidation}
         placeholder="Введите текущий пароль"
+        autoComplete="off"
       />
 
       <FormInput
@@ -49,6 +50,7 @@ function ChangePasswordForm() {
             value !== watch('currentPassword') || 'Новый пароль не должен совпадать c текущим!',
         }}
         placeholder="Введите новый пароль"
+        autoComplete="off"
       />
 
       <button type="submit" className="change-password-form__btn form-btn" disabled={isLoading}>
