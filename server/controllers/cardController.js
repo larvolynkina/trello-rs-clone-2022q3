@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import mongoose from 'mongoose';
 import Card from '../models/cardModel.js';
 import Column from '../models/columnModel.js';
@@ -516,6 +517,13 @@ async function addAttachment(req, res) {
       return res.status(403).json({ message: errors.notAWorkspaceMember });
     }
     const card = await Card.findById(cardId);
+
+    const participants = [];
+    for (let i = 0; i < card.participants.length; i += 1) {
+      const participant = await User.findById(card.participants[i]);
+      participants.push(participant);
+    }
+
     const newAttachment = {
       type,
       url,
@@ -523,6 +531,7 @@ async function addAttachment(req, res) {
       date: Date.now(),
     };
     card.attachments.push(newAttachment);
+    card.participants = participants;
     await card.save();
     return res.status(200).json(card);
   } catch (error) {
