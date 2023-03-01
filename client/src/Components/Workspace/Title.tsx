@@ -1,7 +1,10 @@
 import { useState, KeyboardEvent } from 'react';
 import { toast } from 'react-toastify';
 
+import { useAppDispatch } from '../../hooks/redux';
 import { useUpdateWorkspaceMutation } from '../../store/reducers/workspace/workspace.api';
+import { updateWorkspaceTitle } from '../../store/reducers/board/boardState';
+
 import './Title.scss';
 
 type TitleProps = {
@@ -13,6 +16,7 @@ function Title({ title, workspaceId }: TitleProps) {
   const [value, setValue] = useState(title);
 
   const [updateWorkspace, { isLoading }] = useUpdateWorkspaceMutation();
+  const dispatch = useAppDispatch();
 
   const handleTitleChange = async () => {
     if (!value.trim()) {
@@ -37,6 +41,7 @@ function Title({ title, workspaceId }: TitleProps) {
           title: value.trim(),
         }).unwrap();
         setValue(value.trim());
+        dispatch(updateWorkspaceTitle({ workspaceId, title: value }));
       } catch {
         setValue(title);
         toast.error('Произошла ошибка при изменении заголовка!');

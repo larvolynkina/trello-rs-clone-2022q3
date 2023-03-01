@@ -21,6 +21,11 @@ export const boardStateSlice = createSlice({
   name: 'dataColumns',
   initialState,
   reducers: {
+    updateWorkspaceTitle(state, action: PayloadAction<{workspaceId: string, title: string}>) {
+      if (state.boardData.workspace?._id === action.payload.workspaceId) {
+        state.boardData.workspace.title = action.payload.title
+      }
+    },
     updateBoardDetails(state, action: PayloadAction<IBoard>) {
       state.boardData = action.payload;
     },
@@ -134,6 +139,7 @@ export const boardStateSlice = createSlice({
 });
 
 export const {
+  updateWorkspaceTitle,
   changeTitleColumnInStore,
   createColumnInStore,
   updateColumnsInStore,
