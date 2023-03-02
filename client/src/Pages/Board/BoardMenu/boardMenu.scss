@@ -3,9 +3,9 @@
 .board-menu {
   position: absolute;
   top: 90px;
+  bottom: 43px;
   right: 0px;
   width: 339px;
-  height: 80vh;
   border: 1px solid #091e4221;
   background-color: #f4f5f7;
   padding: 5px 10px;
@@ -102,7 +102,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 58vh;
+    // max-height: 58vh;
+    height: auto;
     overflow-y: scroll;
   }
 

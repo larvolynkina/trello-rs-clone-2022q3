@@ -6,7 +6,7 @@ import {
   useGetUserByEmailMutation,
   useAddMembersOnBoardMutation,
 } from '../../../store/reducers/board/board.api';
-import { useAppDispatch } from '../../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { addParticipantsInStore } from '../../../store/reducers/board/boardState';
 import { IUser } from '../../../types/card';
 import UserAvatar from '../../../Components/UserAvatar';
@@ -22,6 +22,7 @@ function SearchParticipantsForm({ setIsShowSearchForm, boardId }: SearchParticip
   const [inputText, setInputText] = useState('');
   const [parts, setParts] = useState<IUser[] | []>([]);
   const dispatch = useAppDispatch();
+  const { participantsData } = useAppSelector((state) => state.BOARD);
 
   const handleSaveParticipants = () => {
     const membersId = parts.map((part) => part._id);
@@ -31,8 +32,8 @@ function SearchParticipantsForm({ setIsShowSearchForm, boardId }: SearchParticip
     addMembersOnBoard({ boardId, membersId }).then((res) => {
       if ('error' in res && 'status' in res.error) {
         if (res.error.status === 400) {
-          toast.error('Этот(эти) пользователь(-ли) уже участник(и) доски' , {autoClose: 1000});
-        } 
+          toast.error('Этот(эти) пользователь(-ли) уже участник(и) доски', { autoClose: 1000 });
+        }
       }
     });
     setParts([]);
@@ -43,22 +44,30 @@ function SearchParticipantsForm({ setIsShowSearchForm, boardId }: SearchParticip
   };
 
   const handleSearchParticipants = () => {
+    if (inputText.trim().length === 0) {
+      toast.success('Введите адрес электронной почты...');  
+      return;
+    }
+    toast.loading('Ищем пользователя...');
     async function getPart() {
       const response = await getUserByEmail({ boardId, email: inputText });
       return response;
     }
     getPart().then((res) => {
+      toast.dismiss();
       if ('data' in res) {
         const part = res.data;
         if (parts.find((el) => el._id === part._id)) {
-          toast.error('Пользователь уже добавлен в список', {autoClose: 1000});
+          toast.error('Пользователь уже добавлен в список', { autoClose: 1000 });
+        } else if (participantsData.find((el) => el._id === part._id)) {
+          toast.error('Пользователь уже является участником доски', { autoClose: 1000 });
         } else {
           setParts([...parts, res.data]);
         }
         setInputText('');
       } else if ('error' in res && 'status' in res.error) {
         if (res.error.status === 400) {
-          toast.error('Пользователя с указанным email не существует', {autoClose: 1000});
+          toast.error('Пользователя с указанным email не существует', { autoClose: 1000 });
         }
       }
     });
@@ -98,6 +107,8 @@ function SearchParticipantsForm({ setIsShowSearchForm, boardId }: SearchParticip
           type="button"
           className="add-participants__add-btn"
           onClick={handleSaveParticipants}
+          disabled={! (parts.length > 0)}
+
         >
           Добавить
         </button>
