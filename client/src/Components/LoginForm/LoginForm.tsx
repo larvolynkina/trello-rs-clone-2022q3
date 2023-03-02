@@ -8,6 +8,7 @@ import { loginAction } from '../../store/serviceActions';
 import { LoginData } from '../../types/userData';
 import FormInput from '../FormInput';
 import './LoginForm.scss';
+import Logo from '../Logo';
 
 function LoginForm() {
   const dispatch = useAppDispatch();
@@ -29,8 +30,10 @@ function LoginForm() {
   return (
     <section className="login-form auth-form">
       <div className="login-form__container">
+        <Logo className="login-form__logo logo--large" />
+
         <form className="auth-form__wrapper" onSubmit={handleSubmit(handleFormSubmit)}>
-          <h1 className="auth-form__title">Вход в Trello</h1>
+          <h1 className="auth-form__title">Вход в Boards</h1>
 
           {loginInputData.map(({ id, ...props }) => (
             <FormInput<LoginData> key={id} register={register} errors={errors} {...props} />

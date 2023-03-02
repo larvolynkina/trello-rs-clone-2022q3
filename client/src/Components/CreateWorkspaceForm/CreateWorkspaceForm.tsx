@@ -58,8 +58,14 @@ function CreateWorkspaceForm({ onClose }: CreateWorkspaceFormProps) {
             required: 'Данное поле обязательно для заполнения',
             minLength: {
               value: 3,
-              message: 'Минимальная длина поля 3 символа',
+              message: 'Минимальная длина поля 1 символ',
             },
+            maxLength: {
+              value: 20,
+              message: 'Максимальная длина поля 20 символов',
+            },
+            validate: (value) =>
+              value.trim().length >= 1 || 'Минимальная длина поля 1 символ без пробелов',
           })}
           type="text"
           placeholder="Введите название раб. пространства"

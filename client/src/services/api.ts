@@ -5,7 +5,7 @@ import { AppStore } from '../store/rootReducer';
 import { requireAuthorization } from '../store/reducers/userState';
 import { AuthorizationStatus, SERVER_URL } from '../const/const';
 
-const REQUEST_TIMEOUT = 10000;
+const REQUEST_TIMEOUT = 30000;
 
 enum HttpCode {
   Unauthorized = 401,

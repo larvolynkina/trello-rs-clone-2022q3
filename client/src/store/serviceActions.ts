@@ -13,6 +13,7 @@ import {
   ChangePasswordData,
   UserAvatarData,
 } from '../types/userData';
+import { showErrorToast, showLoadingToast, showSuccessToast } from '../utils/toast';
 import {
   loadUserData,
   removeUserData,
@@ -20,6 +21,7 @@ import {
   requireLogout,
   setIsLoadingUserData,
 } from './reducers/userState';
+import { workspaceApi } from './reducers/workspace/workspace.api';
 import { AppDispatch, RootState } from './rootReducer';
 
 const SERVER_CONNECTION_ERROR = 'Please, check server connection!';
@@ -109,6 +111,8 @@ export const changeUserNameAction = createAppAsyncThunk(
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));
       toast.success('Имя пользователя изменено.');
+
+      dispatch(workspaceApi.util.invalidateTags(['Workspace']));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
         const message = err.response?.data.message || UNKNOWN_ERROR;
@@ -141,6 +145,7 @@ export const changeUserPasswordAction = createAppAsyncThunk(
 export const changeAvatarColorAction = createAppAsyncThunk(
   `${NameSpace.user}/changeAvatarColorAction`,
   async (color: string, { dispatch, extra: api }) => {
+    const toastId = showLoadingToast('Обновление аватара...');
     try {
       const avatarData: UserAvatarData = {
         avatarColor: color,
@@ -151,11 +156,15 @@ export const changeAvatarColorAction = createAppAsyncThunk(
       const { data } = await api.patch<User>(`${APIRoute.users}/avatar`, avatarData);
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));
-      toast.success('Аватар пользователя успешно обновлен.');
+      showSuccessToast(toastId, 'Аватар пользователя успешно обновлен.');
+
+      dispatch(workspaceApi.util.invalidateTags(['Workspace']));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
-        const message = err.response?.data.message || UNKNOWN_ERROR;
-        toast.error(message);
+        showErrorToast({
+          id: toastId,
+          err,
+        });
       }
       dispatch(setIsLoadingUserData(false));
     }
@@ -170,6 +179,7 @@ type UploadResponse = {
 export const changeAvatarImageAction = createAppAsyncThunk(
   `${NameSpace.user}/changeAvatarImageAction`,
   async (file: File, { dispatch, extra: api }) => {
+    const toastId = showLoadingToast('Идет загрузка изображения...');
     try {
       dispatch(setIsLoadingUserData(true));
 
@@ -184,11 +194,15 @@ export const changeAvatarImageAction = createAppAsyncThunk(
       const { data } = await api.patch<User>(`${APIRoute.users}/avatar`, avatarData);
       dispatch(loadUserData(data));
       dispatch(setIsLoadingUserData(false));
-      toast.success('Аватар пользователя успешно обновлен.');
+      showSuccessToast(toastId, 'Аватар пользователя успешно обновлен.');
+
+      dispatch(workspaceApi.util.invalidateTags(['Workspace']));
     } catch (err) {
       if (axios.isAxiosError<ErrorMessage>(err)) {
-        const message = err.response?.data.message || UNKNOWN_ERROR;
-        toast.error(message);
+        showErrorToast({
+          id: toastId,
+          err,
+        });
       }
       dispatch(setIsLoadingUserData(false));
     }

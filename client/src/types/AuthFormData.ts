@@ -10,6 +10,7 @@ export type CustomFormInputData<TData> = {
   type: string;
   validation: RegisterOptions;
   placeholder: string;
+  autoComplete?: string;
 }[];
 
 type LoginDataInputType = ArrayElement<CustomFormInputData<LoginData>>;

@@ -30,6 +30,10 @@ export const passwordValidation = {
     value: 20,
     message: 'Максимальная длина пароля 20 символов',
   },
+  pattern: {
+    value: /^\S+$/,
+    message: 'Пароль не должен содержать пробелы',
+  },
 };
 
 export const passwordInputData: LoginDataInputTypeWithoutId = {
@@ -37,6 +41,7 @@ export const passwordInputData: LoginDataInputTypeWithoutId = {
   type: 'password',
   validation: passwordValidation,
   placeholder: 'Введите пароль',
+  autoComplete: 'off',
 };
 
 export const userNameValidation = {
@@ -48,6 +53,10 @@ export const userNameValidation = {
   maxLength: {
     value: 20,
     message: 'Максимальная длина имени 20 символов',
+  },
+  pattern: {
+    value: /^[a-zA-Zа-яА-я0-9]+$/,
+    message: 'Имя может содержать только буквы и цифры',
   },
 };
 

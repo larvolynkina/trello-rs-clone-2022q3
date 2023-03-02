@@ -5,31 +5,35 @@ $boxShadowColor: #091e4226;
 .header {
   position: fixed;
   color: #fff;
-  padding: 9px 0;
+  padding: rem(9) 0;
   width: 100%;
   top: 0;
   left: 0;
   right: 0;
   background-color: #026aa7;
   box-shadow: $boxShadowColor 0 rem(2) rem(4) 0;
-  z-index: 2;
+
+  &--hide {
+    visibility: hidden;
+  }
 
   &__container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: rem(26);
+
     &--board {
+      padding-left: rem(20);
+      padding-right: rem(20);
       max-width: 100%;
     }
   }
-}
 
-.logo {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 700;
-  font-size: 24px;
-  color: #fff;
+  &__avatar {
+    width: rem(24);
+    height: rem(24);
+    flex: 0 0 rem(24);
+    font-size: rem(12.5);
+  }
 }
