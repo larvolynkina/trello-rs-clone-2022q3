@@ -56,6 +56,11 @@
   }
   &__add-btn {
     margin: 0 10px 0 0;
+    
+    &:disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
   }
   &__cancel-btn {
   }

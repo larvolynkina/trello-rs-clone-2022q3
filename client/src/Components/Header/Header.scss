@@ -12,6 +12,7 @@ $boxShadowColor: #091e4226;
   right: 0;
   background-color: #026aa7;
   box-shadow: $boxShadowColor 0 rem(2) rem(4) 0;
+  z-index: 1;
 
   &--hide {
     visibility: hidden;

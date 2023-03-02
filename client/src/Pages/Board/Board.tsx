@@ -11,7 +11,7 @@ import {
   updateCardInColumn,
 } from '../../store/reducers/board/boardState';
 
-import { AddButtonsOnBoardText } from '../../const/const';
+import { AddButtonsOnBoardText, APPRoute } from '../../const/const';
 import { getNewColumnsOrder, getColumnsWithOrderedCards, getCardsOfColumn } from './utils';
 import AddCardOrColumnForm from '../../Components/Column/AddCardOrColumnForm';
 import Column from '../../Components/Column';
@@ -79,6 +79,9 @@ function Board() {
   useEffect(() => {
     if (isError && error && isFetchBaseQueryError(error) && error.status === 403) {
       navigate('/forbidden');
+    } 
+    if (isError && error && isFetchBaseQueryError(error) && error.status === 500) {
+      navigate(APPRoute.notFound);
     }
   }, [isError]);
 
@@ -88,6 +91,10 @@ function Board() {
       const foundCard = cardsData.find((card) => card._id === findCardId);
       if (foundCard) {
         setOpenCard((prev) => ({ ...prev, isOpen: true, cardId: foundCard._id }));
+      } else {
+        toast.error('Карточки с таким адресом не найдено');
+        paramsURL.delete('card');
+        setParamsURL(paramsURL);
       }
     }
   }, [paramsURL, cardsData]);
