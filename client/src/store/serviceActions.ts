@@ -14,6 +14,7 @@ import {
   UserAvatarData,
 } from '../types/userData';
 import { showErrorToast, showLoadingToast, showSuccessToast } from '../utils/toast';
+import { boardApi } from './reducers/board/board.api';
 import {
   loadUserData,
   removeUserData,
@@ -98,6 +99,8 @@ export const logoutAction = createAppAsyncThunk(
     dropToken();
     dispatch(requireLogout());
     dispatch(removeUserData());
+    dispatch(workspaceApi.util.resetApiState());
+    dispatch(boardApi.util.resetApiState());
   },
 );
 
