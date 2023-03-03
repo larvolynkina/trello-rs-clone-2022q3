@@ -21,4 +21,32 @@ Boards имеет четыре ключевых компонента:
 5. Открыть Карточку  
 На странице Карточка вам доступен весь функционал: редактирование заголовка, описания, добавление чек-листов, участников, вложений, меток, просмотр всех действий на карточке, а также удаление карточки и др.
 
-Приятного пользования!
+Приятного пользования!  
+
+---
+### Frontend Stack:
+- **React** - a JavaScript library for building user interfaces
+- **React Redux** - react bindings for a predictable state container for JavaScript applications
+- **Redux Toolkit** - the official, opinionated, batteries-included toolset for efficient Redux development
+- **RTK Query** - data fetching and caching tool
+- **react-beautiful-dnd** - beautiful and accessible drag and drop for lists with React
+- **react-detect-click-outside** - a lightweight React hook that detects clicks outside elements and triggers a callback
+- **react-hook-form** - react Hooks for form state management and validation
+- **React-Toastify** - React-Toastify allows you to add notifications to your app with ease. 
+- **Sass** - CSS extension language
+- **Typescript** - a strongly typed programming language that builds on JavaScript
+
+### Backend Stack:
+- **Express** - web framework for Node.js
+- **MongoDB** - source-available cross-platform document-oriented database program
+- **Mongoose** - mongoose is a MongoDB object modeling tool designed to work in an asynchronous environment. 
+- **bcrypt** - a library to help you hash passwords
+- **jsonwebtoken** - an implementation of JSON Web Tokens
+- **cors** -  a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options
+- **multer** - a node.js middleware for handling multipart/form-data, which is primarily used for uploading files
+- **nodemon** - is a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected
+- **dotenv** - is a zero-dependency module that loads environment variables from a .env file into process.env
+
+### Code Quality and Uniformity Tools:
+- **Eslint** (airbnb config)
+- **Prettier**
