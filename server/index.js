@@ -13,7 +13,11 @@ import uploadRouter from './routes/uploadRoute.js';
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: 'https://larvolynkina-trello-rs-clone-2022q3.netlify.app',
+  }),
+);
 app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 3002;
