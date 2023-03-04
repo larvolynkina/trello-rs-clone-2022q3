@@ -1,0 +1,23 @@
+.workspace-panel {
+  height: 100%;
+  overflow-y: auto;
+
+  &__header {
+    margin: 0 0 10px 0;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid gray;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    pointer-events: none;
+  }
+  &__title {
+    font-weight: 600;
+  }
+  &__boards {
+    max-height: 70vh;
+  }
+  .boards__board--button {
+    display: none;
+  }
+}

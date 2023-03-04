@@ -1,0 +1,102 @@
+.form-btn {
+  display: inline-block;
+  background-color: #0065ff;
+  border: rem(1) solid #0065ff;
+  border-radius: rem(5);
+  line-height: 1.5;
+  padding: rem(14) rem(16);
+  transition: all 0.3s ease 0s;
+  @include adaptiveValue('font-size', 20, 14);
+  color: #fff;
+
+  @media (any-hover: hover) {
+    &:hover {
+      background-color: #0747a6;
+      border-color: #0747a6;
+      box-shadow: #7a869a80 0 0 0 rem(3);
+    }
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    border: rem(1) solid #ccc;
+    box-shadow: none;
+  }
+
+  &--small {
+    font-size: rem(14);
+    padding: rem(5) rem(10);
+  }
+}
+
+.auth-form {
+  &__wrapper {
+    margin: 0 auto;
+    max-width: rem(400);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: rem(17);
+    background-color: #fff;
+    padding: rem(25) rem(40);
+    border-radius: rem(3);
+    box-shadow: #0000001a 0 0 rem(10);
+
+    @media (max-width: $mobile) {
+      padding: rem(25) rem(0);
+      border-radius: 0;
+      box-shadow: initial;
+    }
+  }
+
+  &__title {
+    margin-bottom: rem(28);
+    font-size: rem(32);
+    line-height: 1.1875;
+    font-weight: 700;
+    font-style: oblique;
+    text-align: center;
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: rem(5);
+  }
+
+  &__input {
+    padding: rem(15) rem(14) rem(13);
+    font-size: rem(16);
+    line-height: 1.1875;
+    color: #383838;
+    background-color: #fafbfc;
+    border: rem(1) solid #e6e6e6;
+    border-radius: rem(2);
+  }
+
+  &__input-error {
+    color: $errorColor;
+    font-size: rem(13);
+  }
+
+  &__separator {
+    display: block;
+    height: rem(1);
+    border: 0;
+    border-top: rem(1) solid #cccccc;
+    margin: rem(1) 0;
+    padding: 0;
+  }
+
+  &__link {
+    text-align: center;
+    text-decoration: none;
+    color: #0052cc;
+  }
+}
+
+.authorization-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,0 +1,106 @@
+@import '../../../scss/colors.scss';
+
+.card-context-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  background-color: #0009;
+
+  &__form {
+    position: absolute;
+    width: 254px;
+  }
+
+  &__input {
+    resize: none;
+    border-radius: 3px;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    height: 90px;
+    width: 100%;
+    outline: none;
+    margin: 0 10px 10px 0;
+    padding: 7px;
+  }
+
+  &__save-btn {
+    height: 32px;
+    padding: 0 24px;
+    border-radius: 3px;
+    background-color: $buttonShareAndOutlineColor;
+    color: white;
+    outline: none;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: #0069a7;
+    }
+  }
+
+  &__functions {
+    position: absolute;
+    top: 0;
+    right: -180px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  &__func-btn {
+    padding: 0 12px;
+    height: 32px;
+    border-radius: 3px;
+    color: white;
+    background-color: #000c;
+    opacity: 0.7; 
+    transition: all 85ms;
+    
+    &:hover {
+      opacity: 1;
+      transform: translateX(10px);
+    }
+  }
+  &__close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 0;
+    width: 32px;
+    height: 32px;
+    transition: all 0.3s;
+    border-radius: 3px;
+    background-color: unset;
+    opacity: 0.75;
+    &:hover {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+  &__cross-btn {
+    display: block;
+    background-color: white;
+    transition: all 0.1s;
+
+    &::after,
+    &::before {
+      content: '';
+      width: 20px;
+      height: 2px;
+      border-radius: 5px;
+      background-color: inherit;
+      position: absolute;
+      top: 15px;
+      left: 3px;
+    }
+    &::after {
+      transform: rotate(45deg);
+    }
+    &::before {
+      transform: rotate(135deg);
+    }
+  }
+}

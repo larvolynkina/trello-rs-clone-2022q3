@@ -1,0 +1,26 @@
+@import '../../scss/base/mixins.scss';
+
+.overlay {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  overflow-y: auto;
+  pointer-events: initial;
+  background-color: #091e428a;
+}
+
+.modal {
+  position: fixed;
+  top: rem(100);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  background-color: #fff;
+  z-index: 20;
+  border-radius: rem(3);
+
+  box-shadow: 0 0 0 1px rgba(9, 30, 66, 0.08), 0 2px 1px rgba(9, 30, 66, 0.08),
+    0 0 20px -6px rgba(9, 30, 66, 0.31);
+
+  padding: rem(24);
+}

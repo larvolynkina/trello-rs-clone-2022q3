@@ -1,0 +1,219 @@
+@import '../../scss/colors.scss';
+
+.marks {
+  color: #5e6c84;
+  &__list {
+    margin: 10px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  &__header {
+    height: 48px;
+    border-bottom: 1px solid #091e4221;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  &__title {
+  }
+
+  &__close-btn {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    right: 0px;
+    top: 0;
+    transition: all 0.3s;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  &__cross-btn {
+    display: block;
+    position: relative;
+    background-color: $buttonAddCardTextColor;
+
+    &::after,
+    &::before {
+      content: '';
+      width: 16px;
+      height: 2px;
+      border-radius: 5px;
+      background-color: inherit;
+      position: absolute;
+      top: 0;
+      left: 12px;
+    }
+    &::after {
+      transform: rotate(45deg);
+    }
+    &::before {
+      transform: rotate(135deg);
+    }
+  }
+  &__create-mark {
+    width: 100%;
+    height: 32px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+
+    &:hover{
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+  &__btn {
+    background-color: $buttonShareAndOutlineColor;
+    padding: 5px 12px;
+    color: white;
+    border-radius: 3px;
+    height: 32px;
+    min-width: 86px;
+    transition: all 0.3s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+    
+    &--del {
+      background-color: #933b27;
+    }
+  }
+}
+
+.mark-item {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  align-items: center;
+
+  &__checkbox {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    margin: 0 0 0 5px;
+  }
+  &__body {
+    height: 32px;
+    width: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+  &__circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0 0 0 10px;
+  }
+  &__text {
+  }
+  &__pensil {
+    font-size: 0;
+    width: 25px;
+    height: 25px;
+    padding: 5px;
+    background-image: url('./icon-pensil.png');
+    background-repeat: no-repeat;
+    background-position: 50% 38%;
+    border-radius: 3px;
+    background-color: rgba(240, 240, 240, 0.8);
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: rgb(226, 226, 226);
+    }
+  }
+}
+
+.mark-edit {
+  position: absolute;
+  width: 304px;
+  min-height: 545px;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 12px;
+  border-radius: 3px;
+  border: 1px solid #091e4221;
+  box-shadow: 0 8px 16px -4px rgba(9, 30, 66, 0.25), 0 0 0 1px rgba(9, 30, 66, 0.08);
+  background-color: #fff;
+
+  .mark-item__body {
+    pointer-events: none;
+  }
+  &__present {
+    height: 101px;
+    background-color: #f4f5f7;
+    margin: 0 -12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__mark-item {
+    width: 240px;
+  }
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #091e4221;
+
+  }
+
+  &__label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+    
+    gap: 5px;
+  }
+  &__input {
+    font-size: 14px;
+    line-height: 20px;
+    height: 40px;
+    border: 2px solid #091e4221;
+    border-radius: 3px;
+    outline: none;
+    padding: 8px 12px;
+    
+    &:focus {
+      box-shadow: inset 0 0 0 2px #0079bf;
+      border: none;
+    }
+    
+  }
+  &__colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  &__color-btn {
+    width: 51px;
+    height: 32px;
+    border-radius: 3px;
+    border: 2px transparent solid;
+    font-size: 0;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+  &__btns {
+    display: flex;
+    justify-content: space-between;
+  }
+}

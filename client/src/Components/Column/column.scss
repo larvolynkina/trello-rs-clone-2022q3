@@ -1,0 +1,99 @@
+@import '../../scss/colors.scss';
+
+.column {
+  flex: 0 0 270px;
+  border-radius: 5px;
+  background-color: $columnBackgroundColor;
+  color: $buttonAddColumnTextColor;
+  padding: 4px 8px 8px;
+  user-select: none;
+
+  &__header {
+    min-height: 40px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+
+  &__text-title {
+    font-weight: 600;
+    width: 220px;
+    min-height: 28px;
+    border-radius: 3px;
+    outline: none;
+    background: none;
+    padding: 8px 8px;
+    margin: -4px 0;
+    color: inherit;
+    overflow-wrap: break-word;
+  }
+  &__input-title {
+    font-weight: 600;
+    height: 28px;
+    width: 220px;
+    border-radius: 3px;
+    outline: none;
+    background: none;
+    padding: 4px 8px;
+    margin: -4px 0;
+    color: inherit;
+
+    &--edit,
+    &:focus {
+      background: white;
+      box-shadow: inset 0 0 0 2px $buttonShareAndOutlineColor;
+    }
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  &__actions {
+    width: 40px;
+    height: 30px;
+    padding: 0 0 6px 0;
+    font-weight: 500;
+    transition: all 0.3s;
+    border-radius: 3px;
+    outline: none;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 10px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__add-card {
+    color: $buttonAddCardTextColor;
+    border-radius: 3px;
+    padding: 6px 8px;
+    display: block;
+    flex: 1 0 auto;
+    text-align: left;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      color: $mainColor;
+    }
+  }
+  &__shadow-copy {
+    width: 100%;
+    height: 100%;
+    border: 1px solid gray;
+  }
+}

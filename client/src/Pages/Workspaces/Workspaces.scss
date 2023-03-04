@@ -1,0 +1,22 @@
+@import '../../scss/base/mixins.scss';
+
+.workspaces {
+  padding-top: rem(60);
+  padding-bottom: rem(40);
+  background-color: #fafbfc;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: rem(10);
+    margin: rem(20) 0;
+  }
+
+  &__title {
+    @include adaptiveValue('font-size', 20, 16);
+    font-weight: 700;
+    color: #5e6c84;
+    text-transform: uppercase;
+  }
+}

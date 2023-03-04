@@ -1,0 +1,28 @@
+.not-found, .forbidden {
+    margin: 0 auto;
+    padding: 100px 0;
+    flex: 1;
+    color: #6b778c;
+    font-weight: 500;
+    font-size: 26px;
+
+    &__text {
+        text-align: center;
+    }
+
+    &__link {
+        display: block;
+        margin: 0 auto;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 10px;
+
+        &:link {
+            text-decoration: underline;
+        }
+
+        &:hover {
+            color: #026aa7;
+        }
+    }
+}

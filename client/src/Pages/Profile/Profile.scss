@@ -1,0 +1,9 @@
+@import '../../scss/base/mixins.scss';
+
+.profile {
+  padding-top: rem(60);
+
+  &__tabs {
+    margin-bottom: rem(60);
+  }
+}

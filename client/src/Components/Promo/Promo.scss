@@ -1,0 +1,75 @@
+@import '../../scss/base/mixins.scss';
+@import '../../scss/vars.scss';
+
+.promo {
+  padding-top: rem(60);
+  background-blend-mode: normal, normal;
+  background: url('../../../public/assets/img/main/white-wave-bg.svg') center bottom rem(-0.5) /
+      100% 14% no-repeat scroll padding-box border-box,
+    linear-gradient(60deg, #5243aa, #ed50b4) 0% 0% / auto repeat scroll padding-box border-box
+      #5243aa;
+
+  color: #fff;
+
+  padding-top: rem(68);
+
+  &__container {
+    display: flex;
+
+    @media (max-width: $tablet) {
+      flex-direction: column;
+    }
+  }
+
+  &__right {
+    padding: 0 rem(16) rem(128);
+    width: 50%;
+
+    @media (max-width: $tablet) {
+      width: 100%;
+      padding: 0 0 rem(20);
+    }
+  }
+
+  &__title {
+    @include adaptiveValue('font-size', 48, 32);
+    margin-bottom: rem(10);
+    line-height: 1.25;
+
+    @media (max-width: $tablet) {
+      text-align: center;
+    }
+  }
+
+  &__text {
+    font-size: rem(20);
+    line-height: 1.5;
+    margin-bottom: rem(20);
+
+    @media (max-width: $tablet) {
+      text-align: center;
+    }
+  }
+
+  &__signup-btn {
+    @media (max-width: $tablet) {
+      text-align: center;
+      display: block;
+      width: max-content;
+      margin: 0 auto;
+    }
+  }
+
+  &__left {
+    width: 50%;
+
+    @media (max-width: $tablet) {
+      width: 100%;
+      padding-bottom: rem(128);
+    }
+
+    img {
+      width: 100%;
+    }
+  }
+}
