@@ -79,16 +79,16 @@ function Board() {
   useEffect(() => {
     if (isError && error && isFetchBaseQueryError(error) && error.status === 403) {
       navigate('/forbidden');
-    } 
+    }
     if (isError && error && isFetchBaseQueryError(error) && error.status === 500) {
       navigate(APPRoute.notFound);
     }
   }, [isError]);
 
   useEffect(() => {
-    const findCardId = paramsURL.get('card');
-    if (cardsData && findCardId) {
-      const foundCard = cardsData.find((card) => card._id === findCardId);
+    const cardFromURL = paramsURL.get('card');
+    if ((cardsData.length > 0) && cardFromURL) {
+      const foundCard = cardsData.find((card) => card._id === cardFromURL);
       if (foundCard) {
         setOpenCard((prev) => ({ ...prev, isOpen: true, cardId: foundCard._id }));
       } else {
