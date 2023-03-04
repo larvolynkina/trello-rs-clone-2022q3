@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: 'https://larvolynkina-trello-rs-clone-2022q3.netlify.app',
+    origin: ['https://larvolynkina-trello-rs-clone-2022q3.netlify.app', 'http://localhost:3000'],
   }),
 );
 app.use('/uploads', express.static('uploads'));
